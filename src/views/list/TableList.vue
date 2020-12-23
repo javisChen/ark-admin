@@ -209,7 +209,7 @@ export default {
         console.log('loadData request parameters:', requestParameters)
         return getServiceList(requestParameters)
           .then(res => {
-            return res.result
+            return res.data
           })
       },
       selectedRowKeys: [],

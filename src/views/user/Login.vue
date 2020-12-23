@@ -146,7 +146,7 @@ export default {
   created () {
     get2step({ })
       .then(res => {
-        this.requiredTwoStepCaptcha = res.result.stepCode
+        this.requiredTwoStepCaptcha = res.data.stepCode
       })
       .catch(() => {
         this.requiredTwoStepCaptcha = false
@@ -185,7 +185,6 @@ export default {
 
       validateFields(validateFieldsKey, { force: true }, (err, values) => {
         if (!err) {
-          console.log('login form', values)
           const loginParams = { ...values }
           delete loginParams.username
           loginParams[!state.loginType ? 'email' : 'username'] = values.username
@@ -224,7 +223,7 @@ export default {
             setTimeout(hide, 2500)
             this.$notification['success']({
               message: '提示',
-              description: '验证码获取成功，您的验证码为：' + res.result.captcha,
+              description: '验证码获取成功，您的验证码为：' + res.data.captcha,
               duration: 8
             })
           }).catch(err => {
@@ -271,11 +270,6 @@ export default {
     },
     requestFailed (err) {
       this.isLoginError = true
-      this.$notification['error']({
-        message: '错误',
-        description: ((err.response || {}).data || {}).message || '请求出现错误，请稍后再试',
-        duration: 4
-      })
     }
   }
 }

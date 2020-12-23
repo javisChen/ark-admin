@@ -3,6 +3,7 @@ import store from '@/store'
 import storage from 'store'
 import notification from 'ant-design-vue/es/notification'
 import { VueAxios } from './axios'
+import { SUCCESS_CODE } from './code'
 import { ACCESS_TOKEN } from '@/store/mutation-types'
 
 // 创建 axios 实例
@@ -37,6 +38,22 @@ const errorHandler = (error) => {
         })
       }
     }
+    if (error.response.status === 400) {
+      const result = error.response.data
+      console.log('error 400', error.response)
+      notification.error({
+        message: '出了点小问题~',
+        description: result.msg,
+        duration: 4
+      })
+      if (token) {
+        store.dispatch('Logout').then(() => {
+          setTimeout(() => {
+            window.location.reload()
+          }, 1500)
+        })
+      }
+    }
   }
   return Promise.reject(error)
 }
@@ -54,7 +71,12 @@ request.interceptors.request.use(config => {
 
 // response interceptor
 request.interceptors.response.use((response) => {
-  return response.data
+  console.log('response', response)
+  const serverResponse = response.data
+  if (serverResponse.code === SUCCESS_CODE) {
+    return Promise.resolve({data: serverResponse.data, resp: serverResponse})
+  }
+  return Promise.reject(serverResponse)
 }, errorHandler)
 
 const installer = {

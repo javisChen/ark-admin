@@ -174,7 +174,7 @@ export default {
         console.log('loadData.parameter', parameter)
         return getServiceList(Object.assign(parameter, this.queryParam))
           .then(res => {
-            return res.result
+            return res.data
           })
       },
       selectedRowKeys: [],

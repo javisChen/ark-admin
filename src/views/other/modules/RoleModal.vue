@@ -120,7 +120,7 @@ export default {
     loadPermissions () {
       const that = this
       getPermissions().then(res => {
-        const result = res.result
+        const result = res.data
         that.permissions = result.map(permission => {
           const options = JSON.parse(permission.actionData) || []
           permission.checkedAll = false

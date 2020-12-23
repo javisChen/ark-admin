@@ -106,7 +106,7 @@ export default {
       loadData: parameter => {
         return getServiceList(Object.assign(parameter, this.queryParam))
           .then(res => {
-            return res.result
+            return res.data
           })
       },
       orgTree: [],
@@ -116,7 +116,7 @@ export default {
   },
   created () {
     getOrgTree().then(res => {
-      this.orgTree = res.result
+      this.orgTree = res.data
     })
   },
   methods: {
