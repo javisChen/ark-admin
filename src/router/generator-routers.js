@@ -46,7 +46,7 @@ const constantRouterComponents = {
   // account
   'AccountCenter': () => import('@/views/account/center'),
   'AccountSettings': () => import('@/views/account/settings/Index'),
-  // 'BaseSettings': () => import('@/views/account/settings/BaseSetting'),
+  'BasicSettings': () => import('@/views/account/settings/BasicSetting'),
   'SecuritySettings': () => import('@/views/account/settings/Security'),
   'CustomSettings': () => import('@/views/account/settings/Custom'),
   'BindingSettings': () => import('@/views/account/settings/Binding'),
@@ -66,7 +66,7 @@ const rootRouter = {
   name: 'index',
   path: '',
   component: 'BasicLayout',
-  redirect: '/dashboard',
+  redirect: '/dashboard/workplace',
   meta: {
     title: '首页'
   },
@@ -80,19 +80,17 @@ const rootRouter = {
  */
 export const generatorDynamicRouter = (token) => {
   return new Promise((resolve, reject) => {
-    loginService.getCurrentUserNav(token).then(res => {
-      console.log('res', res)
-      const { data } = res
+    loginService.getCurrentUserNav(token).then(({data, resp}) => {
+      console.log('res', resp)
+      console.log('res', data)
       const menuNav = []
       const childrenNav = []
       //      后端数据, 根级树数组,  根级 PID
-      listToTree(data, childrenNav, 0)
+      listToTree(data.routes, childrenNav, 0)
       rootRouter.children = childrenNav
       menuNav.push(rootRouter)
-      console.log('menuNav', menuNav)
       const routers = generator(menuNav)
       routers.push(notFoundRouter)
-      console.log('routers', routers)
       resolve(routers)
     }).catch(err => {
       reject(err)
@@ -130,7 +128,7 @@ export const generator = (routerMap, parent) => {
       }
     }
     // 是否设置了隐藏菜单
-    if (show === false) {
+    if (show == false) {
       currentRouter.hidden = true
     }
     // 是否设置了隐藏子菜单
@@ -161,7 +159,7 @@ export const generator = (routerMap, parent) => {
 const listToTree = (list, tree, parentId) => {
   list.forEach(item => {
     // 判断是否为父级菜单
-    if (item.parentId === parentId) {
+    if (item.parentId == parentId) {
       const child = {
         ...item,
         key: item.key || item.name,

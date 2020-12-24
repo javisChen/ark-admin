@@ -33,6 +33,7 @@ router.beforeEach((to, from, next) => {
             store.dispatch('GenerateRoutes', {roles}).then(() => {
               // 根据roles权限生成可访问的路由表
               // 动态添加可访问路由表
+              console.log('routers', store.getters.addRouters)
               router.addRoutes(store.getters.addRouters)
               // 请求带有 redirect 重定向时，登录自动重定向到该地址
               const redirect = decodeURIComponent(from.query.redirect || to.path)
@@ -46,7 +47,6 @@ router.beforeEach((to, from, next) => {
             })
           })
           .catch((e) => {
-            console.log(e)
             notification.error({
               message: '错误',
               description: '请求用户信息失败，请重试'

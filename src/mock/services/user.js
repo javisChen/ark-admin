@@ -1,5 +1,5 @@
 import Mock from 'mockjs2'
-import { builder } from '../util'
+import {builder} from '../util'
 
 const info = (options) => {
   console.log('options', options)
@@ -361,7 +361,7 @@ const info = (options) => {
   return builder(userInfo)
 }
 
-const userNav = (options) => {
+const userRoutes = (options) => {
   const nav = [
     // dashboard
     {
@@ -742,10 +742,8 @@ const userNav = (options) => {
       'component': 'NotificationSettings'
     }
   ]
-  const json = builder(nav)
-  console.log('json', json)
-  return json
+  return builder(nav)
 }
 
 Mock.mock(/\/api\/user\/info/, 'get', info)
-Mock.mock(/\/api\/user\/nav/, 'get', userNav)
+// Mock.mock(/\/api\/user\/routes/, 'get', userRoutes)

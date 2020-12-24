@@ -71,7 +71,6 @@ request.interceptors.request.use(config => {
 
 // response interceptor
 request.interceptors.response.use((response) => {
-  console.log('response', response)
   const serverResponse = response.data
   if (serverResponse.code === SUCCESS_CODE) {
     return Promise.resolve({data: serverResponse.data, resp: serverResponse})
