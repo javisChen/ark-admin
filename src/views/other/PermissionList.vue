@@ -218,6 +218,7 @@ export default {
     }
   },
   created () {
+    console.log('12321312321')
     this.loadPermissionList()
   },
   methods: {

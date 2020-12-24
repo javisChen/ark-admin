@@ -1,5 +1,5 @@
 // eslint-disable-next-line
-import { UserLayout, BasicLayout, BlankLayout } from '@/layouts'
+import { UserLayout, BasicLayout, BlankLayout,PageView } from '@/layouts'
 import { bxAnaalyse } from '@/core/icons'
 
 const RouteView = {
@@ -267,10 +267,8 @@ export const asyncRouterMap = [
             ]
           }
         ]
-      }
-
+      },
       // other
-      /*
       {
         path: '/other',
         name: 'otherPage',
@@ -287,6 +285,7 @@ export const asyncRouterMap = [
           {
             path: '/other/list',
             component: RouteView,
+            name: 'bizLayout',
             meta: { title: '业务布局', icon: 'layout', permission: [ 'support' ] },
             redirect: '/other/list/tree-list',
             children: [
@@ -321,7 +320,7 @@ export const asyncRouterMap = [
                 meta: { title: '角色列表2', keepAlive: true }
               },
               {
-                path: '/other/list/permission-list',
+                path: '/other/list/system-role',
                 name: 'PermissionList',
                 component: () => import('@/views/other/PermissionList'),
                 meta: { title: '权限列表', keepAlive: true }
@@ -330,7 +329,6 @@ export const asyncRouterMap = [
           }
         ]
       }
-      */
     ]
   },
   {
