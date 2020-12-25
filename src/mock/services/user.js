@@ -746,4 +746,4 @@ const userRoutes = (options) => {
 }
 
 Mock.mock(/\/api\/user\/info/, 'get', info)
-// Mock.mock(/\/api\/user\/routes/, 'get', userRoutes)
+// Mock.mock(/\/api\/user\/menus/, 'get', userRoutes)

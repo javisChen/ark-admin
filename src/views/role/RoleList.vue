@@ -13,11 +13,12 @@
       </a-col>
       <a-col :md="20">
         <div style="max-width: 800px">
-          <a-divider v-if="isMobile()" />
+<!--          <a-divider v-if="isMobile()" />-->
           <div v-if="mdl.id">
-            <h3>角色：{{ mdl.name }}</h3>
+            <h3>角色123：{{ mdl.name }}</h3>
           </div>
-          <a-form :form="form" :layout="isMobile() ? 'vertical' : 'horizontal'">
+<!--          <a-form :form="form" :layout="isMobile() ? 'vertical' : 'horizontal'">-->
+          <a-form :form="form" :layout="'horizontal'">
             <a-form-item label="唯一键">
               <a-input v-decorator="[ 'id', {rules: [{ required: true, message: 'Please input unique key!' }]} ]" placeholder="请填写唯一键" />
             </a-form-item>
@@ -66,6 +67,7 @@
 import pick from 'lodash.pick'
 import { getRoleList, getPermissions } from '@/api/manage'
 // import { actionToObject } from '@/utils/permissions'
+import { PERMISSION_ENUM } from '@/core/permission/permission'
 import { baseMixin } from '@/store/app-mixin'
 
 export default {
@@ -143,22 +145,33 @@ export default {
       })
     },
     loadPermissions () {
-      // getPermissions().then(res => {
-      //   const result = res.data
-      //   this.permissions = result.map(permission => {
-      //     const options = actionToObject(permission.actionData)
-      //     permission.checkedAll = false
-      //     permission.selected = []
-      //     permission.indeterminate = false
-      //     permission.actionsOptions = options.map(option => {
-      //       return {
-      //         label: option.describe,
-      //         value: option.action
-      //       }
-      //     })
-      //     return permission
-      //   })
-      // })
+      getPermissions().then(res => {
+        const result = res.data
+        this.permissions = result.map(permission => {
+          // const options = actionToObject(permission.actionData)
+          const options = [{
+            describe: '新增',
+            action: 'add'
+        },{
+            describe: '删除',
+            action: 'delete'
+        },{
+            describe: '更新',
+            action: 'update'
+        }]
+          permission.checkedAll = false
+          permission.selected = []
+          permission.indeterminate = false
+          permission.actionsOptions = options.map(option => {
+            return {
+              label: option.describe,
+              value: option.action
+            }
+          })
+          console.log(permission)
+          return permission
+        })
+      })
     }
   }
 }

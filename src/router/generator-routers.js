@@ -58,8 +58,11 @@ const constantRouterComponents = {
   'EditList': () => import('@/views/other/TableInnerEditList'),
   'UserList': () => import('@/views/other/UserList'),
   'RoleList': () => import('@/views/other/RoleList'),
-  'SystemRole': () => import('@/views/other/RoleList'),
-  'PermissionList': () => import('@/views/other/PermissionList')
+  'SystemRole': () => import('@/views/role/RoleList'),
+  'PermissionList': () => import('@/views/other/PermissionList'),
+
+  // rbac
+  'PermissionRoute': () => import('@/views/permission/PermissionRoute'),
 
   // 'TestWork': () => import(/* webpackChunkName: "TestWork" */ '@/views/dashboard/TestWork')
 }
