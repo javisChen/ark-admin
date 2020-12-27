@@ -69,7 +69,7 @@ export default {
       return (item.children && item.children.length > 0)
         ? this.renderSubItem(item, item.key) : this.renderMenuItem(item, item.key)
     },
-    renderItemGroup (item) {5
+    renderItemGroup (item) {
       const childrenItems = item.children.map(o => {
         return this.renderItem(o, o.key)
       })
