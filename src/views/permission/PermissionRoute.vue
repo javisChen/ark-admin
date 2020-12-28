@@ -1,205 +1,188 @@
 <template>
-  <a-card :bordered="false">
-    <a-row :gutter="8">
-      <a-col :span="5">
-        <a-button block type="primary" icon="plus-circle" @click="handleAddRoute">
-          添加路由
-        </a-button>
-        <s-tree
-          :dataSource="orgTree"
-          :openKeys.sync="openKeys"
-          :search="true"
-          @click="handleClick"
-          @add="handleAdd"
-          @titleClick="handleTitleClick"></s-tree>
-      </a-col>
-      <a-col :span="19">
-        <s-table
-          ref="table"
-          size="default"
-          :columns="columns"
-          :data="loadData"
-          :alert="false"
-          :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
-        >
-          <span slot="action" slot-scope="text, record">
-            <template v-if="$auth('table.update')">
-              <a @click="handleEdit(record)">编辑</a>
-              <a-divider type="vertical" />
-            </template>
-            <a-dropdown>
-              <a class="ant-dropdown-link">
-                更多 <a-icon type="down" />
-              </a>
-              <a-menu slot="overlay">
-                <a-menu-item>
-                  <a href="javascript:;">详情</a>
-                </a-menu-item>
-                <a-menu-item v-if="$auth('table.disable')">
-                  <a href="javascript:;">禁用</a>
-                </a-menu-item>
-                <a-menu-item v-if="$auth('table.delete')">
-                  <a href="javascript:;">删除</a>
-                </a-menu-item>
-              </a-menu>
-            </a-dropdown>
-          </span>
-        </s-table>
-      </a-col>
-    </a-row>
+  <page-header-wrapper>
+    <a-card :bordered="false">
+      <!--      <div class="table-page-search-wrapper">-->
+      <!--        <a-form layout="inline">-->
+      <!--          <a-row :gutter="48">-->
+      <!--            <a-col :md="8" :sm="24">-->
+      <!--              <a-form-item label="规则编号">-->
+      <!--                <a-input v-model="queryParam.id" placeholder=""/>-->
+      <!--              </a-form-item>-->
+      <!--            </a-col>-->
+      <!--            <a-col :md="8" :sm="24">-->
+      <!--              <a-form-item label="使用状态">-->
+      <!--                <a-select v-model="queryParam.status" placeholder="请选择" default-value="0">-->
+      <!--                  <a-select-option value="0">全部</a-select-option>-->
+      <!--                  <a-select-option value="1">关闭</a-select-option>-->
+      <!--                  <a-select-option value="2">运行中</a-select-option>-->
+      <!--                </a-select>-->
+      <!--              </a-form-item>-->
+      <!--            </a-col>-->
+      <!--            <template v-if="advanced">-->
+      <!--              <a-col :md="8" :sm="24">-->
+      <!--                <a-form-item label="调用次数">-->
+      <!--                  <a-input-number v-model="queryParam.callNo" style="width: 100%"/>-->
+      <!--                </a-form-item>-->
+      <!--              </a-col>-->
+      <!--              <a-col :md="8" :sm="24">-->
+      <!--                <a-form-item label="更新日期">-->
+      <!--                  <a-date-picker v-model="queryParam.date" style="width: 100%" placeholder="请输入更新日期"/>-->
+      <!--                </a-form-item>-->
+      <!--              </a-col>-->
+      <!--              <a-col :md="8" :sm="24">-->
+      <!--                <a-form-item label="使用状态">-->
+      <!--                  <a-select v-model="queryParam.useStatus" placeholder="请选择" default-value="0">-->
+      <!--                    <a-select-option value="0">全部</a-select-option>-->
+      <!--                    <a-select-option value="1">关闭</a-select-option>-->
+      <!--                    <a-select-option value="2">运行中</a-select-option>-->
+      <!--                  </a-select>-->
+      <!--                </a-form-item>-->
+      <!--              </a-col>-->
+      <!--              <a-col :md="8" :sm="24">-->
+      <!--                <a-form-item label="使用状态">-->
+      <!--                  <a-select placeholder="请选择" default-value="0">-->
+      <!--                    <a-select-option value="0">全部</a-select-option>-->
+      <!--                    <a-select-option value="1">关闭</a-select-option>-->
+      <!--                    <a-select-option value="2">运行中</a-select-option>-->
+      <!--                  </a-select>-->
+      <!--                </a-form-item>-->
+      <!--              </a-col>-->
+      <!--            </template>-->
+      <!--            <a-col :md="!advanced && 8 || 24" :sm="24">-->
+      <!--              <span class="table-page-search-submitButtons" :style="advanced && { float: 'right', overflow: 'hidden' } || {} ">-->
+      <!--                <a-button type="primary" @click="$refs.table.refresh(true)">查询</a-button>-->
+      <!--                <a-button style="margin-left: 8px" @click="() => this.queryParam = {}">重置</a-button>-->
+      <!--                <a @click="toggleAdvanced" style="margin-left: 8px">-->
+      <!--                  {{ advanced ? '收起' : '展开' }}-->
+      <!--                  <a-icon :type="advanced ? 'up' : 'down'"/>-->
+      <!--                </a>-->
+      <!--              </span>-->
+      <!--            </a-col>-->
+      <!--          </a-row>-->
+      <!--        </a-form>-->
+      <!--      </div>-->
 
-    <org-modal ref="modal" @ok="handleSaveOk" @close="handleSaveClose" />
+      <div class="table-operator">
+        <a-button type="primary" icon="plus" @click="showAddForm">新建</a-button>
+      </div>
 
-    <add-route-modal ref="addRouteModal" @ok="handleSaveOk" @close="handleSaveClose"/>
+      <a-table
+        bordered
+        :size="'middle'"
+        :scroll="{ x: 1300 }"
+        :indent-size="15"
+        :row-key="rowKey"
+        :columns="columns"
+        :data-source="data">
 
-  </a-card>
+        <template slot="action" slot-scope="text, record">
+          <a href="javascript:;" @click="handleDetail(record)">查看</a>&nbsp;
+          <a v-if="record.status == 1" href="javascript:;" @click="handleDisable">禁用</a>&nbsp;
+          <a v-if="record.status == 2" href="javascript:;" @click="handleEnable">启用</a>&nbsp;
+          <a href="javascript:;" @click="handleDelete">删除</a>
+        </template>
+      </a-table>
+
+    </a-card>
+
+    <!-- 编辑路由信息-->
+    <permission-route-edit-form ref="editForm"
+                                :model="selectedRoute"
+                                @success="handleFormOnSuccess"
+                                @cancel="handleEditFormCancel"/>
+
+    <!-- 创建路由信息表单-->
+    <permission-route-add-form ref="addForm"
+                               @success="handleFormOnSuccess"
+                               @cancel="handleEditFormCancel"/>
+
+  </page-header-wrapper>
 </template>
 
 <script>
-import STree from '@/components/Tree/Tree'
-import { STable } from '@/components'
-import OrgModal from './modules/OrgModal'
-import AddRouteModal from './modules/AddRouteModal'
-import { getOrgTree, getServiceList } from '@/api/manage'
-import { getRouteTree
-} from '@/api/route'
+
+import {getRouteTree, getRoute} from '@/api/route'
+import {tableColumns as columns} from "./data/initData";
+
+import PermissionRouteEditForm from './modules/PermissionRouteEditForm'
+import PermissionRouteAddForm from './modules/PermissionRouteAddForm'
+
+const rowSelection = {
+  onChange: (selectedRowKeys, selectedRows) => {
+    console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+  },
+  onSelect: (record, selected, selectedRows) => {
+    console.log(record, selected, selectedRows);
+  },
+  onSelectAll: (selected, selectedRows, changeRows) => {
+    console.log(selected, selectedRows, changeRows);
+  },
+};
 
 export default {
   name: 'PermissionRoute',
   components: {
-    STable,
-    STree,
-    OrgModal,
-    AddRouteModal
+    PermissionRouteAddForm,
+    PermissionRouteEditForm
   },
-  data () {
+  data() {
     return {
-      openKeys: ['key-01'],
-
-      // 查询参数
-      queryParam: {},
-      // 表头
-      columns: [
-        {
-          title: '#',
-          dataIndex: 'no'
-        },
-        {
-          title: '成员名称',
-          dataIndex: 'description'
-        },
-        {
-          title: '登录次数',
-          dataIndex: 'callNo',
-          sorter: true,
-          needTotal: true,
-          customRender: (text) => text + ' 次'
-        },
-        {
-          title: '状态',
-          dataIndex: 'status',
-          needTotal: true
-        },
-        {
-          title: '更新时间',
-          dataIndex: 'updatedAt',
-          sorter: true
-        },
-        {
-          title: '操作',
-          dataIndex: 'action',
-          width: '150px',
-          scopedSlots: { customRender: 'action' }
-        }
-      ],
-      // 加载数据方法 必须为 Promise 对象
-      loadData: parameter => {
-        return getServiceList(Object.assign(parameter, this.queryParam))
-          .then(res => {
-            return res.data
-          })
-      },
-      orgTree: [],
-      selectedRowKeys: [],
-      selectedRows: []
-    }
+      data: [],
+      columns,
+      rowSelection,
+      selectedRoute: {},
+      addFormVisible: false,
+    };
   },
-  created () {
-    getRouteTree().then(({data}) => {
-      this.orgTree = data.routes
-    })
+  created() {
+    this.loadRouteTree();
   },
   methods: {
-    handleAddRoute() {
-      this.$refs.addRouteModal.add('')
+    handleFormOnSuccess() {
+      console.log('receive ok')
     },
-    handleClick (e) {
-      console.log('handleClick', e)
-      this.queryParam = {
-        key: e.key
+    handleEditFormCancel() {
+      console.log('receive cancel')
+    },
+    showAddForm() {
+      this.$refs['addForm'].open()
+    },
+    rowKey(record) {
+      return record.id
+    },
+    handleDisable(record) {
+
+    },
+    handleEnable(record) {
+
+    },
+    async handleDetail(record) {
+      const {data} = await getRoute(record.id)
+      this.$refs['editForm'].open(data)
+    },
+    handleDelete(record) {
+
+    },
+    async loadRouteTree() {
+      const {data} = await getRouteTree()
+      this.data = data.routes.map(item => {
+        filterNonChildren(item.children);
+        return item;
+      });
+
+      // 筛选下children
+      function filterNonChildren(children) {
+        for (let i = 0; i < children.length; i++) {
+          let child = children[i]
+          if (!child.children || child.children.length == 0) {
+            delete child.children
+          } else {
+            filterNonChildren(child.children)
+          }
+        }
+        return children;
       }
-      this.$refs.table.refresh(true)
-    },
-    handleAdd (item) {
-      console.log('add button, item', item)
-      this.$message.info(`提示：你点了 ${item.key} - ${item.title} `)
-      this.$refs.modal.add(item.key)
-    },
-    handleTitleClick (item) {
-      console.log('handleTitleClick', item)
-    },
-    titleClick (e) {
-      console.log('titleClick', e)
-    },
-    handleSaveOk () {
-
-    },
-    handleSaveClose () {
-
-    },
-
-    onSelectChange (selectedRowKeys, selectedRows) {
-      this.selectedRowKeys = selectedRowKeys
-      this.selectedRows = selectedRows
     }
   }
-}
+};
 </script>
-
-<style lang="less">
-  .custom-tree {
-
-    /deep/ .ant-menu-item-group-title {
-      position: relative;
-      &:hover {
-        .btn {
-          display: block;
-        }
-      }
-    }
-
-    /deep/ .ant-menu-item {
-      &:hover {
-        .btn {
-          display: block;
-        }
-      }
-    }
-
-    /deep/ .btn {
-      display: none;
-      position: absolute;
-      top: 0;
-      right: 10px;
-      width: 20px;
-      height: 40px;
-      line-height: 40px;
-      z-index: 1050;
-
-      &:hover {
-        transform: scale(1.2);
-        transition: 0.5s all;
-      }
-    }
-  }
-</style>

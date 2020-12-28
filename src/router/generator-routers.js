@@ -93,8 +93,6 @@ const rootRouter = {
 export const generatorDynamicRouter = (token) => {
   return new Promise((resolve, reject) => {
     loginService.getCurrentUserNav(token).then(({data, resp}) => {
-      console.log('res', resp)
-      console.log('res', data)
       const menuNav = []
       const childrenNav = []
       //      后端数据, 根级树数组,  根级 PID
