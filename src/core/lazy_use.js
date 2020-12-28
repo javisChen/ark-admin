@@ -2,6 +2,7 @@ import Vue from 'vue'
 
 // base library
 import {
+  Cascader,
   ConfigProvider,
   Layout,
   Input,
@@ -101,6 +102,7 @@ Vue.use(Result)
 Vue.use(Statistic)
 Vue.use(Descriptions)
 Vue.use(Space)
+Vue.use(Cascader)
 
 Vue.prototype.$confirm = Modal.confirm
 Vue.prototype.$message = message

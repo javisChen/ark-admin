@@ -58,17 +58,14 @@
 export default {
   name: 'PermissionRouteEditForm',
   props: {
-    model: {
-      type: Object,
-      default: () => null
-    }
+
   },
   data() {
     return {
       visible: false,
       labelCol: {span: 4},
       wrapperCol: {span: 14},
-      form: this.model,
+      form: {},
       rules: {
         name: [{required: true, message: '请输入路由名称', trigger: 'change'}],
         code: [{required: true, message: '请输入路由编码', trigger: 'change'}],
@@ -100,6 +97,7 @@ export default {
 
   },
   created() {
+    console.log('init edit form')
   }
 }
 </script>

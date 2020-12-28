@@ -77,8 +77,8 @@
 
         <template slot="action" slot-scope="text, record">
           <a href="javascript:;" @click="handleDetail(record)">查看</a>&nbsp;
-          <a v-if="record.status == 1" href="javascript:;" @click="handleDisable">禁用</a>&nbsp;
-          <a v-if="record.status == 2" href="javascript:;" @click="handleEnable">启用</a>&nbsp;
+          <a v-if="record.status === 1" href="javascript:;" @click="handleDisable">禁用</a>&nbsp;
+          <a v-if="record.status === 2" href="javascript:;" @click="handleEnable">启用</a>&nbsp;
           <a href="javascript:;" @click="handleDelete">删除</a>
         </template>
       </a-table>
@@ -87,7 +87,6 @@
 
     <!-- 编辑路由信息-->
     <permission-route-edit-form ref="editForm"
-                                :model="selectedRoute"
                                 @success="handleFormOnSuccess"
                                 @cancel="handleEditFormCancel"/>
 
