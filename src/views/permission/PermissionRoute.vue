@@ -73,25 +73,29 @@
         :indent-size="15"
         :row-key="rowKey"
         :columns="columns"
-        :data-source="data">
+        :data-source="routes">
 
         <template slot="action" slot-scope="text, record">
-          <a href="javascript:;" @click="handleDetail(record)">查看</a>&nbsp;
-          <a v-if="record.status === 1" href="javascript:;" @click="handleDisable">禁用</a>&nbsp;
-          <a v-if="record.status === 2" href="javascript:;" @click="handleEnable">启用</a>&nbsp;
-          <a href="javascript:;" @click="handleDelete">删除</a>
+          <a-button v-if="!record.children || record.children.length === 0"
+                    @click="handleDetail(record)" size="small" type="primary" shape="circle" icon="plus"/>&nbsp;
+          <a-button @click="handleDetail(record)" size="small" type="primary" shape="circle" icon="edit"/>&nbsp;
+          <a-button v-if="record.status === 1" size="small" @click="handleDetail(record)" type="primary"
+                    shape="circle" icon="stop"/>&nbsp;
+          <a-button v-if="record.status === 2" @click="handleDetail(record)" size="small" type="primary"
+                    shape="circle" icon="check"/>&nbsp;
+          <a-button @click="handleDelete(record)" alt="删除" size="small" type="danger" shape="circle" icon="delete"/>
         </template>
       </a-table>
 
     </a-card>
 
     <!-- 编辑路由信息-->
-    <permission-route-edit-form ref="editForm"
-                                @success="handleFormOnSuccess"
-                                @cancel="handleEditFormCancel"/>
+<!--    <permission-route-edit-form ref="editForm"-->
+<!--                                @success="handleFormOnSuccess"-->
+<!--                                @cancel="handleEditFormCancel"/>-->
 
     <!-- 创建路由信息表单-->
-    <permission-route-add-form ref="addForm"
+    <permission-route-add-form :routes="routes" ref="addForm"
                                @success="handleFormOnSuccess"
                                @cancel="handleEditFormCancel"/>
 
@@ -100,7 +104,7 @@
 
 <script>
 
-import {getRouteTree, getRoute} from '@/api/route'
+import {getRouteTree, getRoute, deleteRoute} from '@/api/route-api'
 import {tableColumns as columns} from "./data/initData";
 
 import PermissionRouteEditForm from './modules/PermissionRouteEditForm'
@@ -126,7 +130,7 @@ export default {
   },
   data() {
     return {
-      data: [],
+      routes: [],
       columns,
       rowSelection,
       selectedRoute: {},
@@ -139,6 +143,7 @@ export default {
   methods: {
     handleFormOnSuccess() {
       console.log('receive ok')
+      this.loadRouteTree()
     },
     handleEditFormCancel() {
       console.log('receive cancel')
@@ -157,26 +162,38 @@ export default {
     },
     async handleDetail(record) {
       const {data} = await getRoute(record.id)
-      this.$refs['editForm'].open(data)
+      this.$refs['addForm'].open(data, 'edit')
     },
     handleDelete(record) {
-
+      this.$confirm({
+        title: `确认要删除[${record.name}]路由及其子路由吗？`,
+        content: `删除操作会把子路由也一并删除掉，请慎重！`,
+        onOk: async () => {
+          const {data} = await deleteRoute(record.id)
+          await this.loadRouteTree();
+        }
+      })
     },
     async loadRouteTree() {
       const {data} = await getRouteTree()
-      this.data = data.routes.map(item => {
-        filterNonChildren(item.children);
+      this.routes = data.routes.map(item => {
+        filterNonChildren(item);
         return item;
       });
 
-      // 筛选下children
-      function filterNonChildren(children) {
+      // 把长度为0的children删掉
+      function filterNonChildren(item) {
+        const children = item.children
+        if (!children || children.length == 0) {
+          delete item.children
+          return;
+        }
         for (let i = 0; i < children.length; i++) {
           let child = children[i]
           if (!child.children || child.children.length == 0) {
             delete child.children
           } else {
-            filterNonChildren(child.children)
+            filterNonChildren(child)
           }
         }
         return children;

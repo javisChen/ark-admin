@@ -202,7 +202,7 @@ export default {
           alert: { show: true, clear: () => { this.selectedRowKeys = [] } },
           rowSelection: {
             selectedRowKeys: this.selectedRowKeys,
-            onChange: this.onSelectChange
+            onSelectRouteChange: this.onSelectChange
           }
         }
         this.optionAlertShow = true

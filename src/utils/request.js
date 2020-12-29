@@ -2,9 +2,10 @@ import axios from 'axios'
 import store from '@/store'
 import storage from 'store'
 import notification from 'ant-design-vue/es/notification'
-import { VueAxios } from './axios'
-import { SUCCESS_CODE } from './code'
-import { ACCESS_TOKEN } from '@/store/mutation-types'
+import {VueAxios} from './axios'
+import {SUCCESS_CODE} from './code'
+import {ACCESS_TOKEN} from '@/store/mutation-types'
+import api from "@/api/route-api";
 
 // 创建 axios 实例
 const request = axios.create({
@@ -13,12 +14,21 @@ const request = axios.create({
   timeout: 6000 // 请求超时时间
 })
 
+const post = ({url, params, data}) => request({url, method: 'post', params, data})
+
+const get = ({url, params, data}) => request({url, method: 'get', params, data})
+
+const put = ({url, params, data}) => request({url, method: 'put', params, data})
+
+const del = ({url, params, data}) => request({url, method: 'delete', params, data})
+
 // 异常拦截处理器
 const errorHandler = (error) => {
   if (error.response) {
     const data = error.response.data
     // 从 localstorage 获取 token
     const token = storage.get(ACCESS_TOKEN)
+    console.log('token', token)
     if (error.response.status === 403) {
       notification.error({
         message: 'Forbidden',
@@ -46,13 +56,6 @@ const errorHandler = (error) => {
         description: result.msg,
         duration: 4
       })
-      if (token) {
-        store.dispatch('Logout').then(() => {
-          setTimeout(() => {
-            window.location.reload()
-          }, 1500)
-        })
-      }
     }
   }
   return Promise.reject(error)
@@ -80,7 +83,7 @@ request.interceptors.response.use((response) => {
 
 const installer = {
   vm: {},
-  install (Vue) {
+  install(Vue) {
     Vue.use(VueAxios, request)
   }
 }
@@ -89,5 +92,9 @@ export default request
 
 export {
   installer as VueAxios,
-  request as axios
+  request as axios,
+  post,
+  get,
+  del,
+  put,
 }
