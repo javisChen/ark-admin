@@ -3,12 +3,9 @@ export const tableColumns = [
     title: '路由名称',
     dataIndex: 'name',
     width: 100,
+    filtered:true,
+    sortOrder: 'descend'
   },
-  // {
-  //   title: '路由编码',
-  //   dataIndex: 'code',
-  //   width: 100,
-  // },
   {
     title: '组件名',
     dataIndex: 'component',
@@ -22,6 +19,9 @@ export const tableColumns = [
     dataIndex: 'path',
     width: 150,
     ellipsis: true,
+    customRender: (text, row, index) => {
+      return text || '-'
+    },
   },
   {
     title: '状态',
@@ -30,11 +30,6 @@ export const tableColumns = [
     align: "center",
     scopedSlots: {customRender: 'status'},
   },
-  // {
-  //   title: 'Icon',
-  //   dataIndex: 'icon',
-  //   width: 100,
-  // },
   {
     title: '排序',
     dataIndex: 'sequence',

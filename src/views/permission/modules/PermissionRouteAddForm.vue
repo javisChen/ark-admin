@@ -10,6 +10,7 @@
            :closable="true"
            @cancel="handleClose"
            cancel-text="取消">
+
     <a-form-model
       v-if="formModel"
       ref="ruleForm"
@@ -42,7 +43,10 @@
 
       <a-form-model-item label="路由类型" has-feedback required>
         <a-radio-group v-model="checkedType" name="radioGroup" :default-value="checkedType">
-          <a-radio-button v-for="item in routeTypeOptions" :value="item.value">{{ item.desc }}</a-radio-button>
+          <a-radio-button v-for="item in routeTypeOptions"
+                          :key="item.value"
+                          :value="item.value">{{ item.desc }}
+          </a-radio-button>
         </a-radio-group>
       </a-form-model-item>
 
@@ -66,12 +70,8 @@
       </a-form-model-item>
 
       <a-form-model-item :wrapper-col="{ span: 14, offset: 4 }">
-        <a-button type="primary" @click="submitForm()">
-          确认
-        </a-button>
-        <a-button style="margin-left: 10px;" @click="handleClose">
-          关闭
-        </a-button>
+        <a-button type="primary" @click="submitForm()">确认</a-button>
+        <a-button style="margin-left: 10px;" @click="handleClose">关闭</a-button>
       </a-form-model-item>
     </a-form-model>
   </a-modal>
@@ -96,8 +96,8 @@ const ROUTE_TYPE_MENU = 'menu'
 const ROUTE_TYPE_PAGE = 'page'
 
 const routeTypeOptions = [
-  {value : ROUTE_TYPE_MENU, desc :'菜单路由'},
-  {value : ROUTE_TYPE_PAGE, desc : '菜单路由'}
+  {value: ROUTE_TYPE_MENU, desc: '菜单路由'},
+  {value: ROUTE_TYPE_PAGE, desc: '菜单路由'}
 ]
 
 export default {
@@ -178,27 +178,20 @@ export default {
 
         this.formModel.pid = this.formModel.pid || 0
         if (this.type === 'add') {
-          await addRoute(this.formModel)
-            .then(({data}) => {
-              this.afterSuccess($form)
-            })
-            .catch(e => {
-            })
+          addRoute(this.formModel)
+            .then(({data}) => this.afterSuccess($form))
+            .catch(e => e)
             .finally()
         } else {
-          await updateRoute(this.formModel)
-            .then(({data}) => {
-              this.afterSuccess($form)
-            })
-            .catch(e => {
-            })
+          updateRoute(this.formModel)
+            .then(({data}) => this.afterSuccess($form))
+            .catch(e => e)
             .finally()
         }
       });
     },
   },
   created() {
-    console.log(this.routes)
   }
 }
 </script>
