@@ -4,11 +4,11 @@ export const tableColumns = [
     dataIndex: 'name',
     width: 100,
   },
-  {
-    title: '路由编码',
-    dataIndex: 'code',
-    width: 100,
-  },
+  // {
+  //   title: '路由编码',
+  //   dataIndex: 'code',
+  //   width: 100,
+  // },
   {
     title: '组件名',
     dataIndex: 'component',
@@ -24,10 +24,17 @@ export const tableColumns = [
     ellipsis: true,
   },
   {
-    title: 'Icon',
-    dataIndex: 'icon',
-    width: 100,
+    title: '状态',
+    dataIndex: 'status',
+    width: 50,
+    align: "center",
+    scopedSlots: {customRender: 'status'},
   },
+  // {
+  //   title: 'Icon',
+  //   dataIndex: 'icon',
+  //   width: 100,
+  // },
   {
     title: '排序',
     dataIndex: 'sequence',

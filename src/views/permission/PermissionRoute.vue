@@ -75,14 +75,30 @@
         :columns="columns"
         :data-source="routes">
 
+        <template slot="status" slot-scope="text, record">
+          <a-tag :color="record.status === 1 ? '#57c227' : '#fd4f5f'">
+            <a-dropdown :trigger="['click']">
+              <a class="ant-dropdown-link" @click="e => e.preventDefault()">
+                {{ getStatusDesc(record.status) }}
+                <a-icon type="down"/>
+              </a>
+              <a-menu slot="overlay" @click="routeStatusChange($event, record)">
+                <a-menu-item v-for="(value, key) in routeStatusDictionary" :key="key">
+                  {{ value }}
+                </a-menu-item>
+              </a-menu>
+            </a-dropdown>
+          </a-tag>
+        </template>
+
         <template slot="action" slot-scope="text, record">
           <a-button v-if="!record.children || record.children.length === 0"
                     @click="handleDetail(record)" size="small" type="primary" shape="circle" icon="plus"/>&nbsp;
           <a-button @click="handleDetail(record)" size="small" type="primary" shape="circle" icon="edit"/>&nbsp;
-          <a-button v-if="record.status === 1" size="small" @click="handleDetail(record)" type="primary"
-                    shape="circle" icon="stop"/>&nbsp;
-          <a-button v-if="record.status === 2" @click="handleDetail(record)" size="small" type="primary"
-                    shape="circle" icon="check"/>&nbsp;
+<!--          <a-button v-if="record.status === 1" size="small" @click="handleDetail(record)" type="primary"-->
+<!--                    shape="circle" icon="stop"/>&nbsp;-->
+<!--          <a-button v-if="record.status === 2" @click="handleDetail(record)" size="small" type="primary"-->
+<!--                    shape="circle" icon="check"/>&nbsp;-->
           <a-button @click="handleDelete(record)" alt="删除" size="small" type="danger" shape="circle" icon="delete"/>
         </template>
       </a-table>
@@ -90,9 +106,9 @@
     </a-card>
 
     <!-- 编辑路由信息-->
-<!--    <permission-route-edit-form ref="editForm"-->
-<!--                                @success="handleFormOnSuccess"-->
-<!--                                @cancel="handleEditFormCancel"/>-->
+    <!--    <permission-route-edit-form ref="editForm"-->
+    <!--                                @success="handleFormOnSuccess"-->
+    <!--                                @cancel="handleEditFormCancel"/>-->
 
     <!-- 创建路由信息表单-->
     <permission-route-add-form :routes="routes" ref="addForm"
@@ -104,7 +120,7 @@
 
 <script>
 
-import {getRouteTree, getRoute, deleteRoute} from '@/api/route-api'
+import {getRouteTree, getRoute, deleteRoute, updateRouteStatus} from '@/api/route-api'
 import {tableColumns as columns} from "./data/initData";
 
 import PermissionRouteEditForm from './modules/PermissionRouteEditForm'
@@ -122,6 +138,12 @@ const rowSelection = {
   },
 };
 
+const routeStatusDictionary = {
+  1: '已启用',
+  2: '已禁用'
+}
+
+
 export default {
   name: 'PermissionRoute',
   components: {
@@ -134,6 +156,7 @@ export default {
       columns,
       rowSelection,
       selectedRoute: {},
+      routeStatusDictionary,
       addFormVisible: false,
     };
   },
@@ -141,8 +164,20 @@ export default {
     this.loadRouteTree();
   },
   methods: {
+    async routeStatusChange(value, route) {
+      try {
+        await updateRouteStatus({id: route.id, status: +value.key})
+        await this.loadRouteTree()
+        this.$message.success('修改成功')
+      } catch (e) {
+      }
+    },
+    getStatusDesc(status) {
+      console.log(routeStatusDictionary[status]);
+      return routeStatusDictionary[status]
+    },
     handleFormOnSuccess() {
-      console.log('receive ok')
+      this.$message.success('保存成功')
       this.loadRouteTree()
     },
     handleEditFormCancel() {

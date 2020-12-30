@@ -41,10 +41,13 @@
       </a-form-model-item>
 
       <a-form-model-item label="路由类型" has-feedback required>
-        <a-radio-group v-model="checkedType" name="radioGroup" :default-value="'menu'">
-          <a-radio-button value="menu">菜单路由</a-radio-button>
-          <a-radio-button value="page">页面路由</a-radio-button>
+        <a-radio-group v-model="checkedType" name="radioGroup" :default-value="checkedType">
+          <a-radio-button v-for="item in routeTypeOptions" :value="item.value">{{ item.desc }}</a-radio-button>
         </a-radio-group>
+      </a-form-model-item>
+
+      <a-form-model-item label="路由组件" prop="component" has-feedback required>
+        <a-input v-model="formModel.component"/>
       </a-form-model-item>
 
       <a-form-model-item label="状态" prop="status" required>
@@ -52,10 +55,6 @@
           <a-radio :value="1">启用</a-radio>
           <a-radio :value="2">禁用</a-radio>
         </a-radio-group>
-      </a-form-model-item>
-
-      <a-form-model-item v-if="isPageType" label="路由组件" prop="component" has-feedback required>
-        <a-input v-model="formModel.component"/>
       </a-form-model-item>
 
       <a-form-model-item v-if="isPageType" label="路由路径" prop="path" has-feedback required>
@@ -67,7 +66,7 @@
       </a-form-model-item>
 
       <a-form-model-item :wrapper-col="{ span: 14, offset: 4 }">
-        <a-button type="primary" @click="submitForm('ruleForm')">
+        <a-button type="primary" @click="submitForm()">
           确认
         </a-button>
         <a-button style="margin-left: 10px;" @click="handleClose">
@@ -82,6 +81,25 @@
 
 import {updateRoute, addRoute} from '@/api/route-api'
 
+const defaultModel = {
+  id: '',
+  name: '',
+  code: '',
+  component: '',
+  pid: 0,
+  status: 1,
+  icon: '',
+  sequence: 0
+}
+
+const ROUTE_TYPE_MENU = 'menu'
+const ROUTE_TYPE_PAGE = 'page'
+
+const routeTypeOptions = [
+  {value : ROUTE_TYPE_MENU, desc :'菜单路由'},
+  {value : ROUTE_TYPE_PAGE, desc : '菜单路由'}
+]
+
 export default {
   name: 'PermissionRouteAddForm',
   props: {
@@ -93,23 +111,15 @@ export default {
   },
   data() {
     return {
-      checkedType: 'menu',
+      checkedType: ROUTE_TYPE_MENU,
       visible: false,
       labelCol: {span: 4},
       wrapperCol: {span: 14},
-      formModel: {
-        id: '',
-        name: '',
-        code: '',
-        component: '',
-        pid: 0,
-        status: 1,
-        icon: '',
-        sequence: 0
-      },
+      formModel: Object.assign({}, defaultModel),
       type: 'edit',
       form: {},
       routesOptionsDefaultValue: [],
+      routeTypeOptions,
       rules: {
         name: [{required: true, message: '请输入路由名称', trigger: 'change'}],
         code: [{required: true, message: '请输入路由编码', trigger: 'change'}],
@@ -121,7 +131,7 @@ export default {
   },
   computed: {
     isPageType() {
-      return this.checkedType === 'page';
+      return this.checkedType === ROUTE_TYPE_PAGE;
     }
   },
   methods: {
@@ -130,46 +140,59 @@ export default {
     },
     stringArrConvertToNumberArr: function () {
       return this.formModel.levelPath.split('.').map(item => +item);
-    }, open(formModel, type = 'add') {
+    },
+    open(formModel, type = 'add') {
       this.visible = true
       if (formModel) {
         this.formModel = formModel
+        this.checkedType = formModel.path ? ROUTE_TYPE_PAGE : ROUTE_TYPE_MENU
       }
       this.type = type
-      this.routesOptionsDefaultValue = this.stringArrConvertToNumberArr(this.formModel.levelPath.split('.'))
+      if (type === 'edit') {
+        this.routesOptionsDefaultValue = this.stringArrConvertToNumberArr(this.formModel.levelPath.split('.'))
+      }
     },
     close() {
       this.visible = false
+      this.resetForm()
+    },
+    resetForm() {
+      this.formModel = Object.assign({}, defaultModel)
+      this.routesOptionsDefaultValue = []
+      this.checkedType = ROUTE_TYPE_MENU
     },
     handleClose() {
       this.close()
       this.$emit('cancel', '')
     },
     afterSuccess: function ($form) {
-      $form.resetFields()
       this.$emit('success', '')
       this.close()
     },
-    submitForm(formName) {
-      const $form = this.$refs[formName];
+    submitForm() {
+      const $form = this.$refs['ruleForm'];
       $form.validate(async valid => {
         if (!valid) {
           return false;
         }
+
+        this.formModel.pid = this.formModel.pid || 0
         if (this.type === 'add') {
           await addRoute(this.formModel)
             .then(({data}) => {
+              this.afterSuccess($form)
             })
             .catch(e => {
             })
-            .finally(() => this.afterSuccess($form))
+            .finally()
         } else {
           await updateRoute(this.formModel)
             .then(({data}) => {
+              this.afterSuccess($form)
             })
             .catch(e => {
             })
-            .finally(() => this.afterSuccess($form))
+            .finally()
         }
       });
     },
