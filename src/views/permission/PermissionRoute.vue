@@ -93,7 +93,7 @@
 
         <template slot="action" slot-scope="text, record">
           <a-button v-if="!record.children || record.children.length === 0"
-                    @click="handleDetail(record)" size="small" type="primary" shape="circle" icon="plus"/>&nbsp;
+                    @click="handleAddChildren(record)" size="small" type="primary" shape="circle" icon="plus"/>&nbsp;
           <a-button @click="handleDetail(record)" size="small" type="primary" shape="circle" icon="edit"/>&nbsp;
 <!--          <a-button v-if="record.status === 1" size="small" @click="handleDetail(record)" type="primary"-->
 <!--                    shape="circle" icon="stop"/>&nbsp;-->
@@ -104,11 +104,6 @@
       </a-table>
 
     </a-card>
-
-    <!-- 编辑路由信息-->
-    <!--    <permission-route-edit-form ref="editForm"-->
-    <!--                                @success="handleFormOnSuccess"-->
-    <!--                                @cancel="handleEditFormCancel"/>-->
 
     <!-- 创建路由信息表单-->
     <permission-route-add-form :routes="routes" ref="addForm"
@@ -123,7 +118,6 @@
 import {getRouteTree, getRoute, deleteRoute, updateRouteStatus} from '@/api/route-api'
 import {tableColumns as columns} from "./data/initData";
 
-import PermissionRouteEditForm from './modules/PermissionRouteEditForm'
 import PermissionRouteAddForm from './modules/PermissionRouteAddForm'
 
 const rowSelection = {
@@ -148,7 +142,6 @@ export default {
   name: 'PermissionRoute',
   components: {
     PermissionRouteAddForm,
-    PermissionRouteEditForm
   },
   data() {
     return {
@@ -189,15 +182,11 @@ export default {
     rowKey(record) {
       return record.id
     },
-    handleDisable(record) {
-
-    },
-    handleEnable(record) {
-
+    handleAddChildren() {
+      // this.$refs['addForm'].open(record, 'edit')
     },
     async handleDetail(record) {
-      const {data} = await getRoute(record.id)
-      this.$refs['addForm'].open(data, 'edit')
+      this.$refs['addForm'].open(record, 'edit')
     },
     handleDelete(record) {
       this.$confirm({
