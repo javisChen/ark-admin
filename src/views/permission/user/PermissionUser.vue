@@ -71,7 +71,7 @@
       </div>
 
       <a-table
-        v-if="routes && routes.length > 0"
+        v-if="tableData && tableData.length > 0"
         bordered
         :pagination="false"
         :loading="tableLoading"
@@ -82,7 +82,7 @@
         :indent-size="15"
         :row-key="rowKey"
         :columns="columns"
-        :data-source="routes">
+        :data-source="tableData">
 
         <template slot="status" slot-scope="text, record">
           <a-dropdown :trigger="['click']">
@@ -101,29 +101,25 @@
         </template>
 
         <template slot="action" slot-scope="text, record">
-          <a-button v-if="!record.children || record.children.length === 0"
-                    @click="handleAddChildren(record)" size="small" type="primary" shape="circle" icon="plus"/>&nbsp;
-          <a-button @click="handleDetail(record)" size="small" type="primary" shape="circle" icon="edit"/>&nbsp;
+<!--          <a-button v-if="!record.children || record.children.length === 0"-->
+<!--                    @click="handleAddChildren(record)" size="small" type="primary" shape="circle" icon="plus"/>&nbsp;-->
+<!--          <a-button @click="handleDetail(record)" size="small" type="primary" shape="circle" icon="edit"/>&nbsp;-->
           <a-button @click="handleDelete(record)" alt="删除" size="small" type="danger" shape="circle" icon="delete"/>
         </template>
       </a-table>
+      <v-else>
+        <a-empty />
+      </v-else>
 
     </a-card>
-
-    <!-- 创建路由信息表单-->
-    <permission-route-add-form :routes="routes" ref="addForm"
-                               @success="handleFormOnSuccess"
-                               @cancel="handleEditFormCancel"/>
 
   </page-header-wrapper>
 </template>
 
 <script>
 
-import {getRouteTree, getRoute, deleteRoute, updateRouteStatus} from '@/api/route-api'
+import {addUser, getUsers, updateUser} from '@/api/user-api'
 import {tableColumns as columns} from "./data/initData";
-
-import PermissionRouteAddForm from './modules/PermissionRouteAddForm'
 
 const rowSelection = {
   onChange: (selectedRowKeys, selectedRows) => {
@@ -146,7 +142,6 @@ const routeStatusDictionary = {
 export default {
   name: 'PermissionRoute',
   components: {
-    PermissionRouteAddForm,
   },
   data() {
     return {
@@ -154,7 +149,7 @@ export default {
       tableLoading: false,
       advanced: false,
       queryParam: {},
-      routes: [],
+      tableData: [],
       columns,
       rowSelection,
       selectedRoute: {},
@@ -163,33 +158,33 @@ export default {
     };
   },
   created() {
-    this.loadRouteTree();
+    this.loadTableData();
   },
   methods: {
     resetQueryParams() {
       this.queryParam = {}
-      this.loadRouteTree()
+      this.loadTableData()
     },
     handleQueryStatusChange(value) {
-      this.loadRouteTree()
+      this.loadTableData()
     },
     toggleAdvanced() {
       this.advanced = !this.advanced;
     },
     async routeStatusChange(value, route) {
-      try {
-        await updateRouteStatus({id: route.id, status: +value.key})
-        await this.loadRouteTree()
-        this.$message.success('修改成功')
-      } catch (e) {
-      }
+      // try {
+      //   await updateRouteStatus({id: route.id, status: +value.key})
+      //   await this.loadTableData()
+      //   this.$message.success('修改成功')
+      // } catch (e) {
+      // }
     },
     getStatusDesc(status) {
       return routeStatusDictionary[status]
     },
     handleFormOnSuccess() {
       this.$message.success('保存成功')
-      this.loadRouteTree()
+      this.loadTableData()
     },
     handleEditFormCancel() {
     },
@@ -199,51 +194,22 @@ export default {
     rowKey(record) {
       return record.id
     },
-    handleAddChildren() {
-      // this.$refs['addForm'].open(record, 'edit')
-    },
-    async handleDetail(record) {
-      this.$refs['addForm'].open(record, 'edit')
-    },
     handleDelete(record) {
       this.$confirm({
-        title: `确认要删除[${record.name}]路由及其子路由吗？`,
-        content: `删除操作会把子路由也一并删除掉，请慎重！`,
+        title: `提示`,
+        content: `确定要禁用[${record.name}]用户吗？`,
         onOk: async () => {
-          const {data} = await deleteRoute(record.id)
-          await this.loadRouteTree();
         }
       })
     },
     toggleLoading() {
       this.tableLoading = !this.tableLoading
     },
-    async loadRouteTree() {
+    async loadTableData() {
       this.toggleLoading()
-      const {data} = await getRouteTree(this.queryParam)
-      this.routes = data.routes.map(item => {
-        filterNonChildren(item);
-        return item;
-      });
+      const {data} = await getUsers(this.queryParam)
+      this.tableData = data;
       this.toggleLoading()
-
-      // 把长度为0的children删掉
-      function filterNonChildren(item) {
-        const children = item.children
-        if (!children || children.length == 0) {
-          delete item.children
-          return;
-        }
-        for (let i = 0; i < children.length; i++) {
-          let child = children[i]
-          if (!child.children || child.children.length == 0) {
-            delete child.children
-          } else {
-            filterNonChildren(child)
-          }
-        }
-        return children;
-      }
     }
   }
 };

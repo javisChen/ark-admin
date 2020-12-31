@@ -47,7 +47,8 @@ import {
   Space,
   message,
   notification,
-  FormModel
+  FormModel,
+  Empty
 } from 'ant-design-vue'
 import Viser from 'viser-vue'
 
@@ -59,6 +60,7 @@ import PageLoading from '@/components/PageLoading'
 import PermissionHelper from '@/core/permission/permission'
 import './directives/action'
 
+Vue.use(Empty)
 Vue.use(FormModel)
 Vue.use(ConfigProvider)
 Vue.use(Layout)

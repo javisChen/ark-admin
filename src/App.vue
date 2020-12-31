@@ -2,6 +2,7 @@
   <a-config-provider :locale="locale"
                      :auto-insert-space-in-button="false"
                      :transform-cell-text="transformCellText ">
+
     <div id="app">
       <router-view/>
     </div>

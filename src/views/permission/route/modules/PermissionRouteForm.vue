@@ -1,6 +1,7 @@
 <template>
 
   <a-modal style="width: 1000px"
+           :centered="true"
            v-model="visible"
            title="新建路由"
            ok-text="确认"
@@ -19,12 +20,36 @@
       :label-col="labelCol"
       :wrapper-col="wrapperCol">
 
-      <a-form-model-item ref="name" label="路由名称" prop="name" required has-feedback>
-        <a-input v-model="formModel.name"/>
+      <a-form-model-item ref="name" label="路由名称" prop="name" has-feedback>
+        <a-input placeholder="路由名称" v-model="formModel.name"/>
       </a-form-model-item>
 
-      <a-form-model-item label="路由编码" prop="code" required has-feedback>
-        <a-input v-model="formModel.code"/>
+      <a-form-model-item label="路由编码" prop="code" has-feedback>
+        <a-input placeholder="路由编码（格式 一级路由:二级路由:三级路由:...）" v-model="formModel.code"/>
+      </a-form-model-item>
+
+      <a-form-model-item label="路由类型" prop="type">
+        <a-radio-group v-model="formModel.type" name="radioGroup">
+          <a-radio-button v-for="item in routeTypeOptions"
+                          :key="item.value"
+                          :value="item.value">{{ item.desc }}
+          </a-radio-button>
+        </a-radio-group>
+      </a-form-model-item>
+
+      <a-form-model-item label="路由组件" prop="component" has-feedback>
+        <route-component-select v-model="formModel.component"></route-component-select>
+      </a-form-model-item>
+
+      <a-form-model-item label="状态" prop="status" required>
+        <a-radio-group name="radioGroup" v-model="formModel.status" :default-value="1">
+          <a-radio :value="1">启用</a-radio>
+          <a-radio :value="2">禁用</a-radio>
+        </a-radio-group>
+      </a-form-model-item>
+
+      <a-form-model-item v-if="isMenuType" label="是否隐藏子路由" prop="hideChildren">
+        <a-switch checked-children="是" un-checked-children="否" v-model="formModel.hideChildren"/>
       </a-form-model-item>
 
       <a-form-model-item label="所属路由" prop="pid" has-feedback>
@@ -37,32 +62,12 @@
                     @change="onSelectRouteChange"/>
       </a-form-model-item>
 
-      <a-form-model-item label="Icon" prop="icon">
-        <a-input v-model="formModel.icon"/>
-      </a-form-model-item>
-
-      <a-form-model-item label="路由类型" has-feedback required>
-        <a-radio-group v-model="checkedType" name="radioGroup" :default-value="checkedType">
-          <a-radio-button v-for="item in routeTypeOptions"
-                          :key="item.value"
-                          :value="item.value">{{ item.desc }}
-          </a-radio-button>
-        </a-radio-group>
-      </a-form-model-item>
-
-      <a-form-model-item label="路由组件" prop="component" has-feedback required>
-        <a-input v-model="formModel.component"/>
-      </a-form-model-item>
-
-      <a-form-model-item label="状态" prop="status" required>
-        <a-radio-group name="radioGroup" v-model="formModel.status" :default-value="1">
-          <a-radio :value="1">启用</a-radio>
-          <a-radio :value="2">禁用</a-radio>
-        </a-radio-group>
-      </a-form-model-item>
-
-      <a-form-model-item v-if="isPageType" label="路由路径" prop="path" has-feedback required>
+      <a-form-model-item label="路由地址" prop="path" has-feedback >
         <a-input v-model="formModel.path"/>
+      </a-form-model-item>
+
+      <a-form-model-item label="Icon" prop="icon">
+        <a-input placeholder="请输入路由名称" v-model="formModel.icon"/>
       </a-form-model-item>
 
       <a-form-model-item label="排序" prop="sequence">
@@ -81,6 +86,11 @@
 
 import {updateRoute, addRoute} from '@/api/route-api'
 
+import RouteComponentSelect from "./RouteComponentSelect";
+
+const ROUTE_TYPE_MENU = 1
+const ROUTE_TYPE_PAGE = 2
+
 const defaultModel = {
   id: '',
   name: '',
@@ -89,19 +99,21 @@ const defaultModel = {
   pid: 0,
   status: 1,
   icon: '',
-  sequence: 0
+  sequence: 0,
+  hideChildren: false,
+  type: ROUTE_TYPE_MENU
 }
-
-const ROUTE_TYPE_MENU = 'menu'
-const ROUTE_TYPE_PAGE = 'page'
 
 const routeTypeOptions = [
   {value: ROUTE_TYPE_MENU, desc: '菜单路由'},
-  {value: ROUTE_TYPE_PAGE, desc: '菜单路由'}
+  {value: ROUTE_TYPE_PAGE, desc: '页面路由'}
 ]
 
 export default {
   name: 'PermissionRouteAddForm',
+  components: {
+    RouteComponentSelect
+  },
   props: {
     routes: {
       type: Array,
@@ -113,7 +125,7 @@ export default {
     return {
       checkedType: ROUTE_TYPE_MENU,
       visible: false,
-      labelCol: {span: 4},
+      labelCol: {span: 6},
       wrapperCol: {span: 14},
       formModel: Object.assign({}, defaultModel),
       type: 'edit',
@@ -124,14 +136,15 @@ export default {
         name: [{required: true, message: '请输入路由名称', trigger: 'change'}],
         code: [{required: true, message: '请输入路由编码', trigger: 'change'}],
         status: [{required: true, message: '请选择路由状态', trigger: 'change'}],
+        type: [{required: true, message: '请选择路由类型', trigger: 'change'}],
         component: [{required: true, message: '请输入路由组件', trigger: 'change'}],
-        path: [{required: true, message: '请选择路由状态', trigger: 'change'}],
+        hideChildren: [{required: true, message: '', trigger: 'change'}],
       }
     }
   },
   computed: {
-    isPageType() {
-      return this.checkedType === ROUTE_TYPE_PAGE;
+    isMenuType() {
+      return this.formModel.type === ROUTE_TYPE_MENU;
     }
   },
   methods: {
@@ -142,15 +155,16 @@ export default {
       return this.formModel.levelPath.split('.').map(item => +item);
     },
     open(formModel, type = 'add') {
+      console.log(formModel)
       this.visible = true
       if (formModel) {
-        this.formModel = formModel
-        this.checkedType = formModel.path ? ROUTE_TYPE_PAGE : ROUTE_TYPE_MENU
+        this.formModel = Object.assign(this.formModel, formModel)
+        console.log(this.formModel)
+        if (this.formModel.levelPath) {
+          this.routesOptionsDefaultValue = this.stringArrConvertToNumberArr(this.formModel.levelPath.split('.'))
+        }
       }
       this.type = type
-      if (type === 'edit') {
-        this.routesOptionsDefaultValue = this.stringArrConvertToNumberArr(this.formModel.levelPath.split('.'))
-      }
     },
     close() {
       this.visible = false
@@ -159,7 +173,6 @@ export default {
     resetForm() {
       this.formModel = Object.assign({}, defaultModel)
       this.routesOptionsDefaultValue = []
-      this.checkedType = ROUTE_TYPE_MENU
     },
     handleClose() {
       this.close()
