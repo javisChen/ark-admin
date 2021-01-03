@@ -4,7 +4,7 @@
     @change="handleChange"
     :allowClear="true"
     show-search
-    placeholder="请选择路由组件"
+    placeholder="Select a person"
     option-filter-prop="children"
     style="width: 200px"
     :filter-option="filterOption"

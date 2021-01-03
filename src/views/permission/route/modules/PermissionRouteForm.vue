@@ -14,7 +14,7 @@
 
     <a-form-model
       v-if="formModel"
-      ref="ruleForm"
+      ref="form"
       :model="formModel"
       :rules="rules"
       :label-col="labelCol"
@@ -133,12 +133,12 @@ export default {
       routesOptionsDefaultValue: [],
       routeTypeOptions,
       rules: {
-        name: [{required: true, message: '请输入路由名称', trigger: 'change'}],
-        code: [{required: true, message: '请输入路由编码', trigger: 'change'}],
-        status: [{required: true, message: '请选择路由状态', trigger: 'change'}],
-        type: [{required: true, message: '请选择路由类型', trigger: 'change'}],
-        component: [{required: true, message: '请输入路由组件', trigger: 'change'}],
-        hideChildren: [{required: true, message: '', trigger: 'change'}],
+        name: [{required: true, message: '请输入路由名称', trigger: 'blur'}],
+        code: [{required: true, message: '请输入路由编码', trigger: 'blur'}],
+        status: [{required: true, message: '请选择路由状态', trigger: 'blur'}],
+        type: [{required: true, message: '请选择路由类型', trigger: 'blur'}],
+        component: [{required: true, message: '请输入路由组件', trigger: 'blur'}],
+        hideChildren: [{required: true, message: '', trigger: 'blur'}],
       }
     }
   },
@@ -183,7 +183,7 @@ export default {
       this.close()
     },
     submitForm() {
-      const $form = this.$refs['ruleForm'];
+      const $form = this.$refs['form'];
       $form.validate(async valid => {
         if (!valid) {
           return false;

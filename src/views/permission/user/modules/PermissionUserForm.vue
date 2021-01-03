@@ -1,0 +1,149 @@
+<template>
+
+  <a-modal style="width: 1000px"
+           :centered="true"
+           v-model="visible"
+           title="新建用户"
+           ok-text="确认"
+           :confirmLoading="true"
+           :destroyOnClose="true"
+           :footer="null"
+           :closable="true"
+           @cancel="handleClose"
+           cancel-text="取消">
+
+    <a-form-model
+      v-if="formModel"
+      ref="form"
+      :model="formModel"
+      :rules="rules"
+      :label-col="labelCol"
+      :wrapper-col="wrapperCol">
+
+      <a-form-model-item label="用户名称" prop="name" has-feedback>
+        <a-input placeholder="用户名称" v-model="formModel.name"/>
+      </a-form-model-item>
+
+      <a-form-model-item label="用户密码" prop="password" has-feedback>
+        <a-input type="password" placeholder="用户密码（6~18位，数字字母0-9A-Za-z）" v-model="formModel.password"/>
+      </a-form-model-item>
+
+      <a-form-model-item label="手机号码" prop="phone" has-feedback>
+        <a-input placeholder="手机号码（11位）" v-model="formModel.phone"/>
+      </a-form-model-item>
+
+      <a-form-model-item label="状态" prop="status" required>
+        <a-radio-group name="radioGroup" v-model="formModel.status" :default-value="1">
+          <a-radio :value="1">启用</a-radio>
+          <a-radio :value="2">禁用</a-radio>
+        </a-radio-group>
+      </a-form-model-item>
+
+      <!--      <a-form-model-item label="所属用户" prop="pid" has-feedback>-->
+      <!--        <a-cascader popupPlacement="bottomLeft"-->
+      <!--                    :changeOnSelect="true"-->
+      <!--                    :options="routes"-->
+      <!--                    :fieldNames="{ label: 'name', value: 'id', children: 'children' }"-->
+      <!--                    placeholder="请选择所属用户"-->
+      <!--                    :default-value="routesOptionsDefaultValue"-->
+      <!--                    @change="onSelectRouteChange"/>-->
+      <!--      </a-form-model-item>-->
+
+      <a-form-model-item :wrapper-col="{ span: 14, offset: 4 }">
+        <a-button type="primary" @click="submitForm()">确认</a-button>
+        <a-button style="margin-left: 10px;" @click="handleClose">关闭</a-button>
+      </a-form-model-item>
+    </a-form-model>
+  </a-modal>
+</template>
+
+<script>
+
+import md5 from 'md5'
+
+import {addUser, updateUser} from '@/api/user-api'
+
+import RouteComponentSelect from "./RouteComponentSelect";
+
+const defaultModel = {
+  id: '',
+  name: '',
+  phone: '',
+  password: '88888888',
+  status: 1,
+}
+
+export default {
+  name: 'PermissionUserForm',
+  components: {
+    RouteComponentSelect
+  },
+  props: {},
+  data() {
+    return {
+      visible: false,
+      labelCol: {span: 6},
+      wrapperCol: {span: 14},
+      formModel: Object.assign({}, defaultModel),
+      form: {},
+      rules: {
+        name: [{required: true, message: '请输入用户名称', trigger: 'blur'}],
+        password: [
+          {required: true, message: '请输入用户密码', trigger: 'blur'},
+          {min: 8, max: 20, message: '请将密码设置为8-20位，并且由字母，数字和符号两种以上组合', trigger: 'blur'}
+        ],
+        phone: [
+          {type: 'string', len: 11, required: true, message: '请输入11位的手机号码', trigger: 'blur'},
+        ],
+        status: [{required: true, message: '请选择用户状态', trigger: 'blur'}],
+      }
+    }
+  },
+  computed: {},
+  methods: {
+    open(formModel, type = 'add') {
+      console.log(formModel)
+      this.type = type
+      this.visible = true
+    },
+    close() {
+      this.visible = false
+      this.resetForm()
+    },
+    resetForm() {
+      this.formModel = Object.assign({}, defaultModel)
+    },
+    handleClose() {
+      this.close()
+      this.$emit('cancel', '')
+    },
+    afterSuccess: function ($form) {
+      this.$emit('success', '')
+      this.close()
+    },
+    submitForm() {
+      const $form = this.$refs['form'];
+      $form.validate(async valid => {
+        if (!valid) {
+          return false;
+        }
+        const form = Object.assign({}, this.formModel)
+        form.password = md5(form.password)
+        if (this.type === 'add') {
+          addUser(form)
+            .then(({data}) => this.afterSuccess($form))
+            .catch(e => e)
+            .finally()
+        } else {
+          updateUser(form)
+            .then(({data}) => this.afterSuccess($form))
+            .catch(e => e)
+            .finally()
+        }
+      });
+    },
+  },
+  created() {
+  }
+}
+</script>
