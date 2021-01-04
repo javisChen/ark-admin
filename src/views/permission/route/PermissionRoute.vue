@@ -102,7 +102,7 @@
 
         <template slot="action" slot-scope="text, record">
           <a-button @click="handleAddChildren(record)" size="small" type="primary" shape="circle" icon="plus"/>&nbsp;
-          <a-button @click="handleDetail(record)" size="small" type="primary" shape="circle" icon="edit"/>&nbsp;
+          <a-button @click="handleEdit(record)" size="small" type="primary" shape="circle" icon="edit"/>&nbsp;
           <a-button @click="handleDelete(record)" alt="删除" size="small" type="danger" shape="circle" icon="delete"/>
         </template>
       </a-table>
@@ -121,7 +121,6 @@
 
 
 import {getRouteTree, deleteRoute, updateRouteStatus} from '@/api/route-api'
-import {tableColumns as columns} from "./data/initData";
 import PermissionRouteForm from './modules/PermissionRouteForm'
 
 const rowSelection = {
@@ -154,7 +153,51 @@ export default {
       advanced: false,
       queryParam: {},
       routes: [],
-      columns,
+      columns: [
+        {
+          title: '路由名称',
+          dataIndex: 'name',
+          width: 100,
+          filtered:true,
+          sortOrder: 'descend'
+        },
+        {
+          title: '组件名',
+          dataIndex: 'component',
+          width: 100,
+          customRender: (text, row, index) => {
+            return text || '-'
+          },
+        },
+        {
+          title: '路径',
+          dataIndex: 'path',
+          width: 150,
+          ellipsis: true,
+          customRender: (text, row, index) => {
+            return text || '-'
+          },
+        },
+        {
+          title: '状态',
+          dataIndex: 'status',
+          width: 50,
+          align: "center",
+          scopedSlots: {customRender: 'status'},
+        },
+        {
+          title: '排序',
+          dataIndex: 'sequence',
+          width: 50,
+        },
+        {
+          title: '操作',
+          fixed: 'right',
+          width: 150,
+          align: 'center',
+          scopedSlots: {customRender: 'action'},
+        },
+      ],
       rowSelection,
       selectedRoute: {},
       routeStatusDictionary,
@@ -210,7 +253,7 @@ export default {
       }
       this.$refs['routeForm'].open(model, 'add')
     },
-    async handleDetail(record) {
+    async handleEdit(record) {
       this.$refs['routeForm'].open(record, 'edit')
     },
     handleDelete(record) {

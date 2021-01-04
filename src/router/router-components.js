@@ -60,5 +60,6 @@ export default {
   // rbac
   'PermissionRoute': () => import('@/views/permission/route/PermissionRoute'),
   'PermissionUser': () => import('@/views/permission/user/PermissionUser'),
+  'PermissionUserGroup': () => import('@/views/permission/usergroup/PermissionUserGroup'),
 
 }

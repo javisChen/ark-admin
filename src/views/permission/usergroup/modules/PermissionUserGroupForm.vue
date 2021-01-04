@@ -20,16 +20,8 @@
       :label-col="labelCol"
       :wrapper-col="wrapperCol">
 
-      <a-form-model-item label="手机号码" prop="phone" has-feedback>
-        <a-input :disabled="isEditMode" placeholder="手机号码（11位）" v-model="formModel.phone"/>
-      </a-form-model-item>
-
-      <a-form-model-item label="用户名称" prop="name" has-feedback>
-        <a-input placeholder="用户名称" v-model="formModel.name"/>
-      </a-form-model-item>
-
-      <a-form-model-item label="用户密码" prop="password" has-feedback>
-        <a-input type="password" placeholder="用户密码（6~18位，数字字母0-9A-Za-z）" v-model="formModel.password"/>
+      <a-form-model-item label="用户组名称" prop="name" has-feedback>
+        <a-input placeholder="用户组名称" v-model="formModel.name"/>
       </a-form-model-item>
 
       <a-form-model-item label="状态" prop="status" required>
@@ -59,9 +51,7 @@
 
 <script>
 
-import md5 from 'md5'
-
-import {addUser, updateUser} from '@/api/user-api'
+import {addUserGroup, updateUserGroup} from '@/api/usergroup-api'
 
 const FORM_MODE_EDIT = 'edit';
 const FORM_MODE_ADD = 'add';
@@ -69,13 +59,11 @@ const FORM_MODE_ADD = 'add';
 const defaultModel = {
   id: '',
   name: '',
-  phone: '',
-  password: '88888888',
   status: 1,
 }
 
 export default {
-  name: 'PermissionUserForm',
+  name: 'PermissionUserGroupForm',
   components: {
   },
   props: {},
@@ -88,15 +76,8 @@ export default {
       formModel: Object.assign({}, defaultModel),
       form: {},
       rules: {
-        name: [{required: true, message: '请输入用户名称', trigger: 'blur'}],
-        password: [
-          {required: true, message: '请输入用户密码', trigger: 'blur'},
-          {min: 8, max: 20, message: '请将密码设置为8-20位，并且由字母，数字和符号两种以上组合', trigger: 'blur'}
-        ],
-        phone: [
-          {type: 'string', len: 11, required: true, message: '请输入11位的手机号码', trigger: 'blur'},
-        ],
-        status: [{required: true, message: '请选择用户状态', trigger: 'blur'}],
+        name: [{required: true, message: '请输入用户组名称', trigger: 'blur'}],
+        status: [{required: true, message: '请选择用户组状态', trigger: 'blur'}],
       }
     }
   },
@@ -136,15 +117,13 @@ export default {
           return false;
         }
         const form = Object.assign({}, this.formModel)
-        form.password = md5(form.password)
         if (this.mode === FORM_MODE_ADD) {
-          addUser(form)
+          addUserGroup(form)
             .then(({data}) => this.afterSuccess($form))
             .catch(e => e)
             .finally()
         } else {
-          delete form.phone;
-          updateUser(form)
+          updateUserGroup(form)
             .then(({data}) => this.afterSuccess($form))
             .catch(e => e)
             .finally()

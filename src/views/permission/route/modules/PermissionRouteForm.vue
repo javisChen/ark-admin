@@ -109,6 +109,9 @@ const routeTypeOptions = [
   {value: ROUTE_TYPE_PAGE, desc: '页面路由'}
 ]
 
+const FORM_MODE_EDIT = 'edit';
+const FORM_MODE_ADD = 'add';
+
 export default {
   name: 'PermissionRouteAddForm',
   components: {
@@ -128,7 +131,7 @@ export default {
       labelCol: {span: 6},
       wrapperCol: {span: 14},
       formModel: Object.assign({}, defaultModel),
-      type: 'edit',
+      type: FORM_MODE_EDIT,
       form: {},
       routesOptionsDefaultValue: [],
       routeTypeOptions,
@@ -154,7 +157,7 @@ export default {
     stringArrConvertToNumberArr: function () {
       return this.formModel.levelPath.split('.').map(item => +item);
     },
-    open(formModel, type = 'add') {
+    open(formModel, type = FORM_MODE_ADD) {
       console.log(formModel)
       this.visible = true
       if (formModel) {
@@ -188,9 +191,8 @@ export default {
         if (!valid) {
           return false;
         }
-
         this.formModel.pid = this.formModel.pid || 0
-        if (this.type === 'add') {
+        if (this.type === FORM_MODE_ADD) {
           addRoute(this.formModel)
             .then(({data}) => this.afterSuccess($form))
             .catch(e => e)

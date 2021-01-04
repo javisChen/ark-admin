@@ -5,7 +5,7 @@
               <a-form layout="inline">
                 <a-row :gutter="48">
                   <a-col :md="8" :sm="24">
-                    <a-form-item label="用户名称">
+                    <a-form-item label="用户组名称">
                       <a-input v-model="queryParam.name" placeholder=""/>
                     </a-form-item>
                   </a-col>
@@ -33,7 +33,7 @@
             </div>
 
       <div class="table-operator">
-        <a-button type="primary" icon="plus" @click="showUserForm">新建用户</a-button>
+        <a-button type="primary" icon="plus" @click="showUserForm">新建用户组</a-button>
       </div>
 
       <a-table
@@ -78,7 +78,7 @@
     </a-card>
 
     <!-- 创建路由信息表单-->
-    <permission-user-form  ref="userForm"
+    <permission-user-group-form  ref="userGroupForm"
                            @success="handleFormOnSuccess"
                            @cancel="handleEditFormCancel"/>
 
@@ -88,8 +88,8 @@
 
 <script>
 
-import {getUsers} from '@/api/user-api'
-import PermissionUserForm from "./modules/PermissionUserForm";
+import {getUserGroups} from '@/api/usergroup-api'
+import PermissionUserGroupForm from "./modules/PermissionUserGroupForm";
 
 const rowSelection = {
   onChange: (selectedRowKeys, selectedRows) => {
@@ -128,9 +128,9 @@ const queryParam = {
 }
 
 export default {
-  name: 'PermissionRoute',
+  name: 'PermissionUserGroup',
   components: {
-    PermissionUserForm
+    PermissionUserGroupForm
   },
   data() {
     return {
@@ -142,36 +142,21 @@ export default {
       tableData: [],
       columns: [
         {
-          title: '用户名称',
+          title: '用户组名称',
           dataIndex: 'name',
-          width: 100
-        },
-        {
-          title: '手机号码',
-          dataIndex: 'phone',
-          width: 100,
-          customRender: (text, row, index) => {
-            return text || '-'
-          },
         },
         {
           title: '状态',
           dataIndex: 'status',
-          width: 50,
           align: "center",
-          scopedSlots: {customRender: 'status'},
-        },
-        {
-          title: '操作',
           width: 50,
-          align: 'center',
-          scopedSlots: {customRender: 'action'},
+          scopedSlots: {customRender: 'status'},
         },
       ],
       rowSelection,
       selectedRoute: {},
       routeStatusDictionary,
-      userFormVisible: false,
+      userGroupFormVisible: false,
     };
   },
   created() {
@@ -179,7 +164,7 @@ export default {
   },
   methods: {
     async handleEdit(record) {
-      this.$refs['userForm'].open(record, 'edit')
+      this.$refs['userGroupForm'].open(record, 'edit')
     },
     handleTableChange(pagination, filters, sorter) {
       this.queryParam.current = pagination.current
@@ -213,7 +198,7 @@ export default {
     handleEditFormCancel() {
     },
     showUserForm() {
-      this.$refs['userForm'].open()
+      this.$refs['userGroupForm'].open()
     },
     rowKey(record) {
       return record.id
@@ -231,7 +216,7 @@ export default {
     },
     async loadTableData() {
       this.toggleLoading()
-      const {data} = await getUsers(this.queryParam)
+      const {data} = await getUserGroups(this.queryParam)
       this.tableData = data.records;
       this.pagination.total = data.total
       this.toggleLoading()
