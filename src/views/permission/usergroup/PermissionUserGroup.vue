@@ -1,86 +1,94 @@
 <template>
   <page-header-wrapper>
     <a-card :bordered="false">
-            <div class="table-page-search-wrapper">
-              <a-form layout="inline">
-                <a-row :gutter="48">
-                  <a-col :md="8" :sm="24">
-                    <a-form-item label="用户组名称">
-                      <a-input v-model="queryParam.name" placeholder=""/>
-                    </a-form-item>
-                  </a-col>
-                  <a-col :md="8" :sm="24">
-                    <a-form-item label="使用状态">
-                      <a-select v-model="queryParam.status" placeholder="请选择" :default-value="0"
-                                @change="handleQueryStatusChange">
-                        <a-select-option v-for="(value, key) in routeStatusDictionary"
-                                         :key="key"
-                                         :value="key">
-                          {{ value }}
-                        </a-select-option>
-                      </a-select>
-                    </a-form-item>
-                  </a-col>
-                  <a-col :md="!advanced && 8 || 24" :sm="24">
+      <a-row :gutter="8">
+        <a-col :span="5">
+          <permission-user-group-tree></permission-user-group-tree>
+        </a-col>
+        <a-col :span="19">
+
+          <div class="table-page-search-wrapper">
+            <a-form layout="inline">
+              <a-row :gutter="48">
+                <a-col :md="8" :sm="24">
+                  <a-form-item label="用户组名称">
+                    <a-input v-model="queryParam.name" placeholder=""/>
+                  </a-form-item>
+                </a-col>
+                <a-col :md="8" :sm="24">
+                  <a-form-item label="使用状态">
+                    <a-select v-model="queryParam.status" placeholder="请选择" :default-value="0"
+                              @change="handleQueryStatusChange">
+                      <a-select-option v-for="(value, key) in routeStatusDictionary"
+                                       :key="key"
+                                       :value="key">
+                        {{ value }}
+                      </a-select-option>
+                    </a-select>
+                  </a-form-item>
+                </a-col>
+                <a-col :md="!advanced && 8 || 24" :sm="24">
                           <span class="table-page-search-submitButtons"
                                 :style="advanced && { float: 'right', overflow: 'hidden' } || {} ">
                             <a-button type="primary" @click="loadTableData">查询</a-button>
                             <a-button style="margin-left: 8px" @click="resetQueryParams">重置</a-button>
                           </span>
-                  </a-col>
-                </a-row>
-              </a-form>
-            </div>
+                </a-col>
+              </a-row>
+            </a-form>
+          </div>
 
-      <div class="table-operator">
-        <a-button type="primary" icon="plus" @click="showUserForm">新建用户组</a-button>
-      </div>
+          <div class="table-operator">
+            <a-button type="primary" icon="plus" @click="showUserForm">新建用户组</a-button>
+          </div>
 
-      <a-table
-        v-if="tableData && tableData.length > 0"
-        bordered
-        @change="handleTableChange"
-        :pagination="pagination"
-        :loading="tableLoading"
-        :defaultExpandAllRows="defaultExpandAllRows"
-        :expandRowByClick="true"
-        :size="'middle'"
-        :indent-size="15"
-        :row-key="rowKey"
-        :columns="columns"
-        :data-source="tableData">
+          <a-table
+            v-if="tableData && tableData.length > 0"
+            bordered
+            @change="handleTableChange"
+            :pagination="pagination"
+            :loading="tableLoading"
+            :defaultExpandAllRows="defaultExpandAllRows"
+            :expandRowByClick="true"
+            :size="'middle'"
+            :indent-size="15"
+            :row-key="rowKey"
+            :columns="columns"
+            :data-source="tableData">
 
-        <template slot="status" slot-scope="text, record">
-          <a-dropdown :trigger="['click']">
-            <a-menu slot="overlay" @click="routeStatusChange($event, record)">
-              <a-menu-item v-for="(value, key) in routeStatusDictionary" :key="key">
-                {{ value }}
-              </a-menu-item>
-            </a-menu>
-            <a-button
-              :style="record.status === 1 ? {'background-color': '#52c41a',border: 'none', 'color': 'white'}: {}"
-              shape="round" size="small" :type="record.status !== 1 ? 'danger' : ''">
-              {{ getStatusDesc(record.status) }}
-              <a-icon type="down"/>
-            </a-button>
-          </a-dropdown>
-        </template>
+            <template slot="status" slot-scope="text, record">
+              <a-dropdown :trigger="['click']">
+                <a-menu slot="overlay" @click="routeStatusChange($event, record)">
+                  <a-menu-item v-for="(value, key) in routeStatusDictionary" :key="key">
+                    {{ value }}
+                  </a-menu-item>
+                </a-menu>
+                <a-button
+                  :style="record.status === 1 ? {'background-color': '#52c41a',border: 'none', 'color': 'white'}: {}"
+                  shape="round" size="small" :type="record.status !== 1 ? 'danger' : ''">
+                  {{ getStatusDesc(record.status) }}
+                  <a-icon type="down"/>
+                </a-button>
+              </a-dropdown>
+            </template>
 
-        <template slot="action" slot-scope="text, record">
-          <!--          <a-button v-if="!record.children || record.children.length === 0"-->
-          <!--                    @click="handleAddChildren(record)" size="small" type="primary" shape="circle" icon="plus"/>&nbsp;-->
-          <a-button @click="handleEdit(record)" size="small" type="primary" shape="circle" icon="edit"/>&nbsp;
-          <a-button @click="handleDelete(record)" alt="删除" size="small" type="danger" shape="circle" icon="delete"/>
-        </template>
-      </a-table>
-      <a-empty v-else/>
-
+            <template slot="action" slot-scope="text, record">
+              <!--          <a-button v-if="!record.children || record.children.length === 0"-->
+              <!--                    @click="handleAddChildren(record)" size="small" type="primary" shape="circle" icon="plus"/>&nbsp;-->
+              <a-button @click="handleEdit(record)" size="small" type="primary" shape="circle" icon="edit"/>&nbsp;
+              <a-button @click="handleDelete(record)" alt="删除" size="small" type="danger" shape="circle" icon="delete"/>
+            </template>
+          </a-table>
+          <a-empty v-else/>
+        </a-col>
+      </a-row>
     </a-card>
 
     <!-- 创建路由信息表单-->
-    <permission-user-group-form  ref="userGroupForm"
-                           @success="handleFormOnSuccess"
-                           @cancel="handleEditFormCancel"/>
+    <permission-user-group-form ref="userGroupForm"
+                                @success="handleFormOnSuccess"
+                                @cancel="handleEditFormCancel"/>
+
 
   </page-header-wrapper>
 
@@ -90,6 +98,7 @@
 
 import {getUserGroups} from '@/api/usergroup-api'
 import PermissionUserGroupForm from "./modules/PermissionUserGroupForm";
+import PermissionUserGroupTree from "./modules/PermissionUserGroupTree";
 
 const rowSelection = {
   onChange: (selectedRowKeys, selectedRows) => {
@@ -122,15 +131,14 @@ const pagination = {
 const queryParam = {
   current: 1,
   size: 15,
-  params: {
-
-  }
+  params: {}
 }
 
 export default {
   name: 'PermissionUserGroup',
   components: {
-    PermissionUserGroupForm
+    PermissionUserGroupForm,
+    PermissionUserGroupTree
   },
   data() {
     return {
@@ -149,9 +157,14 @@ export default {
           title: '状态',
           dataIndex: 'status',
           align: "center",
-          width: 50,
           scopedSlots: {customRender: 'status'},
         },
+        {
+          title: '操作',
+          width: 100,
+          align: 'center',
+          scopedSlots: {customRender: 'action'},
+        }
       ],
       rowSelection,
       selectedRoute: {},

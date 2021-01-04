@@ -1,0 +1,136 @@
+<template>
+  <a-tree
+    v-model="checkedKeys"
+    checkable
+    :expanded-keys="expandedKeys"
+    :auto-expand-parent="autoExpandParent"
+    :selected-keys="selectedKeys"
+    :tree-data="treeData"
+    @expand="onExpand"
+    @select="onSelect"
+  >
+    <template slot="custom" slot-scope="item">
+      <span style="margin-right: 10px">{{ item.title }}</span>
+
+      <a-button style="margin-right: 5px" type="" icon="plus" shape="circle" size="small"
+                @click="()=> append(item)">
+      </a-button>
+      <a-button style="margin-right: 5px" type="" icon="edit" shape="circle" size="small"
+                @click="()=> append(item)">
+      </a-button>
+      <a-button style="margin-right: 5px" type="" icon="delete" shape="circle" size="small"
+                @click="()=> append(item)">
+      </a-button>
+
+    </template>
+  </a-tree>
+</template>
+
+<script>
+
+import {getUserGroupsTree} from "@/api/usergroup-api";
+
+const treeData = [
+  {
+    title: '0-0',
+    key: '0-0',
+    children: [
+      {
+        title: '0-0-0',
+        key: '0-0-0',
+        scopedSlots: {title: 'custom'},
+        children: [
+          {
+            title: '0-0-0-0',
+            key: '0-0-0-0',
+            scopedSlots: {title: 'custom'},
+          },
+          {
+            title: '0-0-0-1', key: '0-0-0-1',
+            scopedSlots: {title: 'custom'},
+          },
+          {
+            title: '0-0-0-2', key: '0-0-0-2',
+            scopedSlots: {title: 'custom'},
+          },
+        ],
+      },
+      {
+        title: '0-0-1',
+        key: '0-0-1',
+        children: [
+          {title: '0-0-1-0', key: '0-0-1-0'},
+          {title: '0-0-1-1', key: '0-0-1-1'},
+          {title: '0-0-1-2', key: '0-0-1-2'},
+        ],
+      },
+      {
+        title: '0-0-2',
+        key: '0-0-2',
+      },
+    ],
+  },
+  {
+    title: '0-1',
+    key: '0-1',
+    children: [
+      {title: '0-1-0-0', key: '0-1-0-0'},
+      {title: '0-1-0-1', key: '0-1-0-1'},
+      {title: '0-1-0-2', key: '0-1-0-2'},
+    ],
+  },
+  {
+    title: '0-2',
+    key: '0-2',
+  },
+];
+
+export default {
+  data() {
+    return {
+      expandedKeys: ['0-0-0', '0-0-1'],
+      autoExpandParent: true,
+      checkedKeys: ['0-0-0'],
+      selectedKeys: [],
+      treeData,
+    };
+  },
+  watch: {
+    checkedKeys(val) {
+      console.log('onCheck', val);
+    },
+  },
+  created() {
+    this.loadTreeData()
+  },
+  methods: {
+    async loadTreeData() {
+      const {data} = await getUserGroupsTree({})
+      this.treeData = data.map(item => {
+        item.scopedSlots = {title: 'custom'}
+        return item
+      })
+    },
+    onExpand(expandedKeys) {
+      console.log('onExpand', expandedKeys);
+      // if not set autoExpandParent to false, if children expanded, parent can not collapse.
+      // or, you can remove all expanded children keys.
+      this.expandedKeys = expandedKeys;
+      this.autoExpandParent = false;
+    },
+    onCheck(checkedKeys) {
+      console.log('onCheck', checkedKeys);
+      this.checkedKeys = checkedKeys;
+    },
+    onSelect(selectedKeys, info) {
+      console.log('onSelect', info);
+      this.selectedKeys = selectedKeys;
+    },
+  },
+};
+</script>
+<style scoped>
+.btn {
+  width: 20px;
+}
+</style>

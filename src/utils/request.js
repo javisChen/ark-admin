@@ -50,7 +50,6 @@ const errorHandler = (error) => {
     }
     if (error.response.status === 400) {
       const result = error.response.data
-      console.log('error 400', error.response)
       notification.error({
         message: '出了点小问题~',
         description: result.msg,
