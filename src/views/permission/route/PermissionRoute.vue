@@ -54,7 +54,7 @@
       <!--            <a-col :md="!advanced && 8 || 24" :sm="24">-->
       <!--                    <span class="table-page-search-submitButtons"-->
       <!--                          :style="advanced && { float: 'right', overflow: 'hidden' } || {} ">-->
-      <!--                      <a-button type="primary" @click="loadRouteTree">查询</a-button>-->
+      <!--                      <a-button type="primary" @click="loadTableData">查询</a-button>-->
       <!--                      <a-button style="margin-left: 8px" @click="resetQueryParams">重置</a-button>-->
       <!--                      <a @click="toggleAdvanced" style="margin-left: 8px">-->
       <!--                        {{ advanced ? '收起' : '展开' }}-->
@@ -73,12 +73,13 @@
       <a-table
         v-if="routes && routes.length > 0"
         bordered
-        :pagination="false"
+        @change="handleTableChange"
+        :pagination="pagination"
         :loading="tableLoading"
         :defaultExpandAllRows="defaultExpandAllRows"
         :expandRowByClick="false"
         :size="'middle'"
-        :scroll="{ x: 1300 }"
+        :scroll="scroll"
         :indent-size="15"
         :row-key="rowKey"
         :columns="columns"
@@ -105,6 +106,18 @@
           <a-button @click="handleEdit(record)" size="small" type="primary" shape="circle" icon="edit"/>&nbsp;
           <a-button @click="handleDelete(record)" alt="删除" size="small" type="danger" shape="circle" icon="delete"/>
         </template>
+
+        <template slot="type" slot-scope="text, record">
+          {{ getTypeDesc(record.type) }}
+        </template>
+
+        <template slot="isHideChildren" slot-scope="text, record">
+          {{ record.isHideChildren ? '是' : '否' }}
+        </template>
+
+        <template slot="icon" slot-scope="text, record">
+          <a-icon :type="record.icon"></a-icon>
+        </template>
       </a-table>
 
     </a-card>
@@ -120,26 +133,31 @@
 <script>
 
 
-import {getRouteTree, deleteRoute, updateRouteStatus} from '@/api/route-api'
+import {getRoutes, deleteRoute, updateRouteStatus} from '@/api/route-api'
 import PermissionRouteForm from './modules/PermissionRouteForm'
-
-const rowSelection = {
-  onChange: (selectedRowKeys, selectedRows) => {
-    console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
-  },
-  onSelect: (record, selected, selectedRows) => {
-    console.log(record, selected, selectedRows);
-  },
-  onSelectAll: (selected, selectedRows, changeRows) => {
-    console.log(selected, selectedRows, changeRows);
-  },
-};
+import {filterNonChildren} from "@/utils/util";
 
 const routeStatusDictionary = {
   1: '已启用',
   2: '已禁用'
 }
 
+const routeTypeDictionary = {
+  1: '菜单路由',
+  2: '页面路由'
+}
+
+
+const pagination = {
+  showSizeChanger: true,
+  position: 'bottom',
+  size: 'default',
+  showQuickJumper: true,
+  pageSizeOptions: ['15', '25', '35', '50'],
+  defaultCurrent: 1,
+  defaultPageSize: 15,
+  total: 0
+}
 
 export default {
   name: 'PermissionRoute',
@@ -153,18 +171,21 @@ export default {
       advanced: false,
       queryParam: {},
       routes: [],
+      pagination,
       columns: [
         {
           title: '路由名称',
           dataIndex: 'name',
-          width: 100,
-          filtered:true,
-          sortOrder: 'descend'
+          width: 200,
+          filtered: true,
+          sortOrder: 'descend',
+          fixed: 'left',
         },
         {
           title: '组件名',
           dataIndex: 'component',
-          width: 100,
+          width: 150,
+          align: "center",
           customRender: (text, row, index) => {
             return text || '-'
           },
@@ -172,48 +193,90 @@ export default {
         {
           title: '路径',
           dataIndex: 'path',
-          width: 150,
+          width: 220,
           ellipsis: true,
           customRender: (text, row, index) => {
             return text || '-'
           },
         },
         {
+          title: '类型',
+          dataIndex: 'type',
+          width: 100,
+          align: "center",
+          ellipsis: true,
+          scopedSlots: {customRender: 'type'},
+        },
+        {
+          title: '图标',
+          dataIndex: 'icon',
+          align: "center",
+          width: 100,
+          scopedSlots: {customRender: 'icon'},
+        },
+        {
+          title: '是否隐藏子菜单',
+          dataIndex: 'isHideChildren',
+          width: 150,
+          align: "center",
+          scopedSlots: {customRender: 'isHideChildren'},
+        },
+        {
           title: '状态',
           dataIndex: 'status',
-          width: 50,
           align: "center",
+          width: 100,
           scopedSlots: {customRender: 'status'},
         },
         {
           title: '排序',
           dataIndex: 'sequence',
-          width: 50,
+          align: "center",
+          width: 100,
+        },
+        {
+          title: '创建时间',
+          dataIndex: 'createTime',
+          align: "center",
+          width: 180,
+        },
+        {
+          title: '更新时间',
+          dataIndex: 'updateTime',
+          align: "center",
+          width: 180,
         },
         {
           title: '操作',
           fixed: 'right',
-          width: 150,
+          width: 100,
           align: 'center',
           scopedSlots: {customRender: 'action'},
         },
       ],
-      rowSelection,
       selectedRoute: {},
       routeStatusDictionary,
       addFormVisible: false,
+      scroll: {x: 1000},
     };
   },
   created() {
-    this.loadRouteTree();
+    this.loadTableData();
   },
   methods: {
+    getTypeDesc(value) {
+      return routeTypeDictionary[value]
+    },
+    handleTableChange(pagination, filters, sorter) {
+      this.queryParam.current = pagination.current
+      this.loadTableData()
+    },
     resetQueryParams() {
       this.queryParam = {}
-      this.loadRouteTree()
+      this.loadTableData()
     },
     handleQueryStatusChange(value) {
-      this.loadRouteTree()
+      this.loadTableData()
     },
     toggleAdvanced() {
       this.advanced = !this.advanced;
@@ -221,7 +284,7 @@ export default {
     async routeStatusChange(value, route) {
       try {
         await updateRouteStatus({id: route.id, status: +value.key})
-        await this.loadRouteTree()
+        await this.loadTableData()
         this.$message.success('修改成功')
       } catch (e) {
       }
@@ -231,7 +294,7 @@ export default {
     },
     handleFormOnSuccess() {
       this.$message.success('保存成功')
-      this.loadRouteTree()
+      this.loadTableData()
     },
     handleEditFormCancel() {
     },
@@ -262,39 +325,24 @@ export default {
         content: `删除操作会把子路由也一并删除掉，请慎重！`,
         onOk: async () => {
           const {data} = await deleteRoute(record.id)
-          await this.loadRouteTree();
+          await this.loadTableData();
         }
       })
     },
     toggleLoading() {
       this.tableLoading = !this.tableLoading
     },
-    async loadRouteTree() {
+    async loadTableData() {
       this.toggleLoading()
-      const {data} = await getRouteTree(this.queryParam)
-      this.routes = data.routes.map(item => {
+      const {data} = await getRoutes(this.queryParam)
+      console.log(data.records)
+      this.routes = data.records.map(item => {
         filterNonChildren(item);
         return item;
       });
+      console.log(this.routes)
+      this.pagination.total = data.total
       this.toggleLoading()
-
-      // 把长度为0的children删掉
-      function filterNonChildren(item) {
-        const children = item.children
-        if (!children || children.length == 0) {
-          delete item.children
-          return;
-        }
-        for (let i = 0; i < children.length; i++) {
-          let child = children[i]
-          if (!child.children || child.children.length == 0) {
-            delete child.children
-          } else {
-            filterNonChildren(child)
-          }
-        }
-        return children;
-      }
     }
   }
 };

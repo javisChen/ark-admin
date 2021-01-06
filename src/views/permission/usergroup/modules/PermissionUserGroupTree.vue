@@ -101,7 +101,7 @@ export default {
     },
   },
   created() {
-    this.loadTreeData()
+    // this.loadTreeData()
   },
   methods: {
     async loadTreeData() {

@@ -11,6 +11,8 @@ export default api
 
 export const getRouteTree = (data) => post({url: api.routeTree, data})
 
+export const getRoutes = (data) => post({url: api.routes, data})
+
 export const getRoute = (id) => get({url: `${api.route}/${id}`})
 
 export const addRoute = (data) => post({url: api.route, data})

@@ -39,16 +39,6 @@
         </a-radio-group>
       </a-form-model-item>
 
-      <!--      <a-form-model-item label="所属用户" prop="pid" has-feedback>-->
-      <!--        <a-cascader popupPlacement="bottomLeft"-->
-      <!--                    :changeOnSelect="true"-->
-      <!--                    :options="routes"-->
-      <!--                    :fieldNames="{ label: 'name', value: 'id', children: 'children' }"-->
-      <!--                    placeholder="请选择所属用户"-->
-      <!--                    :default-value="routesOptionsDefaultValue"-->
-      <!--                    @change="onSelectRouteChange"/>-->
-      <!--      </a-form-model-item>-->
-
       <a-form-model-item :wrapper-col="{ span: 14, offset: 4 }">
         <a-button type="primary" @click="submitForm()">确认</a-button>
         <a-button style="margin-left: 10px;" @click="handleClose">关闭</a-button>

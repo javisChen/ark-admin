@@ -23,12 +23,23 @@
       <a-form-model-item label="用户组名称" prop="name" has-feedback>
         <a-input placeholder="用户组名称" v-model="formModel.name"/>
       </a-form-model-item>
+      
+      <a-form-model-item label="所属用户组" prop="pid" has-feedback>
+        <a-cascader popupPlacement="bottomLeft"
+                    :changeOnSelect="true"
+                    :options="userGroups"
+                    :fieldNames="{ label: 'name', value: 'id', children: 'children' }"
+                    placeholder="请选择所属路由"
+                    :default-value="userGroupsOptionsDefaultValue"
+                    @change="onSelectUserGroupsChange"/>
+      </a-form-model-item>
 
       <a-form-model-item label="状态" prop="status" required>
         <a-radio-group name="radioGroup" v-model="formModel.status" :default-value="1">
           <a-radio :value="1">启用</a-radio>
           <a-radio :value="2">禁用</a-radio>
         </a-radio-group>
+        
       </a-form-model-item>
 
       <!--      <a-form-model-item label="所属用户" prop="pid" has-feedback>-->
@@ -37,8 +48,8 @@
       <!--                    :options="routes"-->
       <!--                    :fieldNames="{ label: 'name', value: 'id', children: 'children' }"-->
       <!--                    placeholder="请选择所属用户"-->
-      <!--                    :default-value="routesOptionsDefaultValue"-->
-      <!--                    @change="onSelectRouteChange"/>-->
+      <!--                    :default-value="userGroupsOptionsDefaultValue"-->
+      <!--                    @change="onSelectUserGroupsChange"/>-->
       <!--      </a-form-model-item>-->
 
       <a-form-model-item :wrapper-col="{ span: 14, offset: 4 }">
@@ -66,7 +77,12 @@ export default {
   name: 'PermissionUserGroupForm',
   components: {
   },
-  props: {},
+  props: {
+    userGroups: {
+      type: Array,
+      required: true,
+      default: () => []
+    },},
   data() {
     return {
       mode: FORM_MODE_ADD,
@@ -78,7 +94,8 @@ export default {
       rules: {
         name: [{required: true, message: '请输入用户组名称', trigger: 'blur'}],
         status: [{required: true, message: '请选择用户组状态', trigger: 'blur'}],
-      }
+      },
+      userGroupsOptionsDefaultValue: []
     }
   },
   computed: {
@@ -87,6 +104,12 @@ export default {
     }
   },
   methods: {
+    onSelectUserGroupsChange(value, selectedOptions) {
+      this.formModel.pid = value[value.length - 1]
+    },
+    stringArrConvertToNumberArr: function () {
+      // return this.formModel.levelPath.split('.').map(item => +item);
+    },
     open(formModel, mode = FORM_MODE_ADD) {
       if (formModel) {
         this.formModel = Object.assign(this.formModel, formModel)
