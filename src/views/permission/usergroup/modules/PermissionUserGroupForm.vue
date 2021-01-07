@@ -5,10 +5,10 @@
            v-model="visible"
            title="新建用户"
            ok-text="确认"
-           :confirmLoading="true"
+           :confirmLoading="confirmLoading"
            :destroyOnClose="true"
-           :footer="null"
            :closable="true"
+           @ok="submitForm"
            @cancel="handleClose"
            cancel-text="取消">
 
@@ -39,23 +39,8 @@
           <a-radio :value="1">启用</a-radio>
           <a-radio :value="2">禁用</a-radio>
         </a-radio-group>
-        
       </a-form-model-item>
 
-      <!--      <a-form-model-item label="所属用户" prop="pid" has-feedback>-->
-      <!--        <a-cascader popupPlacement="bottomLeft"-->
-      <!--                    :changeOnSelect="true"-->
-      <!--                    :options="routes"-->
-      <!--                    :fieldNames="{ label: 'name', value: 'id', children: 'children' }"-->
-      <!--                    placeholder="请选择所属用户"-->
-      <!--                    :default-value="userGroupsOptionsDefaultValue"-->
-      <!--                    @change="onSelectUserGroupsChange"/>-->
-      <!--      </a-form-model-item>-->
-
-      <a-form-model-item :wrapper-col="{ span: 14, offset: 4 }">
-        <a-button type="primary" @click="submitForm()">确认</a-button>
-        <a-button style="margin-left: 10px;" @click="handleClose">关闭</a-button>
-      </a-form-model-item>
     </a-form-model>
   </a-modal>
 </template>
@@ -85,6 +70,7 @@ export default {
     },},
   data() {
     return {
+      confirmLoading: false,
       mode: FORM_MODE_ADD,
       visible: false,
       labelCol: {span: 6},
@@ -104,11 +90,15 @@ export default {
     }
   },
   methods: {
+
+    closeConfirmLoading() {
+      this.confirmLoading = false
+    },
+    toggleConfirmLoading() {
+      this.confirmLoading = !this.confirmLoading
+    },
     onSelectUserGroupsChange(value, selectedOptions) {
       this.formModel.pid = value[value.length - 1]
-    },
-    stringArrConvertToNumberArr: function () {
-      // return this.formModel.levelPath.split('.').map(item => +item);
     },
     open(formModel, mode = FORM_MODE_ADD) {
       if (formModel) {
@@ -119,6 +109,7 @@ export default {
       this.visible = true
     },
     close() {
+      this.confirmLoading = false
       this.visible = false
       this.resetForm()
     },
@@ -140,16 +131,17 @@ export default {
           return false;
         }
         const form = Object.assign({}, this.formModel)
+        this.toggleConfirmLoading()
         if (this.mode === FORM_MODE_ADD) {
           addUserGroup(form)
             .then(({data}) => this.afterSuccess($form))
             .catch(e => e)
-            .finally()
+            .finally(() => this.closeConfirmLoading())
         } else {
           updateUserGroup(form)
             .then(({data}) => this.afterSuccess($form))
             .catch(e => e)
-            .finally()
+            .finally(() => this.closeConfirmLoading())
         }
       });
     },

@@ -1,200 +1,187 @@
 <template>
-  <a-modal
-    :width="1000"
-    :centered="false"
-    v-model="visible"
-    title="元素管理"
-    ok-text="确定"
-    :confirmLoading="false"
-    :destroyOnClose="true"
-    :closable="true"
-    @cancel="handleClose"
-    cancel-text="取消">
-    <a-card :bordered="false">
-      <div class="table-operator">
-        <a-button type="primary" icon="plus" @click="showForm">添加元素</a-button>
-      </div>
-      <a-table
-        v-if="tableData && tableData.length > 0"
-        bordered
-        @change="handleTableChange"
-        :pagination="pagination"
-        :loading="tableLoading"
-        :defaultExpandAllRows="defaultExpandAllRows"
-        :expandRowByClick="true"
-        :size="'middle'"
-        :indent-size="15"
-        :row-key="rowKey"
-        :columns="columns"
-        :data-source="tableData">
-
-        <template slot="status" slot-scope="text, record">
-          <a-dropdown :trigger="['click']">
-            <a-menu slot="overlay" @click="routeStatusChange($event, record)">
-              <a-menu-item v-for="(value, key) in routeStatusDictionary" :key="key">
+  <a-card
+    type="inner"
+    title="页面元素"
+    size="small">
+    <a-button icon="plus"
+              type="primary"
+              class="editable-add-btn"
+              @click="handleAddElement">
+      新增元素
+    </a-button>
+    <a-table
+      style="margin-top: 10px"
+      :pagination="false"
+      :columns="columns"
+      :data-source="data"
+      :row-key="rowKey"
+      size="small"
+      bordered>
+      <template
+        v-for="col in ['name', 'type']"
+        :slot="col"
+        slot-scope="text, record, index">
+        <div :key="col">
+          <template v-if="record.editable">
+            <a-input
+              v-if="col === 'name'"
+              :value="text"
+              @change="e => handleChange(e.target.value, record.key, col)"
+            />
+            <a-select style="width: 100%"
+                      v-else-if="col === 'type'"
+                      @change="e => handleChange(e, record.key, col)"
+                      placeholder="请选择"
+                      :value="record.type"
+                      :default-value="1">
+              <a-select-option v-for="(value, key) in typeDictionary"
+                               :key="key"
+                               :value="parseInt(key)">
                 {{ value }}
-              </a-menu-item>
-            </a-menu>
-            <a-button
-              :style="record.status === 1 ? {'background-color': '#52c41a',border: 'none', 'color': 'white'}: {}"
-              shape="round" size="small" :type="record.status !== 1 ? 'danger' : ''">
-              {{ getStatusDesc(record.status) }}
-              <a-icon type="down"/>
-            </a-button>
-          </a-dropdown>
-        </template>
-
-        <template slot="action" slot-scope="text, record">
-          <k-tooltip-button title="编辑" @click="handleEdit(record)" icon="edit"/>&nbsp;
-          <k-tooltip-button title="删除" @click="handleDelete(record)" type="danger" icon="delete"/>
-        </template>
-      </a-table>
-      <a-empty v-else/>
-
-    </a-card>
-
-    <!-- 创建路由信息表单-->
-    <permission-page-element-form ref="elementForm"
-                                  @success="handleFormOnSuccess"
-                                  @cancel="handleEditFormCancel"/>
-  </a-modal>
+              </a-select-option>
+            </a-select>
+          </template>
+          <template v-else>
+            <span v-if="col === 'name'">{{ record.name }}</span>
+            <span v-if="col === 'type'">{{ getTypeDesc(record.type) }}</span>
+          </template>
+        </div>
+      </template>
+      <template slot="operation" slot-scope="text, record, index">
+        <div class="editable-row-operations">
+        <span v-if="record.editable">
+          <a @click="() => save(record.key)">保存</a>
+          <a @click="() => cancel(record.key)">取消</a>
+        </span>
+          <span v-else>
+          <a :disabled="editingKey !== ''" @click="() => edit(record.key)">编辑</a>
+          <a-popconfirm title="确定删除元素?" @confirm="() => cancel(record.key)">
+            <a>删除</a>
+          </a-popconfirm>
+        </span>
+        </div>
+      </template>
+    </a-table>
+  </a-card>
 
 </template>
 
 <script>
+const columns = [
+  {
+    title: '元素名称',
+    dataIndex: 'name',
+    width: '33%',
+    scopedSlots: {customRender: 'name'},
+  },
+  {
+    title: '元素类型',
+    dataIndex: 'age',
+    width: '33%',
+    scopedSlots: {customRender: 'type'},
+  },
+  {
+    title: '操作',
+    dataIndex: 'operation',
+    scopedSlots: {customRender: 'operation'},
+  },
+];
 
-import {getPageElements} from '@/api/page-element-api'
+const data = [];
 
-import PermissionPageElementForm from "./PermissionPageElementForm";
-
-const routeStatusDictionary = {
-  1: '已启用',
-  2: '已禁用'
-}
-
-const queryParam = {
-  current: 1,
-  size: 15,
-  params: {}
+const typeDictionary = {
+  1: 'Button',
+  2: 'Div'
 }
 
 export default {
   name: 'PermissionPageElementTable',
-  components: {
-    PermissionPageElementForm
+  props: {
+    elementData: {
+      type: Array,
+      required: false,
+      default: () => []
+    },
   },
   data() {
+    this.cacheData = data.map(item => ({...item}));
     return {
-      visible: false,
-      defaultExpandAllRows: true,
-      tableLoading: false,
-      advanced: false,
-      queryParam,
-      tableData: [],
-      columns: [
-        {
-          title: '元素名称',
-          dataIndex: 'name',
-          width: 100
-        },
-        {
-          title: '元素类型',
-          dataIndex: 'type',
-          width: 100,
-          customRender: (text, row, index) => {
-            return text || '-'
-          },
-        },
-        {
-          title: '状态',
-          dataIndex: 'status',
-          width: 50,
-          align: "center",
-          scopedSlots: {customRender: 'status'},
-        },
-        {
-          title: '操作',
-          width: 50,
-          align: 'center',
-          scopedSlots: {customRender: 'action'},
-        },
-      ],
-      selectedRoute: {},
-      routeStatusDictionary,
-      userFormVisible: false,
+      typeDictionary,
+      data: this.elementData,
+      count: data.length,
+      columns,
+      editingKey: '',
     };
   },
-  created() {
-    this.loadTableData();
-  },
   methods: {
-    open(formModel) {
-      this.visible = true
-    },
-    close() {
-      this.visible = false
-      this.resetForm()
-    },
-    resetForm() {
-
-    },
-    handleClose() {
-      this.close()
-      this.$emit('cancel', '')
-    },
-    afterSuccess: function ($form) {
-      this.$emit('success', '')
-      this.close()
-    },
-    async handleEdit(record) {
-      this.$refs['userForm'].open(record, 'edit')
-    },
-    handleTableChange(pagination, filters, sorter) {
-      this.queryParam.current = pagination.current
-      this.loadTableData()
-    },
-    resetQueryParams() {
-      this.queryParam = Object.assign({}, queryParam)
-      this.loadTableData()
-    },
-    handleQueryStatusChange(value) {
-      this.loadTableData()
-    },
-    toggleAdvanced() {
-      this.advanced = !this.advanced;
-    },
-    getStatusDesc(status) {
-      return routeStatusDictionary[status]
-    },
-    handleFormOnSuccess() {
-      this.$message.success('保存成功')
-      this.loadTableData()
-    },
-    handleEditFormCancel() {
-    },
-    showForm() {
-      this.$refs['elementForm'].open()
-    },
     rowKey(record) {
+      console.log(record)
       return record.id
     },
-    handleDelete(record) {
-      this.$confirm({
-        title: `提示`,
-        content: `确定要禁用[${record.name}]用户吗？`,
-        onOk: async () => {
-        }
-      })
+    reset() {
+      this.data = []
     },
-    toggleLoading() {
-      this.tableLoading = !this.tableLoading
+    getTypeDesc(value) {
+      return typeDictionary[value]
     },
-    async loadTableData() {
-      this.toggleLoading()
-      const {data} = await getPageElements(this.queryParam)
-      this.tableData = data;
-      this.toggleLoading()
-    }
-  }
+    handleAddElement() {
+      this.addCount()
+      this.data.push({
+        key: this.count,
+        name: '',
+        type: 1,
+      });
+      this.cacheData = [...this.data]
+    },
+    addCount() {
+      this.count++
+    },
+    handleChange(value, key, column) {
+      console.log(value)
+      const newData = [...this.data];
+      const target = newData.filter(item => key === item.key)[0];
+      if (target) {
+        target[column] = value;
+        this.data = newData;
+      }
+    },
+    edit(key) {
+      const newData = [...this.data];
+      const target = newData.filter(item => key === item.key)[0];
+      this.editingKey = key;
+      if (target) {
+        target.editable = true;
+        this.data = newData;
+      }
+    },
+    save(key) {
+      const newData = [...this.data];
+      const newCacheData = [...this.cacheData];
+      const target = newData.filter(item => key === item.key)[0];
+      const targetCache = newCacheData.filter(item => key === item.key)[0];
+      if (target && targetCache) {
+        delete target.editable;
+        this.data = newData;
+        Object.assign(targetCache, target);
+        this.cacheData = newCacheData;
+      }
+      this.editingKey = '';
+    },
+    cancel(key) {
+      const newData = [...this.data];
+      const target = newData.filter(item => key === item.key)[0];
+      this.editingKey = '';
+      if (target) {
+        Object.assign(target, this.cacheData.filter(item => key === item.key)[0]);
+        delete target.editable;
+        this.data = newData;
+      }
+    },
+  },
 };
 </script>
+<style scoped>
+.editable-row-operations a {
+  margin-right: 8px;
+}
+</style>

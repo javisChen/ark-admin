@@ -5,10 +5,10 @@
            v-model="visible"
            title="新建角色"
            ok-text="确认"
-           :confirmLoading="true"
+           :confirmLoading="confirmLoading"
            :destroyOnClose="true"
-           :footer="null"
            :closable="true"
+           @ok="submitForm"
            @cancel="handleClose"
            cancel-text="取消">
 
@@ -31,11 +31,8 @@
         </a-radio-group>
       </a-form-model-item>
 
-      <a-form-model-item :wrapper-col="{ span: 14, offset: 4 }">
-        <a-button type="primary" @click="submitForm()">确认</a-button>
-        <a-button style="margin-left: 10px;" @click="handleClose">关闭</a-button>
-      </a-form-model-item>
     </a-form-model>
+
   </a-modal>
 </template>
 
@@ -59,6 +56,7 @@ export default {
   props: {},
   data() {
     return {
+      confirmLoading: false,
       mode: FORM_MODE_ADD,
       visible: false,
       labelCol: {span: 6},
@@ -85,6 +83,7 @@ export default {
       this.visible = true
     },
     close() {
+      this.confirmLoading = false
       this.visible = false
       this.resetForm()
     },
@@ -99,23 +98,30 @@ export default {
       this.$emit('success', '')
       this.close()
     },
+    toggleConfirmLoading() {
+      this.confirmLoading = !this.confirmLoading
+    },
+    closeConfirmLoading() {
+      this.confirmLoading = false
+    },
     submitForm() {
       const $form = this.$refs['form'];
       $form.validate(async valid => {
         if (!valid) {
           return false;
         }
+        this.toggleConfirmLoading()
         const form = Object.assign({}, this.formModel)
         if (this.mode === FORM_MODE_ADD) {
           addRole(form)
             .then(({data}) => this.afterSuccess($form))
             .catch(e => e)
-            .finally()
+            .finally(() => this.closeConfirmLoading())
         } else {
           updateRole(form)
             .then(({data}) => this.afterSuccess($form))
             .catch(e => e)
-            .finally()
+            .finally(() => this.closeConfirmLoading())
         }
       });
     },

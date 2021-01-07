@@ -5,10 +5,10 @@
            v-model="visible"
            title="新建用户"
            ok-text="确认"
-           :confirmLoading="true"
+           :confirmLoading="confirmLoading"
            :destroyOnClose="true"
-           :footer="null"
            :closable="true"
+           @ok="submitForm"
            @cancel="handleClose"
            cancel-text="取消">
 
@@ -71,11 +71,12 @@ export default {
   props: {},
   data() {
     return {
+      confirmLoading: false,
       mode: FORM_MODE_ADD,
       visible: false,
       labelCol: {span: 6},
       wrapperCol: {span: 14},
-      formModel: Object.assign({}, defaultModel),
+      formModel: {...defaultModel},
       form: {},
       rules: {
         name: [{required: true, message: '请输入用户名称', trigger: 'blur'}],
@@ -96,6 +97,9 @@ export default {
     }
   },
   methods: {
+    toggleConfirmLoading() {
+      this.confirmLoading = !this.confirmLoading
+    },
     open(formModel, mode = FORM_MODE_ADD) {
       if (formModel) {
         this.formModel = Object.assign(this.formModel, formModel)
@@ -105,11 +109,12 @@ export default {
       this.visible = true
     },
     close() {
+      this.confirmLoading = false
       this.visible = false
       this.resetForm()
     },
     resetForm() {
-      this.formModel = Object.assign({}, defaultModel)
+      this.formModel = {...defaultModel}
     },
     handleClose() {
       this.close()
@@ -119,25 +124,29 @@ export default {
       this.$emit('success', '')
       this.close()
     },
+    closeConfirmLoading() {
+      this.confirmLoading = false
+    },
     submitForm() {
       const $form = this.$refs['form'];
       $form.validate(async valid => {
         if (!valid) {
           return false;
         }
-        const form = Object.assign({}, this.formModel)
+        const form = {...this.formModel}
         form.password = md5(form.password)
+        this.toggleConfirmLoading()
         if (this.mode === FORM_MODE_ADD) {
           addUser(form)
             .then(({data}) => this.afterSuccess($form))
             .catch(e => e)
-            .finally()
+            .finally(() => this.closeConfirmLoading())
         } else {
           delete form.phone;
           updateUser(form)
             .then(({data}) => this.afterSuccess($form))
             .catch(e => e)
-            .finally()
+            .finally(() => this.closeConfirmLoading())
         }
       });
     },

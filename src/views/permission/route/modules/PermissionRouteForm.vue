@@ -1,28 +1,27 @@
 <template>
 
   <a-modal
-    :width="650"
-    :centered="true"
+    :width="830"
     v-model="visible"
     title="新建路由"
     ok-text="确认"
-    :confirmLoading="true"
+    :confirmLoading="confirmLoading"
     :destroyOnClose="true"
-    :footer="null"
     :closable="true"
+    @ok="submitForm"
     @cancel="handleClose"
     cancel-text="取消">
 
     <a-form-model
-      layout="vertical"
+      layout="horizontal"
       v-if="formModel"
       ref="form"
       :model="formModel"
       :rules="rules"
-      :label-col="{span: 10}"
-      :wrapper-col="{span: 25}">
+      :label-col="{span: 8}"
+      :wrapper-col="{span: 16}">
 
-      <a-row :gutter="8">
+      <a-row :gutter="1">
         <a-col :span="12">
           <a-form-model-item ref="name" label="路由名称" prop="name" has-feedback>
             <a-input placeholder="路由名称" v-model="formModel.name"/>
@@ -95,42 +94,29 @@
           </a-form-model-item>
         </a-col>
         <a-col :span="12">
-          <a-form-model-item v-if="isMenuType" label="是否隐藏子路由" prop="hideChildren">
-            <a-switch checked-children="是" un-checked-children="否" v-model="formModel.hideChildren"/>
-          </a-form-model-item>
         </a-col>
       </a-row>
 
       <a-row :gutter="8">
         <a-col :span="12">
-          <a-form-model-item label="状态" prop="status" required>
-            <a-radio-group name="radioGroup" v-model="formModel.status" :default-value="1">
-              <a-radio-button :value="1">启用</a-radio-button>
-              <a-radio-button :value="2">禁用</a-radio-button>
-            </a-radio-group>
+          <a-form-model-item v-if="isMenuType" label="是否隐藏子路由" prop="hideChildren">
+            <a-switch checked-children="是" un-checked-children="否" v-model="formModel.hideChildren"/>
           </a-form-model-item>
         </a-col>
-        <a-col :span="12">
-<!--          <a-form-model-item v-if="isMenuType" label="是否隐藏子路由" prop="hideChildren">-->
-<!--            <a-switch checked-children="是" un-checked-children="否" v-model="formModel.hideChildren"/>-->
-<!--          </a-form-model-item>-->
-        </a-col>
       </a-row>
-
-
-      <a-form-model-item :wrapper-col="{ span: 14, offset: 4 }">
-        <a-button type="primary" @click="submitForm()">确认</a-button>
-        <a-button style="margin-left: 10px;" @click="handleClose">关闭</a-button>
-      </a-form-model-item>
     </a-form-model>
+
+    <!-- 页面元素 -->
+    <permission-page-element-table ref="elementTable" :element-data="formModel.elements"/>
+
   </a-modal>
 </template>
 
 <script>
 
 import {updateRoute, addRoute} from '@/api/route-api'
-
 import RouteComponentSelect from "./RouteComponentSelect";
+import PermissionPageElementTable from "./PermissionPageElementTable";
 
 const ROUTE_TYPE_MENU = 1
 const ROUTE_TYPE_PAGE = 2
@@ -145,6 +131,7 @@ const defaultModel = {
   icon: '',
   sequence: 0,
   hideChildren: false,
+  elements: [],
   type: ROUTE_TYPE_MENU
 }
 
@@ -159,7 +146,8 @@ const FORM_MODE_ADD = 'add';
 export default {
   name: 'PermissionRouteAddForm',
   components: {
-    RouteComponentSelect
+    RouteComponentSelect,
+    PermissionPageElementTable
   },
   props: {
     routes: {
@@ -170,9 +158,10 @@ export default {
   },
   data() {
     return {
+      confirmLoading: false,
       checkedType: ROUTE_TYPE_MENU,
-      visible: true,
-      labelCol: {span: 5},
+      visible: false,
+      labelCol: {span: 6},
       wrapperCol: {span: 10},
       formModel: Object.assign({}, defaultModel),
       type: FORM_MODE_EDIT,
@@ -202,11 +191,9 @@ export default {
       return this.formModel.levelPath.split('.').map(item => +item);
     },
     open(formModel, type = FORM_MODE_ADD) {
-      console.log(formModel)
       this.visible = true
       if (formModel) {
         this.formModel = Object.assign(this.formModel, formModel)
-        console.log(this.formModel)
         if (this.formModel.levelPath) {
           this.routesOptionsDefaultValue = this.stringArrConvertToNumberArr(this.formModel.levelPath.split('.'))
         }
@@ -214,6 +201,8 @@ export default {
       this.type = type
     },
     close() {
+      this.$refs['elementTable'].reset()
+      this.closeConfirmLoading()
       this.visible = false
       this.resetForm()
     },
@@ -226,8 +215,15 @@ export default {
       this.$emit('cancel', '')
     },
     afterSuccess: function ($form) {
+      this.toggleConfirmLoading()
       this.$emit('success', '')
       this.close()
+    },
+    toggleConfirmLoading() {
+      this.confirmLoading = !this.confirmLoading
+    },
+    closeConfirmLoading() {
+      this.confirmLoading = false
     },
     submitForm() {
       const $form = this.$refs['form'];
@@ -235,17 +231,19 @@ export default {
         if (!valid) {
           return false;
         }
+        this.toggleConfirmLoading()
         this.formModel.pid = this.formModel.pid || 0
+        this.formModel.elements = this.$refs['elementTable'].data
         if (this.type === FORM_MODE_ADD) {
           addRoute(this.formModel)
             .then(({data}) => this.afterSuccess($form))
             .catch(e => e)
-            .finally()
+            .finally(() => this.closeConfirmLoading())
         } else {
           updateRoute(this.formModel)
             .then(({data}) => this.afterSuccess($form))
             .catch(e => e)
-            .finally()
+            .finally(() => this.closeConfirmLoading())
         }
       });
     },

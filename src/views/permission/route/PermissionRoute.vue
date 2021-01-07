@@ -103,11 +103,8 @@
 
         <template slot="action" slot-scope="text, record">
           <k-tooltip-button title="添加子路由" @click="handleAddChildren(record)" icon="plus"/>&nbsp;
-          <k-tooltip-button v-if="record.type === 2" title="管理路由元素" @click="handleRouteElement(record)"
-                            icon="unordered-list"/>&nbsp;&nbsp;
           <k-tooltip-button title="编辑" @click="handleEdit(record)" icon="edit"/>&nbsp;
           <k-tooltip-button title="删除" @click="handleDelete(record)" type="danger" icon="delete"/>
-
         </template>
 
         <template slot="type" slot-scope="text, record">
@@ -119,7 +116,7 @@
         </template>
 
         <template slot="icon" slot-scope="text, record">
-          <a-icon :type="record.icon"></a-icon>
+          <a-icon v-if="record.icon" :type="record.icon"></a-icon>
         </template>
       </a-table>
 
@@ -130,16 +127,13 @@
                            @success="handleFormOnSuccess"
                            @cancel="handleEditFormCancel"/>
 
-    <permission-page-element-table ref="elementTable"/>
-
   </page-header-wrapper>
 </template>
 
 <script>
 
-import {getRoutes, deleteRoute, updateRouteStatus} from '@/api/route-api'
+import {getRoutes, deleteRoute, updateRouteStatus, getRoute} from '@/api/route-api'
 import PermissionRouteForm from './modules/PermissionRouteForm'
-import PermissionPageElementTable from './modules/PermissionPageElementTable'
 
 import {filterNonChildren} from "@/utils/util";
 
@@ -169,7 +163,6 @@ export default {
   name: 'PermissionRoute',
   components: {
     PermissionRouteForm,
-    PermissionPageElementTable
   },
   data() {
     return {
@@ -311,9 +304,6 @@ export default {
     rowKey(record) {
       return record.id
     },
-    handleRouteElement(record) {
-      this.$refs['elementTable'].open()
-    },
     handleAddChildren({levelPath, code, id, path}) {
       // 添加子路由的时候默认回显当前的路径、添加的pid就是当前父路由的id
       const model = {
@@ -325,7 +315,8 @@ export default {
       this.$refs['routeForm'].open(model, 'add')
     },
     async handleEdit(record) {
-      this.$refs['routeForm'].open(record, 'edit')
+      const {data} = await getRoute(record.id)
+      this.$refs['routeForm'].open(data, 'edit')
     },
     handleDelete(record) {
       this.$confirm({
@@ -343,12 +334,10 @@ export default {
     async loadTableData() {
       this.toggleLoading()
       const {data} = await getRoutes(this.queryParam)
-      console.log(data.records)
       this.routes = data.records.map(item => {
         filterNonChildren(item);
         return item;
       });
-      console.log(this.routes)
       this.pagination.total = data.total
       this.toggleLoading()
     }
