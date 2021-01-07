@@ -9,7 +9,7 @@ const api = {
 
 export default api
 
-export const getRouteTree = (data) => post({url: api.routeTree, data})
+export const getRoutesTree = (data) => post({url: api.routeTree, data})
 
 export const getRoutes = (data) => post({url: api.routes, data})
 

@@ -1,78 +1,122 @@
 <template>
 
-  <a-modal style="width: 1000px"
-           :centered="true"
-           v-model="visible"
-           title="新建路由"
-           ok-text="确认"
-           :confirmLoading="true"
-           :destroyOnClose="true"
-           :footer="null"
-           :closable="true"
-           @cancel="handleClose"
-           cancel-text="取消">
+  <a-modal
+    :width="650"
+    :centered="true"
+    v-model="visible"
+    title="新建路由"
+    ok-text="确认"
+    :confirmLoading="true"
+    :destroyOnClose="true"
+    :footer="null"
+    :closable="true"
+    @cancel="handleClose"
+    cancel-text="取消">
 
     <a-form-model
+      layout="vertical"
       v-if="formModel"
       ref="form"
       :model="formModel"
       :rules="rules"
-      :label-col="labelCol"
-      :wrapper-col="wrapperCol">
+      :label-col="{span: 10}"
+      :wrapper-col="{span: 25}">
 
-      <a-form-model-item ref="name" label="路由名称" prop="name" has-feedback>
-        <a-input placeholder="路由名称" v-model="formModel.name"/>
-      </a-form-model-item>
+      <a-row :gutter="8">
+        <a-col :span="12">
+          <a-form-model-item ref="name" label="路由名称" prop="name" has-feedback>
+            <a-input placeholder="路由名称" v-model="formModel.name"/>
+          </a-form-model-item>
+        </a-col>
+        <a-col :span="12">
+          <a-form-model-item label="路由编码" prop="code" has-feedback>
+            <a-input placeholder="路由编码（格式 一级路由:二级路由:三级路由:...）" v-model="formModel.code"/>
+          </a-form-model-item>
+        </a-col>
+      </a-row>
 
-      <a-form-model-item label="路由编码" prop="code" has-feedback>
-        <a-input placeholder="路由编码（格式 一级路由:二级路由:三级路由:...）" v-model="formModel.code"/>
-      </a-form-model-item>
+      <a-row :gutter="8">
+        <a-col :span="12">
+          <a-form-model-item label="路由组件" prop="component" has-feedback>
+            <route-component-select v-model="formModel.component"></route-component-select>
+          </a-form-model-item>
+        </a-col>
+        <a-col :span="12">
+          <a-form-model-item label="路由地址" prop="path" has-feedback>
+            <a-input v-model="formModel.path"/>
+          </a-form-model-item>
+        </a-col>
+      </a-row>
 
-      <a-form-model-item label="路由类型" prop="type">
-        <a-radio-group v-model="formModel.type" name="radioGroup">
-          <a-radio-button v-for="item in routeTypeOptions"
-                          :key="item.value"
-                          :value="item.value">{{ item.desc }}
-          </a-radio-button>
-        </a-radio-group>
-      </a-form-model-item>
+      <a-row :gutter="8">
+        <a-col :span="12">
+          <a-form-model-item label="所属路由" prop="pid" has-feedback>
+            <a-cascader popupPlacement="bottomLeft"
+                        :changeOnSelect="true"
+                        :options="routes"
+                        :fieldNames="{ label: 'name', value: 'id', children: 'children' }"
+                        placeholder="请选择所属路由"
+                        :default-value="routesOptionsDefaultValue"
+                        @change="onSelectRouteChange"/>
+          </a-form-model-item>
+        </a-col>
+        <a-col :span="12">
+          <a-form-model-item label="Icon" prop="icon">
+            <a-input placeholder="Icon" v-model="formModel.icon"/>
+          </a-form-model-item>
+        </a-col>
+      </a-row>
 
-      <a-form-model-item label="路由组件" prop="component" has-feedback>
-        <route-component-select v-model="formModel.component"></route-component-select>
-      </a-form-model-item>
+      <a-row :gutter="8">
+        <a-col :span="12">
+          <a-form-model-item label="排序" prop="sequence">
+            <a-input v-model="formModel.sequence" type="number"/>
+          </a-form-model-item>
+        </a-col>
+        <a-col :span="12">
+          <a-form-model-item label="状态" prop="status" required>
+            <a-radio-group name="radioGroup" v-model="formModel.status" :default-value="1">
+              <a-radio-button :value="1">启用</a-radio-button>
+              <a-radio-button :value="2">禁用</a-radio-button>
+            </a-radio-group>
+          </a-form-model-item>
+        </a-col>
+      </a-row>
 
-      <a-form-model-item label="状态" prop="status" required>
-        <a-radio-group name="radioGroup" v-model="formModel.status" :default-value="1">
-          <a-radio :value="1">启用</a-radio>
-          <a-radio :value="2">禁用</a-radio>
-        </a-radio-group>
-      </a-form-model-item>
+      <a-row :gutter="8">
+        <a-col :span="12">
+          <a-form-model-item label="路由类型" prop="type">
+            <a-radio-group v-model="formModel.type" name="radioGroup">
+              <a-radio-button v-for="item in routeTypeOptions"
+                              :key="item.value"
+                              :value="item.value">{{ item.desc }}
+              </a-radio-button>
+            </a-radio-group>
+          </a-form-model-item>
+        </a-col>
+        <a-col :span="12">
+          <a-form-model-item v-if="isMenuType" label="是否隐藏子路由" prop="hideChildren">
+            <a-switch checked-children="是" un-checked-children="否" v-model="formModel.hideChildren"/>
+          </a-form-model-item>
+        </a-col>
+      </a-row>
 
-      <a-form-model-item v-if="isMenuType" label="是否隐藏子路由" prop="hideChildren">
-        <a-switch checked-children="是" un-checked-children="否" v-model="formModel.hideChildren"/>
-      </a-form-model-item>
+      <a-row :gutter="8">
+        <a-col :span="12">
+          <a-form-model-item label="状态" prop="status" required>
+            <a-radio-group name="radioGroup" v-model="formModel.status" :default-value="1">
+              <a-radio-button :value="1">启用</a-radio-button>
+              <a-radio-button :value="2">禁用</a-radio-button>
+            </a-radio-group>
+          </a-form-model-item>
+        </a-col>
+        <a-col :span="12">
+<!--          <a-form-model-item v-if="isMenuType" label="是否隐藏子路由" prop="hideChildren">-->
+<!--            <a-switch checked-children="是" un-checked-children="否" v-model="formModel.hideChildren"/>-->
+<!--          </a-form-model-item>-->
+        </a-col>
+      </a-row>
 
-      <a-form-model-item label="所属路由" prop="pid" has-feedback>
-        <a-cascader popupPlacement="bottomLeft"
-                    :changeOnSelect="true"
-                    :options="routes"
-                    :fieldNames="{ label: 'name', value: 'id', children: 'children' }"
-                    placeholder="请选择所属路由"
-                    :default-value="routesOptionsDefaultValue"
-                    @change="onSelectRouteChange"/>
-      </a-form-model-item>
-
-      <a-form-model-item label="路由地址" prop="path" has-feedback >
-        <a-input v-model="formModel.path"/>
-      </a-form-model-item>
-
-      <a-form-model-item label="Icon" prop="icon">
-        <a-input placeholder="请输入路由名称" v-model="formModel.icon"/>
-      </a-form-model-item>
-
-      <a-form-model-item label="排序" prop="sequence">
-        <a-input v-model="formModel.sequence" type="number"/>
-      </a-form-model-item>
 
       <a-form-model-item :wrapper-col="{ span: 14, offset: 4 }">
         <a-button type="primary" @click="submitForm()">确认</a-button>
@@ -127,9 +171,9 @@ export default {
   data() {
     return {
       checkedType: ROUTE_TYPE_MENU,
-      visible: false,
-      labelCol: {span: 6},
-      wrapperCol: {span: 14},
+      visible: true,
+      labelCol: {span: 5},
+      wrapperCol: {span: 10},
       formModel: Object.assign({}, defaultModel),
       type: FORM_MODE_EDIT,
       form: {},

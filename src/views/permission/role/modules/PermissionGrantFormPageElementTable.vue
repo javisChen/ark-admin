@@ -1,15 +1,16 @@
 <template>
-  <a-tree
-    v-model="checkedKeys"
-    checkable
-    :expanded-keys="expandedKeys"
-    :auto-expand-parent="autoExpandParent"
-    :selected-keys="selectedKeys"
-    :tree-data="treeData"
-    @expand="onExpand"
-    @select="onSelect"
-  >
-  </a-tree>
+  <a-table
+    bordered
+    :pagination="false"
+    :loading="false"
+    :expandRowByClick="true"
+    :size="'small'"
+    :indent-size="15"
+    :row-key="rowKey"
+    :columns="columns"
+    :data-source="tableData">
+
+  </a-table>
 </template>
 
 <script>
@@ -68,8 +69,38 @@ const treeData = [
 ];
 
 export default {
+  name: 'PermissionGrantRouteTree',
   data() {
     return {
+      columns: [
+        {
+          title: '用户名称',
+          dataIndex: 'name',
+          width: 100
+        },
+        {
+          title: '手机号码',
+          dataIndex: 'phone',
+          width: 100,
+          customRender: (text, row, index) => {
+            return text || '-'
+          },
+        },
+        {
+          title: '状态',
+          dataIndex: 'status',
+          width: 50,
+          align: "center",
+          scopedSlots: {customRender: 'status'},
+        },
+        {
+          title: '操作',
+          width: 50,
+          align: 'center',
+          scopedSlots: {customRender: 'action'},
+        },
+      ],
+      tableData: [],
       expandedKeys: ['0-0-0', '0-0-1'],
       autoExpandParent: true,
       checkedKeys: ['0-0-0'],
@@ -86,12 +117,12 @@ export default {
     // this.loadTreeData()
   },
   methods: {
+    rowKey(record) {
+      return record.id
+    },
     async loadTreeData() {
       const {data} = await getUserGroupsTree({})
-      this.treeData = data.map(item => {
-        item.scopedSlots = {title: 'custom'}
-        return item
-      })
+      this.treeData = data
     },
     onExpand(expandedKeys) {
       console.log('onExpand', expandedKeys);

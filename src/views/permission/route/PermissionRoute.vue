@@ -102,9 +102,12 @@
         </template>
 
         <template slot="action" slot-scope="text, record">
-          <a-button @click="handleAddChildren(record)" size="small" type="primary" shape="circle" icon="plus"/>&nbsp;
-          <a-button @click="handleEdit(record)" size="small" type="primary" shape="circle" icon="edit"/>&nbsp;
-          <a-button @click="handleDelete(record)" alt="删除" size="small" type="danger" shape="circle" icon="delete"/>
+          <k-tooltip-button title="添加子路由" @click="handleAddChildren(record)" icon="plus"/>&nbsp;
+          <k-tooltip-button v-if="record.type === 2" title="管理路由元素" @click="handleRouteElement(record)"
+                            icon="unordered-list"/>&nbsp;&nbsp;
+          <k-tooltip-button title="编辑" @click="handleEdit(record)" icon="edit"/>&nbsp;
+          <k-tooltip-button title="删除" @click="handleDelete(record)" type="danger" icon="delete"/>
+
         </template>
 
         <template slot="type" slot-scope="text, record">
@@ -127,14 +130,17 @@
                            @success="handleFormOnSuccess"
                            @cancel="handleEditFormCancel"/>
 
+    <permission-page-element-table ref="elementTable"/>
+
   </page-header-wrapper>
 </template>
 
 <script>
 
-
 import {getRoutes, deleteRoute, updateRouteStatus} from '@/api/route-api'
 import PermissionRouteForm from './modules/PermissionRouteForm'
+import PermissionPageElementTable from './modules/PermissionPageElementTable'
+
 import {filterNonChildren} from "@/utils/util";
 
 const routeStatusDictionary = {
@@ -163,10 +169,11 @@ export default {
   name: 'PermissionRoute',
   components: {
     PermissionRouteForm,
+    PermissionPageElementTable
   },
   data() {
     return {
-      defaultExpandAllRows: false,
+      defaultExpandAllRows: true,
       tableLoading: false,
       advanced: false,
       queryParam: {},
@@ -249,7 +256,7 @@ export default {
         {
           title: '操作',
           fixed: 'right',
-          width: 100,
+          width: 150,
           align: 'center',
           scopedSlots: {customRender: 'action'},
         },
@@ -304,9 +311,10 @@ export default {
     rowKey(record) {
       return record.id
     },
+    handleRouteElement(record) {
+      this.$refs['elementTable'].open()
+    },
     handleAddChildren({levelPath, code, id, path}) {
-      console.log(id)
-      console.log(path)
       // 添加子路由的时候默认回显当前的路径、添加的pid就是当前父路由的id
       const model = {
         levelPath,

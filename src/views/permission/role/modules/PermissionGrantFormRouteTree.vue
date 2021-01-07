@@ -1,20 +1,26 @@
 <template>
-  <a-tree
-    v-model="checkedKeys"
-    checkable
-    :expanded-keys="expandedKeys"
-    :auto-expand-parent="autoExpandParent"
-    :selected-keys="selectedKeys"
-    :tree-data="treeData"
-    @expand="onExpand"
-    @select="onSelect"
+
+  <a-card title="路由列表"
+          size="small"
   >
-  </a-tree>
+    <a-tree
+      v-model="checkedKeys"
+      checkable
+      :replaceFields="replaceFields"
+      :expanded-keys="expandedKeys"
+      :auto-expand-parent="autoExpandParent"
+      :selected-keys="selectedKeys"
+      :tree-data="treeData"
+      @expand="onExpand"
+      @select="onSelect"
+    >
+    </a-tree>
+  </a-card>
 </template>
 
 <script>
 
-import {getUserGroupsTree} from "@/api/usergroup-api";
+import {getRoutesTree} from '@/api/route-api'
 
 const treeData = [
   {
@@ -68,8 +74,10 @@ const treeData = [
 ];
 
 export default {
+  name: 'PermissionGrantRouteTree',
   data() {
     return {
+      replaceFields: {children: 'children', title: 'name', key: 'id'},
       expandedKeys: ['0-0-0', '0-0-1'],
       autoExpandParent: true,
       checkedKeys: ['0-0-0'],
@@ -83,15 +91,12 @@ export default {
     },
   },
   created() {
-    // this.loadTreeData()
+    this.loadTreeData()
   },
   methods: {
     async loadTreeData() {
-      const {data} = await getUserGroupsTree({})
-      this.treeData = data.map(item => {
-        item.scopedSlots = {title: 'custom'}
-        return item
-      })
+      const {data} = await getRoutesTree({})
+      this.treeData = data
     },
     onExpand(expandedKeys) {
       console.log('onExpand', expandedKeys);

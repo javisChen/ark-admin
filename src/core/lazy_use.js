@@ -57,10 +57,12 @@ import Viser from 'viser-vue'
 import VueCropper from 'vue-cropper'
 import Dialog from '@/components/Dialog'
 import MultiTab from '@/components/MultiTab'
+import KTooltipButton from '@/components/KTooltipButton'
 import PageLoading from '@/components/PageLoading'
 import PermissionHelper from '@/core/permission/permission'
 import './directives/action'
 
+Vue.use(KTooltipButton)
 Vue.use(Empty)
 Vue.use(FormModel)
 Vue.use(ConfigProvider)

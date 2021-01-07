@@ -1,36 +1,36 @@
 <template>
   <page-header-wrapper>
     <a-card :bordered="false">
-            <div class="table-page-search-wrapper">
-              <a-form layout="inline">
-                <a-row :gutter="48">
-                  <a-col :md="8" :sm="24">
-                    <a-form-item label="用户名称">
-                      <a-input v-model="queryParam.name" placeholder=""/>
-                    </a-form-item>
-                  </a-col>
-                  <a-col :md="8" :sm="24">
-                    <a-form-item label="使用状态">
-                      <a-select v-model="queryParam.status" placeholder="请选择" :default-value="0"
-                                @change="handleQueryStatusChange">
-                        <a-select-option v-for="(value, key) in routeStatusDictionary"
-                                         :key="key"
-                                         :value="key">
-                          {{ value }}
-                        </a-select-option>
-                      </a-select>
-                    </a-form-item>
-                  </a-col>
-                  <a-col :md="!advanced && 8 || 24" :sm="24">
-                          <span class="table-page-search-submitButtons"
-                                :style="advanced && { float: 'right', overflow: 'hidden' } || {} ">
-                            <a-button type="primary" @click="loadTableData">查询</a-button>
-                            <a-button style="margin-left: 8px" @click="resetQueryParams">重置</a-button>
-                          </span>
-                  </a-col>
-                </a-row>
-              </a-form>
-            </div>
+<!--      <div class="table-page-search-wrapper">-->
+<!--        <a-form layout="inline">-->
+<!--          <a-row :gutter="48">-->
+<!--            <a-col :md="8" :sm="24">-->
+<!--              <a-form-item label="用户名称">-->
+<!--                <a-input v-model="queryParam.name" placeholder=""/>-->
+<!--              </a-form-item>-->
+<!--            </a-col>-->
+<!--            <a-col :md="8" :sm="24">-->
+<!--              <a-form-item label="使用状态">-->
+<!--                <a-select v-model="queryParam.status" placeholder="请选择" :default-value="0"-->
+<!--                          @change="handleQueryStatusChange">-->
+<!--                  <a-select-option v-for="(value, key) in routeStatusDictionary"-->
+<!--                                   :key="key"-->
+<!--                                   :value="key">-->
+<!--                    {{ value }}-->
+<!--                  </a-select-option>-->
+<!--                </a-select>-->
+<!--              </a-form-item>-->
+<!--            </a-col>-->
+<!--            <a-col :md="!advanced && 8 || 24" :sm="24">-->
+<!--                          <span class="table-page-search-submitButtons"-->
+<!--                                :style="advanced && { float: 'right', overflow: 'hidden' } || {} ">-->
+<!--                            <a-button type="primary" @click="loadTableData">查询</a-button>-->
+<!--                            <a-button style="margin-left: 8px" @click="resetQueryParams">重置</a-button>-->
+<!--                          </span>-->
+<!--            </a-col>-->
+<!--          </a-row>-->
+<!--        </a-form>-->
+<!--      </div>-->
 
       <div class="table-operator">
         <a-button type="primary" icon="plus" @click="showRoleForm">新建角色</a-button>
@@ -67,10 +67,9 @@
         </template>
 
         <template slot="action" slot-scope="text, record">
-          <!--          <a-button v-if="!record.children || record.children.length === 0"-->
-          <!--                    @click="handleAddChildren(record)" size="small" type="primary" shape="circle" icon="plus"/>&nbsp;-->
-          <a-button @click="handleEdit(record)" size="small" type="primary" shape="circle" icon="edit"/>&nbsp;
-          <a-button @click="handleDelete(record)" alt="删除" size="small" type="danger" shape="circle" icon="delete"/>
+          <k-tooltip-button title="编辑" @click="handleEdit(record)" icon="edit"/>&nbsp;
+          <k-tooltip-button title="授权" @click="handleGrant(record)" type="primary" icon="safety"/>&nbsp;
+          <k-tooltip-button title="删除" @click="handleDelete(record)" type="danger" icon="delete"/>
         </template>
       </a-table>
       <a-empty v-else/>
@@ -78,9 +77,14 @@
     </a-card>
 
     <!-- 创建路由信息表单-->
-    <permission-role-form  ref="roleForm"
-                           @success="handleFormOnSuccess"
-                           @cancel="handleEditFormCancel"/>
+    <permission-role-form ref="roleForm"
+                          @success="handleFormOnSuccess"
+                          @cancel="handleEditFormCancel"/>
+
+    <!-- 授权窗口-->
+    <permission-grant-form ref="grantForm"
+                          @success="handleFormOnSuccess"
+                          @cancel="handleEditFormCancel"/>
 
   </page-header-wrapper>
 
@@ -90,18 +94,7 @@
 
 import {getRoles} from '@/api/role-api'
 import PermissionRoleForm from "./modules/PermissionRoleForm";
-
-const rowSelection = {
-  onChange: (selectedRowKeys, selectedRows) => {
-    console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
-  },
-  onSelect: (record, selected, selectedRows) => {
-    console.log(record, selected, selectedRows);
-  },
-  onSelectAll: (selected, selectedRows, changeRows) => {
-    console.log(selected, selectedRows, changeRows);
-  },
-};
+import PermissionGrantForm from "./modules/PermissionGrantForm";
 
 const routeStatusDictionary = {
   1: '已启用',
@@ -122,15 +115,13 @@ const pagination = {
 const queryParam = {
   current: 1,
   size: 15,
-  params: {
-
-  }
 }
 
 export default {
   name: 'PermissionRole',
   components: {
-    PermissionRoleForm
+    PermissionRoleForm,
+    PermissionGrantForm
   },
   data() {
     return {
@@ -165,7 +156,6 @@ export default {
           scopedSlots: {customRender: 'action'},
         },
       ],
-      rowSelection,
       selectedRoute: {},
       routeStatusDictionary,
       roleFormVisible: false,
@@ -215,6 +205,9 @@ export default {
     rowKey(record) {
       return record.id
     },
+    handleGrant(record) {
+      this.$refs['grantForm'].open()
+    },
     handleDelete(record) {
       this.$confirm({
         title: `提示`,
@@ -228,6 +221,7 @@ export default {
     },
     async loadTableData() {
       this.toggleLoading()
+      console.log(this.queryParam)
       const {data} = await getRoles(this.queryParam)
       this.tableData = data.records;
       this.pagination.total = data.total

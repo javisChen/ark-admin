@@ -6,7 +6,6 @@
     show-search
     placeholder="请选择路由组件"
     option-filter-prop="children"
-    style="width: 200px"
     :filter-option="filterOption"
   >
     <a-select-option v-for="(key, value) in routerComponents" :key="value" :value="value">

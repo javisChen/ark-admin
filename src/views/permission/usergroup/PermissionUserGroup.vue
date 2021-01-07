@@ -67,8 +67,8 @@
         </template>
 
         <template slot="action" slot-scope="text, record">
-          <a-button @click="handleEdit(record)" size="small" type="primary" shape="circle" icon="edit"/>&nbsp;
-          <a-button @click="handleDelete(record)" alt="删除" size="small" type="danger" shape="circle" icon="delete"/>
+          <k-tooltip-button title="编辑" @click="handleEdit(record)" icon="edit"/>&nbsp;
+          <k-tooltip-button title="删除" @click="handleDelete(record)" type="danger" icon="delete"/>
         </template>
       </a-table>
       <a-empty v-else/>
