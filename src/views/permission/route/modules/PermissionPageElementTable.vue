@@ -55,7 +55,7 @@
         </span>
           <span v-else>
           <a :disabled="editingKey !== ''" @click="() => edit(record.key)">编辑</a>
-          <a-popconfirm title="确定删除元素?" @confirm="() => cancel(record.key)">
+          <a-popconfirm title="确定删除元素?" @confirm="() => remove(index)">
             <a>删除</a>
           </a-popconfirm>
         </span>
@@ -84,7 +84,7 @@ const columns = [
     title: '操作',
     dataIndex: 'operation',
     scopedSlots: {customRender: 'operation'},
-  },
+  }
 ];
 
 const data = [];
@@ -104,19 +104,17 @@ export default {
     },
   },
   data() {
-    this.cacheData = data.map(item => ({...item}));
     return {
       typeDictionary,
       data: this.elementData,
       count: data.length,
       columns,
-      editingKey: '',
+      editingKey: ''
     };
   },
   methods: {
     rowKey(record) {
-      console.log(record)
-      return record.id
+      return record.id || record.key
     },
     reset() {
       this.data = []
@@ -127,17 +125,15 @@ export default {
     handleAddElement() {
       this.addCount()
       this.data.push({
-        key: this.count,
+        key: new Date().getTime() + Math.ceil(Math.random() * 999),
         name: '',
         type: 1,
       });
-      this.cacheData = [...this.data]
     },
     addCount() {
       this.count++
     },
     handleChange(value, key, column) {
-      console.log(value)
       const newData = [...this.data];
       const target = newData.filter(item => key === item.key)[0];
       if (target) {
@@ -156,23 +152,24 @@ export default {
     },
     save(key) {
       const newData = [...this.data];
-      const newCacheData = [...this.cacheData];
       const target = newData.filter(item => key === item.key)[0];
-      const targetCache = newCacheData.filter(item => key === item.key)[0];
-      if (target && targetCache) {
+      if (target) {
         delete target.editable;
         this.data = newData;
-        Object.assign(targetCache, target);
-        this.cacheData = newCacheData;
       }
       this.editingKey = '';
+    },
+    remove(idx) {
+      console.log(idx)
+      let newData = [...this.data];
+      newData.splice(idx, 1)
+      this.data = newData;
     },
     cancel(key) {
       const newData = [...this.data];
       const target = newData.filter(item => key === item.key)[0];
       this.editingKey = '';
       if (target) {
-        Object.assign(target, this.cacheData.filter(item => key === item.key)[0]);
         delete target.editable;
         this.data = newData;
       }

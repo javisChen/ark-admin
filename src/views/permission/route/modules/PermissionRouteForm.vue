@@ -8,6 +8,7 @@
     :confirmLoading="confirmLoading"
     :destroyOnClose="true"
     :closable="true"
+    :centered="true"
     @ok="submitForm"
     @cancel="handleClose"
     cancel-text="取消">
