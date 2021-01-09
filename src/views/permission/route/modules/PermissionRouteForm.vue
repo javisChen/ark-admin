@@ -107,7 +107,7 @@
       </a-row>
     </a-form-model>
 
-    <!-- 页面元素 -->
+    <!-- 页面元素表格 -->
     <permission-page-element-table ref="elementTable" :element-data="formModel.elements"/>
 
   </a-modal>
@@ -232,9 +232,13 @@ export default {
         if (!valid) {
           return false;
         }
-        this.toggleConfirmLoading()
         this.formModel.pid = this.formModel.pid || 0
         this.formModel.elements = this.$refs['elementTable'].data
+        if (!this.checkElementsIsValid()) {
+          console.log('invalid')
+          return false
+        }
+        this.toggleConfirmLoading()
         if (this.type === FORM_MODE_ADD) {
           addRoute(this.formModel)
             .then(({data}) => this.afterSuccess($form))
@@ -248,6 +252,21 @@ export default {
         }
       });
     },
+    checkElementsIsValid() {
+      let f = true;
+      let hasEditable = false
+      const els = this.formModel.elements
+      for (let i = 0; i < els.length; i++) {
+        const item = els[i]
+        if (!item.name || item.editable) {
+          item.showError = true
+          f = false
+        }
+      }
+      console.log(els)
+      // this.formModel.elements = els
+      return f;
+    }
   },
   created() {
   }

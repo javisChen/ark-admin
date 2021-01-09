@@ -23,14 +23,28 @@
         slot-scope="text, record, index">
         <div :key="col">
           <template v-if="record.editable">
-            <a-input
-              v-if="col === 'name'"
-              :value="text"
-              @change="e => handleChange(e.target.value, record.key, col)"
-            />
+            <div v-if="col === 'name'" style="position: relative">
+              <a-input :style="(record.showError)? 'border: 1px solid #f5222d': ''"
+                :value="text"
+                @change="e => handleChange(e.target.value, record.id, col)"/>
+              <div v-if="(record.showError)" style="color: #f5222d">
+              <span class="ant-form-item-children-icon"
+                    style="position:absolute;top: 9%;right: 6px;">
+                <i aria-label="图标: close-circle"
+                   class="anticon anticon-close-circle">
+                  <svg viewBox="64 64 896 896" data-icon="close-circle" width="1em" height="1em" fill="currentColor"
+                       aria-hidden="true" focusable="false" class="">
+                    <path
+                      d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm165.4 618.2l-66-.3L512 563.4l-99.3 118.4-66.1.3c-4.4 0-8-3.5-8-8 0-1.9.7-3.7 1.9-5.2l130.1-155L340.5 359a8.32 8.32 0 0 1-1.9-5.2c0-4.4 3.6-8 8-8l66.1.3L512 464.6l99.3-118.4 66-.3c4.4 0 8 3.5 8 8 0 1.9-.7 3.7-1.9 5.2L553.5 514l130 155c1.2 1.5 1.9 3.3 1.9 5.2 0 4.4-3.6 8-8 8z"></path>
+                  </svg>
+                </i>
+              </span>
+                <span>请输入元素名称并保存</span>
+              </div>
+            </div>
             <a-select style="width: 100%"
                       v-else-if="col === 'type'"
-                      @change="e => handleChange(e, record.key, col)"
+                      @change="e => handleChange(e, record.id, col)"
                       placeholder="请选择"
                       :value="record.type"
                       :default-value="1">
@@ -50,11 +64,11 @@
       <template slot="operation" slot-scope="text, record, index">
         <div class="editable-row-operations">
         <span v-if="record.editable">
-          <a @click="() => save(record.key)">保存</a>
-          <a @click="() => cancel(record.key)">取消</a>
+          <a @click="() => save(record)">保存</a>
+          <a @click="() => cancel(record.id)">取消</a>
         </span>
           <span v-else>
-          <a :disabled="editingKey !== ''" @click="() => edit(record.key)">编辑</a>
+          <a :disabled="editingKey !== ''" @click="() => edit(record.id)">编辑</a>
           <a-popconfirm title="确定删除元素?" @confirm="() => remove(index)">
             <a>删除</a>
           </a-popconfirm>
@@ -67,6 +81,8 @@
 </template>
 
 <script>
+import cloneDeep from 'lodash.clonedeep'
+
 const columns = [
   {
     title: '元素名称',
@@ -106,53 +122,62 @@ export default {
   data() {
     return {
       typeDictionary,
-      data: this.elementData,
-      count: data.length,
+      data: cloneDeep(this.elementData),
       columns,
       editingKey: ''
     };
   },
+  created() {
+    this.cacheData = this.data.map(item => ({...item}))
+  },
   methods: {
     rowKey(record) {
-      return record.id || record.key
+      return record.id
     },
     reset() {
+      console.log('reset')
       this.data = []
+      console.log(this.data)
+      console.log(this.elementData)
     },
     getTypeDesc(value) {
       return typeDictionary[value]
     },
     handleAddElement() {
-      this.addCount()
-      this.data.push({
-        key: new Date().getTime() + Math.ceil(Math.random() * 999),
+      const item = {
+        id: new Date().getTime() + Math.ceil(Math.random() * 999),
         name: '',
         type: 1,
-      });
-    },
-    addCount() {
-      this.count++
+        editable: true,
+        showError: false
+      }
+      this.data.push(item);
     },
     handleChange(value, key, column) {
       const newData = [...this.data];
-      const target = newData.filter(item => key === item.key)[0];
+      const target = newData.filter(item => key === item.id)[0];
       if (target) {
         target[column] = value;
+        target.showError = !value;
         this.data = newData;
       }
     },
     edit(key) {
       const newData = [...this.data];
-      const target = newData.filter(item => key === item.key)[0];
+      const target = newData.filter(item => key === item.id)[0];
       this.editingKey = key;
       if (target) {
         target.editable = true;
         this.data = newData;
       }
     },
-    save(key) {
+    save(record) {
+      if (!record.name) {
+        record.showError = true
+        return false
+      }
       const newData = [...this.data];
-      const target = newData.filter(item => key === item.key)[0];
+      const target = newData.filter(item => record.id === item.id)[0];
       if (target) {
         delete target.editable;
         this.data = newData;
@@ -160,14 +185,11 @@ export default {
       this.editingKey = '';
     },
     remove(idx) {
-      console.log(idx)
-      let newData = [...this.data];
-      newData.splice(idx, 1)
-      this.data = newData;
+      this.data.splice(idx, 1)
     },
     cancel(key) {
       const newData = [...this.data];
-      const target = newData.filter(item => key === item.key)[0];
+      const target = newData.filter(item => key === item.id)[0];
       this.editingKey = '';
       if (target) {
         delete target.editable;

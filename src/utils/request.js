@@ -48,7 +48,7 @@ const errorHandler = (error) => {
         })
       }
     }
-    if (error.response.status === 400) {
+    if (error.response.status === 400 || error.response.status === 500) {
       const result = error.response.data
       notification.error({
         message: '出了点小问题~',

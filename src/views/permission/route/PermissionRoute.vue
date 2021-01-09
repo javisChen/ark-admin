@@ -147,7 +147,6 @@ const routeTypeDictionary = {
   2: '页面路由'
 }
 
-
 const pagination = {
   showSizeChanger: true,
   position: 'bottom',
@@ -159,6 +158,11 @@ const pagination = {
   total: 0
 }
 
+const queryParam = {
+  current: pagination.defaultCurrent,
+  size: pagination.defaultPageSize
+}
+
 export default {
   name: 'PermissionRoute',
   components: {
@@ -166,10 +170,10 @@ export default {
   },
   data() {
     return {
-      defaultExpandAllRows: true,
+      defaultExpandAllRows: false,
       tableLoading: false,
       advanced: false,
-      queryParam: {},
+      queryParam,
       routes: [],
       pagination,
       columns: [
