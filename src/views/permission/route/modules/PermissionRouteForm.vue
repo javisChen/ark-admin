@@ -108,7 +108,7 @@
     </a-form-model>
 
     <!-- 页面元素表格 -->
-    <permission-page-element-table ref="elementTable" :element-data="formModel.elements"/>
+    <permission-page-element-table v-if="!isMenuType" ref="elementTable" :element-data="formModel.elements"/>
 
   </a-modal>
 </template>
@@ -202,7 +202,9 @@ export default {
       this.type = type
     },
     close() {
-      this.$refs['elementTable'].reset()
+      if (this.$refs['elementTable']) {
+        this.$refs['elementTable'].reset()
+      }
       this.closeConfirmLoading()
       this.visible = false
       this.resetForm()
@@ -233,9 +235,10 @@ export default {
           return false;
         }
         this.formModel.pid = this.formModel.pid || 0
-        this.formModel.elements = this.$refs['elementTable'].data
+        if (this.$refs['elementTable']) {
+          this.formModel.elements = this.$refs['elementTable'].data
+        }
         if (!this.checkElementsIsValid()) {
-          console.log('invalid')
           return false
         }
         this.toggleConfirmLoading()
@@ -253,8 +256,10 @@ export default {
       });
     },
     checkElementsIsValid() {
+      if (!this.formModel.elements || this.formModel.elements.length === 0) {
+        return true
+      }
       let f = true;
-      let hasEditable = false
       const els = this.formModel.elements
       for (let i = 0; i < els.length; i++) {
         const item = els[i]
@@ -263,8 +268,6 @@ export default {
           f = false
         }
       }
-      console.log(els)
-      // this.formModel.elements = els
       return f;
     }
   },

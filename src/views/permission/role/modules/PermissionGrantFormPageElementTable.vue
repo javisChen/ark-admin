@@ -68,38 +68,37 @@ const treeData = [
   },
 ];
 
+const columns = [
+  {
+    title: '权限编号',
+    dataIndex: 'name',
+    width: '33%',
+    scopedSlots: {customRender: 'name'},
+  },
+  {
+    title: '元素名称',
+    dataIndex: 'name',
+    width: '33%',
+    scopedSlots: {customRender: 'name'},
+  },
+  {
+    title: '元素类型',
+    dataIndex: 'age',
+    width: '33%',
+    scopedSlots: {customRender: 'type'},
+  },
+  {
+    title: '操作',
+    dataIndex: 'operation',
+    scopedSlots: {customRender: 'operation'},
+  }
+];
+
 export default {
   name: 'PermissionGrantRouteTree',
   data() {
     return {
-      columns: [
-        {
-          title: '用户名称',
-          dataIndex: 'name',
-          width: 100
-        },
-        {
-          title: '手机号码',
-          dataIndex: 'phone',
-          width: 100,
-          customRender: (text, row, index) => {
-            return text || '-'
-          },
-        },
-        {
-          title: '状态',
-          dataIndex: 'status',
-          width: 50,
-          align: "center",
-          scopedSlots: {customRender: 'status'},
-        },
-        {
-          title: '操作',
-          width: 50,
-          align: 'center',
-          scopedSlots: {customRender: 'action'},
-        },
-      ],
+      columns,
       tableData: [],
       expandedKeys: ['0-0-0', '0-0-1'],
       autoExpandParent: true,
