@@ -206,7 +206,7 @@ export default {
       return record.id
     },
     handleGrant(record) {
-      this.$refs['grantForm'].open()
+      this.$refs['grantForm'].open(record)
     },
     handleDelete(record) {
       this.$confirm({

@@ -83,6 +83,8 @@
 <script>
 import cloneDeep from 'lodash.clonedeep'
 
+import {pageElementTypeDictionary} from '../../dictionary'
+
 const columns = [
   {
     title: '元素名称',
@@ -105,11 +107,6 @@ const columns = [
 
 const data = [];
 
-const typeDictionary = {
-  1: 'Button',
-  2: 'Div'
-}
-
 export default {
   name: 'PermissionPageElementTable',
   props: {
@@ -121,7 +118,7 @@ export default {
   },
   data() {
     return {
-      typeDictionary,
+      typeDictionary: pageElementTypeDictionary,
       data: cloneDeep(this.elementData),
       columns,
       editingKey: ''
@@ -137,11 +134,9 @@ export default {
     reset() {
       console.log('reset')
       this.data = []
-      console.log(this.data)
-      console.log(this.elementData)
     },
     getTypeDesc(value) {
-      return typeDictionary[value]
+      return this.typeDictionary[value]
     },
     handleAddElement() {
       const item = {

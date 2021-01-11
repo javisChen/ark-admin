@@ -4,11 +4,12 @@
     :width="1000"
     :centered="false"
     v-model="visible"
-    title="授权"
-    ok-text="保存授权"
+    :title="'角色授权：' + this.role.name"
+    :ok-text="okText"
     :confirmLoading="confirmLoading"
     :destroyOnClose="true"
     :closable="true"
+    @ok="handleOk"
     @cancel="handleClose"
     cancel-text="取消">
 
@@ -18,14 +19,7 @@
       :defaultActiveTabKey="defaultActiveTabKey"
       @tabChange="key => onTabChange(key, 'noTitleKey')">
       <template v-if="activeTabKey === 'route'">
-        <a-row :gutter="16">
-          <a-col :span="6">
-            <permission-grant-form-route-tree/>
-          </a-col>
-          <a-col :span="18">
-            <permission-grant-form-page-element-table/>
-          </a-col>
-        </a-row>
+        <permission-grant-route-form :role-id="role.id" ref="grantRouteForm"/>
       </template>
       <template v-if="activeTabKey === 'api'">
         123
@@ -36,8 +30,9 @@
 
 <script>
 
-import PermissionGrantFormRouteTree from "./PermissionGrantFormRouteTree";
-import PermissionGrantFormPageElementTable from "./PermissionGrantFormPageElementTable";
+import PermissionGrantRouteForm from "./PermissionGrantRouteForm";
+import {updateRolePermission, getRolePermissionRoutes, getRolePermissionElements} from "@/api/role-api";
+
 
 const defaultModel = {
   id: '',
@@ -45,16 +40,13 @@ const defaultModel = {
   status: 1,
 }
 
-
 const defaultActiveTabKey = 'route';
 const activeTabKey = 'route'
-
 
 export default {
   name: 'PermissionGrantForm',
   components: {
-    PermissionGrantFormRouteTree,
-    PermissionGrantFormPageElementTable
+    PermissionGrantRouteForm
   },
   props: {},
   data() {
@@ -72,19 +64,31 @@ export default {
         },
       ],
       confirmLoading: false,
-      visible: true,
+      visible: false,
+      role: {},
+      okText: '保存路由授权',
+      rolePermissionRoutes: [],
+      rolePermissionElements: [],
     }
   },
-  computed: {},
+  created() {
+  },
   methods: {
+    toggleConfirmLoading() {
+      this.confirmLoading = !this.confirmLoading
+    },
     onTabChange(key) {
       this.activeTabKey = key;
-    },
-    open(formModel, mode = FORM_MODE_ADD) {
-      if (formModel) {
-        this.formModel = Object.assign(this.formModel, formModel)
+      let keyName = ''
+      if (key === 'route') {
+        keyName = '路由'
+      } else if (key === 'api') {
+        keyName = '接口'
       }
-      this.mode = mode
+      this.okText = `保存${keyName}授权`
+    },
+    open(role) {
+      this.role = role
       this.visible = true
     },
     close() {
@@ -94,6 +98,22 @@ export default {
     resetForm() {
       this.formModel = Object.assign({}, defaultModel)
     },
+    async handleOk() {
+      this.toggleConfirmLoading()
+      try {
+        if (this.activeTabKey === 'route') {
+          const checkedPermissions = this.$refs['grantRouteForm'].getCheckedPermissions()
+          if (checkedPermissions && checkedPermissions.length > 0) {
+            await updateRolePermission({roleId: this.role.id, permissionIds: checkedPermissions})
+          }
+        } else if (this.activeTabKey === 'api') {
+          // updateRolePermission({roleId: this.role.id,})
+        }
+      } catch (e) {
+      } finally {
+        this.toggleConfirmLoading()
+      }
+    },
     handleClose() {
       this.close()
       this.$emit('cancel', '')
@@ -101,9 +121,7 @@ export default {
     afterSuccess: function ($form) {
       this.$emit('success', '')
       this.close()
-    },
+    }
   },
-  created() {
-  }
 }
 </script>
