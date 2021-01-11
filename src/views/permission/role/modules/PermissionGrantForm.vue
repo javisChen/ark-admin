@@ -102,13 +102,19 @@ export default {
       this.toggleConfirmLoading()
       try {
         if (this.activeTabKey === 'route') {
-          const checkedPermissions = this.$refs['grantRouteForm'].getCheckedPermissions()
-          if (checkedPermissions && checkedPermissions.length > 0) {
-            await updateRolePermission({roleId: this.role.id, permissionIds: checkedPermissions})
-          }
+          const checkedPermission = this.$refs['grantRouteForm'].getCheckedPermission()
+          console.log('checkedPermission', checkedPermission)
+          const data = {
+            roleId: this.role.id,
+            routePermissionIds: checkedPermission.checkedRoutePermissions,
+            elementPermissionIds: checkedPermission.checkedElementPermissions
+          };
+          await updateRolePermission(data)
         } else if (this.activeTabKey === 'api') {
           // updateRolePermission({roleId: this.role.id,})
         }
+
+        this.afterSuccess()
       } catch (e) {
       } finally {
         this.toggleConfirmLoading()
@@ -118,7 +124,7 @@ export default {
       this.close()
       this.$emit('cancel', '')
     },
-    afterSuccess: function ($form) {
+    afterSuccess: function () {
       this.$emit('success', '')
       this.close()
     }

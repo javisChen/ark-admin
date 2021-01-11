@@ -122,7 +122,7 @@ export default {
       data: cloneDeep(this.elementData),
       columns,
       editingKey: ''
-    };
+    }
   },
   created() {
     this.cacheData = this.data.map(item => ({...item}))

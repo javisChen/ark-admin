@@ -3,7 +3,6 @@ import {post, get, del, put} from '@/utils/request'
 const api = {
   roles: '/roles',
   role: '/role',
-  rolePermission: '/role/permission',
   rolePermissionRoutes: '/role/permission/routes',
   rolePermissionElements: '/role/permission/elements',
 }
@@ -16,7 +15,12 @@ export const addRole = (data) => post({url: api.role, data})
 
 export const updateRole = (data) => put({url: api.role, data})
 
-export const updateRolePermission = (data) => post({url: api.rolePermission, data})
+/**
+ * 提交角色路由权限
+ * @param data
+ * @returns {AxiosPromise}
+ */
+export const updateRolePermission = (data) => post({url: api.rolePermissionRoutes, data})
 
 /**
  * 获取角色下的路由权限

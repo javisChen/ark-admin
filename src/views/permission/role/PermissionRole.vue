@@ -221,7 +221,6 @@ export default {
     },
     async loadTableData() {
       this.toggleLoading()
-      console.log(this.queryParam)
       const {data} = await getRoles(this.queryParam)
       this.tableData = data.records;
       this.pagination.total = data.total
