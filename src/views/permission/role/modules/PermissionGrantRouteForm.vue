@@ -10,6 +10,7 @@
           :checkStrictly="true"
           :replaceFields="replaceFields"
           :default-expanded-keys="defaultExpandedKeys"
+          :expanded-keys="expandedKeys"
           :selected-keys="selectedKeys"
           @expand="onExpand"
           :tree-data="treeData"
@@ -24,7 +25,6 @@
         bordered
         :pagination="false"
         :loading="tableLoading"
-        :expandRowByClick="true"
         :size="'small'"
         :indent-size="15"
         :row-key="rowKey"
@@ -68,28 +68,7 @@ const columns = [
 function getPageElementTypeDictionary(value) {
   return pageElementTypeDictionary[value]
 }
-const treeData = [
-  {
-    title: 'parent 1',
-    key: 2,
-    children: [
-      {
-        title: 'parent 1-0',
-        key: '0-0-0',
-        disabled: true,
-        children: [
-          { title: 'leaf', key: '0-0-0-0', disableCheckbox: true },
-          { title: 'leaf', key: '0-0-0-1' },
-        ],
-      },
-      {
-        title: 'parent 1-1',
-        key: '0-0-1',
-        children: [{ key: '0-0-1-0', slots: { title: 'title0010' } }],
-      },
-    ],
-  },
-];
+
 export default {
   name: 'PermissionGrantRouteTree',
   props: {
@@ -107,12 +86,11 @@ export default {
       expandedKeys: [],
       autoExpandParent: true,
       routeCheckedKeys: {
-        checked:[]
+        checked: []
       },
-      defaultExpandAll: true,
       defaultExpandedKeys: [],
       selectedKeys: [],
-      treeData,
+      treeData: [],
       checkedRoutePermissions: new Set(),
       checkedElementPermissions: [],
       columns,
@@ -131,18 +109,31 @@ export default {
     }
   },
   watch: {
-    'routeCheckedKeys.checked'(val) {
-      // console.log('已选中的权限', val)
-    }
   },
   created() {
     this.loadTreeData()
     this.loadRolePermissionElements()
   },
   methods: {
+    // 加载角色所拥有的页面元素权限
     loadRolePermissionElements() {
       getRolePermissionElements({roleId: this.roleId})
-        .then(({data}) => this.rolePermissionElements = data)
+        .then(({data}) => {
+          this.rolePermissionElements = data;
+          this.selectedRowKeys = this.rolePermissionElements.map(item => item.permissionId)
+        })
+        .catch()
+    },
+    // 加载角色所拥有的路由权限
+    loadRolePermissionRoutes() {
+      getRolePermissionRoutes({roleId: this.roleId})
+        .then(({data}) => {
+          this.rolePermissionRoutes = data;
+          this.routeCheckedKeys = this.rolePermissionRoutes.map(item => item.permissionId)
+          this.defaultExpandedKeys = this.routeCheckedKeys;
+          this.expandedKeys = this.defaultExpandedKeys;
+          this.loadTreeDataSuccess = true
+        })
         .catch()
     },
     getCheckedPermission() {
@@ -161,16 +152,6 @@ export default {
       this.treeData = data
       await this.loadRolePermissionRoutes()
     },
-    loadRolePermissionRoutes() {
-      getRolePermissionRoutes({roleId: this.roleId})
-        .then(({data}) => {
-          this.rolePermissionRoutes = data;
-          this.routeCheckedKeys = this.rolePermissionRoutes.map(item => item.permissionId)
-          this.defaultExpandedKeys = this.routeCheckedKeys;
-          this.loadTreeDataSuccess = true
-        })
-        .catch()
-    },
     rowKey(record) {
       return record.id
     },
@@ -182,8 +163,10 @@ export default {
       // 自己实现了全选和反选
       this.updateChildNodeChecked(nodeChecked, children)
       this.routeCheckedKeys.checked = [...this.checkedRoutePermissions]
+      // 选中/反选后自动展开/折叠节点
+      this.expandedKeys = [...this.checkedRoutePermissions]
     },
-    checkOrUnCheckNode: function (checked, item) {
+    checkOrUnCheckNode (checked, item) {
       const routeCheckedKeys = this.checkedRoutePermissions
       if (checked) {
         routeCheckedKeys.add(item.permissionId)
@@ -193,16 +176,15 @@ export default {
       this.updateChildNodeChecked(checked, item.children)
     },
     updateChildNodeChecked(checked, children) {
-      console.log('checked', checked)
-      console.log('children', children)
-      if (!children || children.length === 0) return
+      if (!children || children.length === 0) {
+        return
+      }
       children.forEach(item => this.checkOrUnCheckNode(checked, item))
     },
     onSelect(selectedKeys, info) {
       this.loadElementsData(selectedKeys[0])
     },
     onExpand(expandedKeys) {
-      console.log('expandedKeys', expandedKeys)
       this.expandedKeys = expandedKeys;
       this.autoExpandParent = true;
     },

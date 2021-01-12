@@ -56,6 +56,7 @@ const defaultModel = {
   id: '',
   name: '',
   status: 1,
+  pid: 0
 }
 
 export default {

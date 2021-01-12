@@ -32,6 +32,40 @@
         <a-input type="password" placeholder="用户密码（6~18位，数字字母0-9A-Za-z）" v-model="formModel.password"/>
       </a-form-model-item>
 
+      <a-form-model-item label="所属角色" prop="password" has-feedback>
+        <a-select
+          :value="formModel.roleIds"
+          mode="multiple"
+          @change="handleRoleOptionsChange"
+          :allowClear="true"
+          show-search
+          placeholder="请选择角色"
+          option-filter-prop="children"
+          :filter-option="filterOption">
+          <a-select-option v-for="(value, index) in roleOptions"
+                           :key="index" :value="value.id">
+            {{ value.name }}
+          </a-select-option>
+        </a-select>
+      </a-form-model-item>
+
+      <a-form-model-item label="所属用户组" prop="password" has-feedback>
+        <a-select
+          :value="formModel.userGroupIds"
+          mode="multiple"
+          @change="handleUserGroupOptionsChange"
+          :allowClear="true"
+          show-search
+          placeholder="请选择用户组"
+          option-filter-prop="children"
+          :filter-option="filterOption">
+          <a-select-option v-for="(value, index) in userGroupOptions"
+                           :key="index" :value="value.id">
+            <span>{{ value.name }} <a href="#">({{getLevelDesc(value.level) + '级'}})</a></span>
+          </a-select-option>
+        </a-select>
+      </a-form-model-item>
+
       <a-form-model-item label="状态" prop="status" required>
         <a-radio-group name="radioGroup" v-model="formModel.status" :default-value="1">
           <a-radio :value="1">启用</a-radio>
@@ -39,10 +73,6 @@
         </a-radio-group>
       </a-form-model-item>
 
-      <a-form-model-item :wrapper-col="{ span: 14, offset: 4 }">
-        <a-button type="primary" @click="submitForm()">确认</a-button>
-        <a-button style="margin-left: 10px;" @click="handleClose">关闭</a-button>
-      </a-form-model-item>
     </a-form-model>
   </a-modal>
 </template>
@@ -52,6 +82,9 @@
 import md5 from 'md5'
 
 import {addUser, updateUser} from '@/api/user-api'
+import {getAllRoles} from "@/api/role-api";
+import {getAllUserGroups} from "@/api/usergroup-api";
+
 
 const FORM_MODE_EDIT = 'edit';
 const FORM_MODE_ADD = 'add';
@@ -62,15 +95,26 @@ const defaultModel = {
   phone: '',
   password: '88888888',
   status: 1,
+  roleIds: [],
+  userGroupIds: [],
+}
+
+const levelDict = {
+  1: '一',
+  2: '二',
+  3: '三',
+  4: '四',
+  5: '五',
 }
 
 export default {
   name: 'PermissionUserForm',
-  components: {
-  },
+  components: {},
   props: {},
   data() {
     return {
+      roleOptions: [],
+      userGroupOptions: [],
       confirmLoading: false,
       mode: FORM_MODE_ADD,
       visible: false,
@@ -91,12 +135,52 @@ export default {
       }
     }
   },
+  created() {
+    this.loadRoleOptions()
+    this.loadUserGroupOptions()
+  },
   computed: {
     isEditMode() {
       return this.mode === FORM_MODE_EDIT
-    }
+    },
+    filteredRoleOptions() {
+      console.log('this.formModel.roleIds', this.formModel.roleIds)
+      var filter = this.roleOptions.filter(o => !this.formModel.roleIds.includes(o.id));
+      console.log('filter', filter)
+      return filter;
+    },
+    filteredUserGroupOptions() {
+      return this.userGroupOptions.filter(o => !this.formModel.userGroupIds.includes(o.id));
+    },
   },
   methods: {
+    getLevelDesc(value) {
+      return levelDict[value]
+    },
+    filterOption(input, option) {
+      return (
+        option.componentOptions.children[0].text.toLowerCase().indexOf(input.toLowerCase()) >= 0
+      );
+    },
+    handleRoleOptionsChange(value) {
+      this.formModel.roleIds = value
+    },
+    handleUserGroupOptionsChange(value) {
+      this.formModel.userGroupIds = value
+    },
+    loadRoleOptions() {
+      getAllRoles()
+        .then(({data}) => {
+          this.roleOptions = data
+          console.log('this.roleOptions', this.roleOptions)
+        })
+    },
+    loadUserGroupOptions() {
+      getAllUserGroups()
+        .then(({data}) => {
+          this.userGroupOptions = data
+        })
+    },
     toggleConfirmLoading() {
       this.confirmLoading = !this.confirmLoading
     },
@@ -105,7 +189,6 @@ export default {
         this.formModel = Object.assign(this.formModel, formModel)
       }
       this.mode = mode
-      console.log(this.mode)
       this.visible = true
     },
     close() {
@@ -150,8 +233,6 @@ export default {
         }
       });
     },
-  },
-  created() {
   }
 }
 </script>

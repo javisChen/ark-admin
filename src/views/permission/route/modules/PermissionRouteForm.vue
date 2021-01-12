@@ -3,8 +3,8 @@
   <a-modal
     :width="830"
     v-model="visible"
-    title="新建路由"
-    ok-text="确认"
+    :title="isEditMode ? '编辑路由' : '新建路由'"
+    ok-text="保存"
     :confirmLoading="confirmLoading"
     :destroyOnClose="true"
     :closable="true"
@@ -185,6 +185,9 @@ export default {
     }
   },
   methods: {
+    isEditMode() {
+      return this.type === FORM_MODE_EDIT
+    },
     onSelectRouteChange(value, selectedOptions) {
       this.formModel.pid = value[value.length - 1]
     },

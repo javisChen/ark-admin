@@ -25,6 +25,7 @@
         123
       </template>
     </a-card>
+
   </a-modal>
 </template>
 
@@ -125,8 +126,7 @@ export default {
       this.$emit('cancel', '')
     },
     afterSuccess: function () {
-      this.$emit('success', '')
-      this.close()
+      this.$message.success('保存成功')
     }
   },
 }

@@ -25,8 +25,8 @@
           <template v-if="record.editable">
             <div v-if="col === 'name'" style="position: relative">
               <a-input :style="(record.showError)? 'border: 1px solid #f5222d': ''"
-                :value="text"
-                @change="e => handleChange(e.target.value, record.id, col)"/>
+                       :value="text"
+                       @change="e => handleChange(e.target.value, record.id, col)"/>
               <div v-if="(record.showError)" style="color: #f5222d">
               <span class="ant-form-item-children-icon"
                     style="position:absolute;top: 9%;right: 6px;">
@@ -119,12 +119,18 @@ export default {
   data() {
     return {
       typeDictionary: pageElementTypeDictionary,
-      data: cloneDeep(this.elementData),
+      data: [],
+      cacheData: [],
       columns,
       editingKey: ''
     }
   },
   created() {
+    this.data = this.elementData.map(item => {
+      const newItem = {...item}
+      newItem.editable = false
+      return newItem;
+    })
     this.cacheData = this.data.map(item => ({...item}))
   },
   methods: {
@@ -132,35 +138,43 @@ export default {
       return record.id
     },
     reset() {
-      console.log('reset')
       this.data = []
     },
     getTypeDesc(value) {
       return this.typeDictionary[value]
     },
-    handleAddElement() {
-      const item = {
+    createElementItem() {
+      return {
         id: new Date().getTime() + Math.ceil(Math.random() * 999),
         name: '',
         type: 1,
         editable: true,
         showError: false
-      }
-      this.data.push(item);
+      };
     },
-    handleChange(value, key, column) {
+    handleAddElement() {
+      const item = this.createElementItem()
+      this.data.push(item);
+      this.cacheData.push(item);
+    },
+    handleChange(value, id, column) {
       const newData = [...this.data];
-      const target = newData.filter(item => key === item.id)[0];
-      if (target) {
+      const newCacheData = [...this.cacheData];
+      const target = newData.find(item => id === item.id);
+      const targetCache = newCacheData.find(item => id === item.id);
+      if (target && targetCache) {
         target[column] = value;
         target.showError = !value;
         this.data = newData;
+        this.cacheData = newCacheData;
       }
+      console.log('原数据：', newData)
+      console.log('缓存数据：', this.cacheData)
     },
-    edit(key) {
+    edit(id) {
       const newData = [...this.data];
-      const target = newData.filter(item => key === item.id)[0];
-      this.editingKey = key;
+      const target = newData.find(item => id === item.id);
+      this.editingKey = id;
       if (target) {
         target.editable = true;
         this.data = newData;
@@ -172,11 +186,17 @@ export default {
         return false
       }
       const newData = [...this.data];
-      const target = newData.filter(item => record.id === item.id)[0];
-      if (target) {
+      const newCacheData = [...this.cacheData];
+      const target = this.data.find(item => record.id === item.id);
+      const targetCache = this.cacheData.find(item => record.id === item.id);
+      if (target && targetCache) {
         delete target.editable;
+        Object.assign(targetCache, target)
         this.data = newData;
+        this.cacheData = newCacheData;
       }
+      console.log('原数据：', newData)
+      console.log('缓存数据：', this.cacheData)
       this.editingKey = '';
     },
     remove(idx) {
@@ -184,12 +204,18 @@ export default {
     },
     cancel(key) {
       const newData = [...this.data];
-      const target = newData.filter(item => key === item.id)[0];
+      const newCacheData = [...this.cacheData];
+      const target = newData.find(item => key === item.id);
+      const targetCache = newCacheData.find(item => key === item.id);
       this.editingKey = '';
-      if (target) {
+      if (target && targetCache) {
         delete target.editable;
+        Object.assign(target, targetCache)
         this.data = newData;
+        this.cacheData = newCacheData;
       }
+      console.log('原数据：', newData)
+      console.log('缓存数据：', this.cacheData)
     },
   },
 };

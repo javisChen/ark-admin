@@ -89,7 +89,7 @@
 
 <script>
 
-import {getUsers} from '@/api/user-api'
+import {getUsers, getUser} from '@/api/user-api'
 import PermissionUserForm from "./modules/PermissionUserForm";
 
 
@@ -168,7 +168,8 @@ export default {
   },
   methods: {
     async handleEdit(record) {
-      this.$refs['userForm'].open(record, 'edit')
+      const {data} = await getUser({id: record.id})
+      this.$refs['userForm'].open(data, 'edit')
     },
     handleTableChange(pagination, filters, sorter) {
       this.queryParam.current = pagination.current
