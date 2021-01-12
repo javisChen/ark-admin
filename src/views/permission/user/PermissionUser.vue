@@ -1,36 +1,36 @@
 <template>
   <page-header-wrapper>
     <a-card :bordered="false">
-            <div class="table-page-search-wrapper">
-              <a-form layout="inline">
-                <a-row :gutter="48">
-                  <a-col :md="8" :sm="24">
-                    <a-form-item label="用户名称">
-                      <a-input v-model="queryParam.name" placeholder=""/>
-                    </a-form-item>
-                  </a-col>
-                  <a-col :md="8" :sm="24">
-                    <a-form-item label="使用状态">
-                      <a-select v-model="queryParam.status" placeholder="请选择" :default-value="0"
-                                @change="handleQueryStatusChange">
-                        <a-select-option v-for="(value, key) in routeStatusDictionary"
-                                         :key="key"
-                                         :value="key">
-                          {{ value }}
-                        </a-select-option>
-                      </a-select>
-                    </a-form-item>
-                  </a-col>
-                  <a-col :md="!advanced && 8 || 24" :sm="24">
+      <div class="table-page-search-wrapper">
+        <a-form layout="inline">
+          <a-row :gutter="48">
+            <a-col :md="8" :sm="24">
+              <a-form-item label="用户名称">
+                <a-input v-model="queryParam.name" placeholder=""/>
+              </a-form-item>
+            </a-col>
+            <a-col :md="8" :sm="24">
+              <a-form-item label="使用状态">
+                <a-select v-model="queryParam.status" placeholder="请选择" :default-value="0"
+                          @change="handleQueryStatusChange">
+                  <a-select-option v-for="(value, key) in routeStatusDictionary"
+                                   :key="key"
+                                   :value="key">
+                    {{ value }}
+                  </a-select-option>
+                </a-select>
+              </a-form-item>
+            </a-col>
+            <a-col :md="!advanced && 8 || 24" :sm="24">
                           <span class="table-page-search-submitButtons"
                                 :style="advanced && { float: 'right', overflow: 'hidden' } || {} ">
                             <a-button type="primary" @click="loadTableData">查询</a-button>
                             <a-button style="margin-left: 8px" @click="resetQueryParams">重置</a-button>
                           </span>
-                  </a-col>
-                </a-row>
-              </a-form>
-            </div>
+            </a-col>
+          </a-row>
+        </a-form>
+      </div>
 
       <div class="table-operator">
         <a-button type="primary" icon="plus" @click="showUserForm">新建用户</a-button>
@@ -43,12 +43,18 @@
         :pagination="pagination"
         :loading="tableLoading"
         :defaultExpandAllRows="defaultExpandAllRows"
-        :expandRowByClick="true"
         :size="'middle'"
-        :indent-size="15"
         :row-key="rowKey"
         :columns="columns"
         :data-source="tableData">
+
+        <template slot="roles" slot-scope="text, record">
+          <a-tag color="blue" v-for="item in record.roles" :key="item">{{ item }}</a-tag>
+        </template>
+
+        <template slot="userGroups" slot-scope="text, record">
+          <a-tag color="blue" v-for="item in record.userGroups" :key="item">{{ item }}</a-tag>
+        </template>
 
         <template slot="status" slot-scope="text, record">
           <a-dropdown :trigger="['click']">
@@ -67,11 +73,8 @@
         </template>
 
         <template slot="action" slot-scope="text, record">
-
           <k-tooltip-button title="编辑" @click="handleEdit(record)" icon="edit"/>&nbsp;
-
           <k-tooltip-button title="删除" @click="handleDelete(record)" type="danger" icon="delete"/>
-
         </template>
       </a-table>
       <a-empty v-else/>
@@ -79,9 +82,9 @@
     </a-card>
 
     <!-- 创建路由信息表单-->
-    <permission-user-form  ref="userForm"
-                           @success="handleFormOnSuccess"
-                           @cancel="handleEditFormCancel"/>
+    <permission-user-form ref="userForm"
+                          @success="handleFormOnSuccess"
+                          @cancel="handleEditFormCancel"/>
 
   </page-header-wrapper>
 
@@ -112,9 +115,6 @@ const pagination = {
 const queryParam = {
   current: 1,
   size: 15,
-  params: {
-
-  }
 }
 
 export default {
@@ -134,20 +134,34 @@ export default {
         {
           title: '用户名称',
           dataIndex: 'name',
-          width: 100
+          width: 50
         },
         {
           title: '手机号码',
           dataIndex: 'phone',
-          width: 100,
+          width: 50,
           customRender: (text, row, index) => {
             return text || '-'
           },
         },
         {
+          title: '角色',
+          dataIndex: 'roles',
+          width: 100,
+          align: 'left',
+          scopedSlots: {customRender: 'roles'},
+        },
+        {
+          title: '所属用户组',
+          dataIndex: 'userGroups',
+          align: 'left',
+          width: 100,
+          scopedSlots: {customRender: 'userGroups'},
+        },
+        {
           title: '状态',
           dataIndex: 'status',
-          width: 50,
+          width: 10,
           align: "center",
           scopedSlots: {customRender: 'status'},
         },

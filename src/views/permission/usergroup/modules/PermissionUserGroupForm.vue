@@ -29,7 +29,7 @@
                     :changeOnSelect="true"
                     :options="userGroups"
                     :fieldNames="{ label: 'name', value: 'id', children: 'children' }"
-                    placeholder="请选择所属路由"
+                    placeholder="请选择上级用户组"
                     :default-value="userGroupsOptionsDefaultValue"
                     @change="onSelectUserGroupsChange"/>
       </a-form-model-item>
