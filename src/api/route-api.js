@@ -4,7 +4,8 @@ const api = {
   routeTree: '/routes/tree',
   routes: '/routes',
   route: '/route',
-  routeStatus: '/route/status'
+  routeStatus: '/route/status',
+  routeElements: (routeId) => `/route/${routeId}/elements`,
 }
 
 export default api
@@ -22,4 +23,7 @@ export const deleteRoute = (id) => del({url: `${api.route}/${id}`})
 export const updateRoute = (data) => put({url: api.route, data})
 
 export const updateRouteStatus = (data) => put({url: api.routeStatus, data})
+
+export const getRouteElements = (id) => get({url: `${api.route}/${id}/elements`})
+
 

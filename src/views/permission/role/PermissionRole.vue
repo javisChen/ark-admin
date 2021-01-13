@@ -93,8 +93,8 @@
 <script>
 
 import {getRoles} from '@/api/role-api'
-import PermissionRoleForm from "./modules/PermissionRoleForm";
-import PermissionGrantForm from "./modules/PermissionGrantForm";
+import PermissionRoleForm from "./components/PermissionRoleForm";
+import PermissionGrantForm from "./components/PermissionGrantForm";
 
 const routeStatusDictionary = {
   1: '已启用',

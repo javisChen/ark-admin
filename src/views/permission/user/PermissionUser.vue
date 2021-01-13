@@ -93,7 +93,7 @@
 <script>
 
 import {getUsers, getUser} from '@/api/user-api'
-import PermissionUserForm from "./modules/PermissionUserForm";
+import PermissionUserForm from "./components/PermissionUserForm";
 
 
 const routeStatusDictionary = {

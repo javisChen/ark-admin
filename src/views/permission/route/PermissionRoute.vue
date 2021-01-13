@@ -133,7 +133,7 @@
 <script>
 
 import {getRoutes, deleteRoute, updateRouteStatus, getRoute} from '@/api/route-api'
-import PermissionRouteForm from './modules/PermissionRouteForm'
+import PermissionRouteForm from './components/PermissionRouteForm'
 
 import {filterNonChildren} from "@/utils/util";
 

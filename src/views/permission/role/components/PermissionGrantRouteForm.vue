@@ -27,7 +27,7 @@
         :loading="tableLoading"
         :size="'small'"
         :indent-size="15"
-        :row-key="rowKey"
+        :row-key="elementTableRowKey"
         :columns="columns"
         :row-selection="rowSelection"
         :data-source="tableData">
@@ -39,15 +39,14 @@
 
 <script>
 
-import {getPageElementPermission} from "@/api/permission-api";
 import {pageElementTypeDictionary} from "../../dictionary";
-import {getRoutesTree} from '@/api/route-api'
-import {updateRolePermission, getRolePermissionRoutes, getRolePermissionElements} from "@/api/role-api";
+import {getRoutesTree, getRouteElements} from '@/api/route-api'
+import {getRolePermissionRoutes, getRolePermissionElements} from "@/api/role-api";
 
 const columns = [
   {
     title: '权限编号',
-    dataIndex: 'code',
+    dataIndex: 'permissionCode',
     width: '33%',
   },
   {
@@ -152,8 +151,8 @@ export default {
       this.treeData = data
       await this.loadRolePermissionRoutes()
     },
-    rowKey(record) {
-      return record.id
+    elementTableRowKey(record) {
+      return record.permissionId
     },
     onCheckRoute({checked}, event) {
       this.checkedRoutePermissions = new Set([...checked])
@@ -182,7 +181,8 @@ export default {
       children.forEach(item => this.checkOrUnCheckNode(checked, item))
     },
     onSelect(selectedKeys, info) {
-      this.loadElementsData(selectedKeys[0])
+      const routeId = info.node.dataRef.id;
+      this.loadElementsData(routeId)
     },
     onExpand(expandedKeys) {
       this.expandedKeys = expandedKeys;
@@ -191,10 +191,10 @@ export default {
     toggleTableLoading() {
       this.tableLoading = !this.tableLoading
     },
-    async loadElementsData(routePermissionId) {
+    async loadElementsData(routeId) {
       this.toggleTableLoading()
       try {
-        const {data} = await getPageElementPermission({routePermissionId: routePermissionId})
+        const {data} = await getRouteElements(routeId)
         this.tableData = data
       } catch (e) {
       } finally {

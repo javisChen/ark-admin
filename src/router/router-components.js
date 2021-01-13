@@ -62,5 +62,6 @@ export default {
   'PermissionUser': () => import('@/views/permission/user/PermissionUser'),
   'PermissionUserGroup': () => import('@/views/permission/usergroup/PermissionUserGroup'),
   'PermissionRole': () => import('@/views/permission/role/PermissionRole'),
+  'PermissionApplication': () => import('@/views/permission/application/PermissionApplication'),
 
 }

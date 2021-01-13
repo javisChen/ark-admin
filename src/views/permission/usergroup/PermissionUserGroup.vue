@@ -88,8 +88,8 @@
 <script>
 
 import {getUserGroups} from '@/api/usergroup-api'
-import PermissionUserGroupForm from "./modules/PermissionUserGroupForm";
-import PermissionUserGroupTree from "./modules/PermissionUserGroupTree";
+import PermissionUserGroupForm from "./components/PermissionUserGroupForm";
+import PermissionUserGroupTree from "./components/PermissionUserGroupTree";
 import {filterNonChildren} from "@/utils/util";
 
 const routeStatusDictionary = {
