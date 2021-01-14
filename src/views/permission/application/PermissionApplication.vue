@@ -16,76 +16,72 @@
         </tag-select>
       </a-form-item>
       <div class="table-operator">
-                <a-button type="primary" icon="plus" @click="showRoleForm">新建角色</a-button>
+        <a-button type="primary" icon="plus" @click="showApplicationForm">新建应用</a-button>
       </div>
 
       <div class="ant-pro-pages-list-applications-filterCardList">
         <a-list :loading="loading" :data-source="data" :grid="{ gutter: 24, xl: 4, lg: 3, md: 3, sm: 2, xs: 1 }"
                 style="margin-top: 24px;">
           <a-list-item slot="renderItem" slot-scope="item">
-            <template v-if="!item.id">
-              <a-button class="new-btn" type="dashed">
-                <a-icon type="plus"/>
-                新增产品
-              </a-button>
-            </template>
-            <template v-else>
-              <a-card :body-style="{ paddingBottom: 20 }" hoverable>
-                <a-card-meta :title="item.title">
-                </a-card-meta>
-                <template slot="actions">
-                  <a-tooltip title="下载">
-                    <a-icon type="download"/>
-                  </a-tooltip>
-                  <a-tooltip title="编辑">
-                    <a-icon type="edit"/>
-                  </a-tooltip>
-                  <a-tooltip title="分享">
-                    <a-icon type="share-alt"/>
-                  </a-tooltip>
-                  <a-dropdown>
-                    <a class="ant-dropdown-link">
-                      <a-icon type="ellipsis"/>
-                    </a>
-                    <a-menu slot="overlay">
-                      <a-menu-item>
-                        <a href="javascript:;">1st menu item</a>
-                      </a-menu-item>
-                      <a-menu-item>
-                        <a href="javascript:;">2nd menu item</a>
-                      </a-menu-item>
-                      <a-menu-item>
-                        <a href="javascript:;">3rd menu item</a>
-                      </a-menu-item>
-                    </a-menu>
-                  </a-dropdown>
-                </template>
-                <div class="">
-                  <card-info active-user="100" new-user="999"></card-info>
-                </div>
-              </a-card>
-            </template>
+            <a-card :body-style="{ paddingBottom: 20 }" hoverable>
+              <a-card-meta :title="item.title">
+              </a-card-meta>
+              <template slot="actions">
+                <a-tooltip title="下载">
+                  <a-icon type="download"/>
+                </a-tooltip>
+                <a-tooltip title="编辑">
+                  <a-icon type="edit"/>
+                </a-tooltip>
+                <a-tooltip title="分享">
+                  <a-icon type="share-alt"/>
+                </a-tooltip>
+                <a-dropdown>
+                  <a class="ant-dropdown-link">
+                    <a-icon type="ellipsis"/>
+                  </a>
+                  <a-menu slot="overlay">
+                    <a-menu-item>
+                      <a href="javascript:;">1st menu item</a>
+                    </a-menu-item>
+                    <a-menu-item>
+                      <a href="javascript:;">2nd menu item</a>
+                    </a-menu-item>
+                    <a-menu-item>
+                      <a href="javascript:;">3rd menu item</a>
+                    </a-menu-item>
+                  </a-menu>
+                </a-dropdown>
+              </template>
+              <div class="">
+                <card-info active-user="100" new-user="999"></card-info>
+              </div>
+            </a-card>
           </a-list-item>
         </a-list>
       </div>
     </a-card>
 
+    <!-- 创建路由信息表单-->
+    <permission-application-form ref="applicationForm"
+                          @success="handleFormOnSuccess"
+                          @cancel="handleEditFormCancel"/>
+
   </page-header-wrapper>
 </template>
 
 <script>
-import moment from 'moment'
-import {TagSelect, StandardFormRow, Ellipsis, AvatarList} from '@/components'
+
+import {TagSelect, StandardFormRow, Ellipsis} from '@/components'
 import CardInfo from './components/CardInfo'
+import PermissionApplicationForm from './components/PermissionApplicationForm'
 
 const TagSelectOption = TagSelect.Option
-const AvatarListItem = AvatarList.AvatarItem
 
 export default {
   name: 'PermissionApplication',
   components: {
-    AvatarList,
-    AvatarListItem,
+    PermissionApplicationForm,
     Ellipsis,
     TagSelect,
     TagSelectOption,
@@ -100,14 +96,14 @@ export default {
     }
   },
   filters: {
-    fromNow(date) {
-      return moment(date).fromNow()
-    }
   },
   mounted() {
     this.getList()
   },
   methods: {
+    showApplicationForm() {
+      this.$refs['applicationForm'].open()
+    },
     handleChange(value) {
       console.log(`selected ${value}`)
     },
@@ -117,6 +113,22 @@ export default {
         {},
         {
           id: 1,
+          title: '权限中心'
+        },
+        {
+          id: 2,
+          title: '权限中心'
+        },
+        {
+          id: 2,
+          title: '权限中心'
+        },
+        {
+          id: 2,
+          title: '权限中心'
+        },
+        {
+          id: 2,
           title: '权限中心'
         },
         {

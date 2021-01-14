@@ -1,12 +1,16 @@
 <template>
   <div class="cardInfo">
     <div>
-      <p>活跃用户</p>
+      <p>接口数量</p>
       <p>{{ activeUser }}</p>
     </div>
     <div>
-      <p>新增用户</p>
+      <p>路由数量</p>
       <p>{{ newUser }}</p>
+    </div>
+    <div>
+      <p>状态</p>
+      <p>上线</p>
     </div>
   </div>
 </template>
@@ -28,29 +32,37 @@ export default {
 </script>
 
 <style lang="less" scoped>
+
 @import "~@/components/index.less";
 @import "~@/utils/utils.less";
 
 .cardInfo {
 
+  display: flex;
+
   .clearfix();
 
   margin-top: 16px;
-  margin-left: 40px;
+
   & > div {
-    position: relative;
-    float: left;
-    width: 50%;
-    text-align: left;
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    width: 33%;
+    text-align: center;
+
     p {
+      display: flex;
+      text-align: center;
+      justify-content: center;
       margin: 0;
-      font-size: 24px;
+      font-size: 16px;
       line-height: 32px;
     }
+
     p:first-child {
-      margin-bottom: 4px;
       color: @text-color-secondary;
-      font-size: 12px;
+      font-size: 13px;
       line-height: 20px;
     }
   }
