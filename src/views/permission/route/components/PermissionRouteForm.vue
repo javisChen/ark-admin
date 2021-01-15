@@ -80,8 +80,7 @@
         <a-col :span="12">
           <a-form-model-item label="所属应用" prop="applicationId" has-feedback>
             <span v-if="isViewMode">{{ formModel.applicationName }}</span>
-            <application-select :disabled="isAddChildrenMode" v-else
-                                v-model="formModel.applicationId"></application-select>
+            <application-select v-else :disabled="isAddChildrenMode" v-model="formModel.applicationId"/>
           </a-form-model-item>
         </a-col>
         <a-col :span="12">

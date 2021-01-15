@@ -1,70 +1,17 @@
 <template>
   <page-header-wrapper>
     <a-card :bordered="false">
-      <!--      <div class="table-page-search-wrapper">-->
-      <!--        <a-form layout="inline">-->
-      <!--          <a-row :gutter="48">-->
-      <!--            <a-col :md="8" :sm="24">-->
-      <!--              <a-form-item label="规则编号">-->
-      <!--                <a-input v-model="queryParam.name" placeholder=""/>-->
-      <!--              </a-form-item>-->
-      <!--            </a-col>-->
-      <!--            <a-col :md="8" :sm="24">-->
-      <!--              <a-form-item label="使用状态">-->
-      <!--                <a-select v-model="queryParam.status" placeholder="请选择" :default-value="0"-->
-      <!--                          @change="handleQueryStatusChange">-->
-      <!--                  <a-select-option v-for="(value, key) in routeStatusDictionary"-->
-      <!--                                   :key="key"-->
-      <!--                                   :value="key">-->
-      <!--                    {{ value }}-->
-      <!--                  </a-select-option>-->
-      <!--                </a-select>-->
-      <!--              </a-form-item>-->
-      <!--            </a-col>-->
-      <!--            <template v-if="advanced">-->
-      <!--              <a-col :md="8" :sm="24">-->
-      <!--                <a-form-item label="调用次数">-->
-      <!--                  <a-input-number v-model="queryParam.callNo" style="width: 100%"/>-->
-      <!--                </a-form-item>-->
-      <!--              </a-col>-->
-      <!--              <a-col :md="8" :sm="24">-->
-      <!--                <a-form-item label="更新日期">-->
-      <!--                  <a-date-picker v-model="queryParam.date" style="width: 100%" placeholder="请输入更新日期"/>-->
-      <!--                </a-form-item>-->
-      <!--              </a-col>-->
-      <!--              <a-col :md="8" :sm="24">-->
-      <!--                <a-form-item label="使用状态">-->
-      <!--                  <a-select v-model="queryParam.useStatus" placeholder="请选择" default-value="0">-->
-      <!--                    <a-select-option value="0">全部</a-select-option>-->
-      <!--                    <a-select-option value="1">关闭</a-select-option>-->
-      <!--                    <a-select-option value="2">运行中</a-select-option>-->
-      <!--                  </a-select>-->
-      <!--                </a-form-item>-->
-      <!--              </a-col>-->
-      <!--              <a-col :md="8" :sm="24">-->
-      <!--                <a-form-item label="使用状态">-->
-      <!--                  <a-select placeholder="请选择" default-value="0">-->
-      <!--                    <a-select-option value="0">全部</a-select-option>-->
-      <!--                    <a-select-option value="1">关闭</a-select-option>-->
-      <!--                    <a-select-option value="2">运行中</a-select-option>-->
-      <!--                  </a-select>-->
-      <!--                </a-form-item>-->
-      <!--              </a-col>-->
-      <!--            </template>-->
-      <!--            <a-col :md="!advanced && 8 || 24" :sm="24">-->
-      <!--                    <span class="table-page-search-submitButtons"-->
-      <!--                          :style="advanced && { float: 'right', overflow: 'hidden' } || {} ">-->
-      <!--                      <a-button type="primary" @click="loadTableData">查询</a-button>-->
-      <!--                      <a-button style="margin-left: 8px" @click="resetQueryParams">重置</a-button>-->
-      <!--                      <a @click="toggleAdvanced" style="margin-left: 8px">-->
-      <!--                        {{ advanced ? '收起' : '展开' }}-->
-      <!--                        <a-icon :type="advanced ? 'up' : 'down'"/>-->
-      <!--                      </a>-->
-      <!--                    </span>-->
-      <!--            </a-col>-->
-      <!--          </a-row>-->
-      <!--        </a-form>-->
-      <!--      </div>-->
+      <div class="table-page-search-wrapper">
+        <a-form layout="inline">
+          <a-row :gutter="48">
+            <a-col :md="8" :sm="24">
+              <a-form-item label="所属应用">
+                <application-select @change="handleApplicationSelectChange" v-model="queryParam.applicationId"/>
+              </a-form-item>
+            </a-col>
+          </a-row>
+        </a-form>
+      </div>
 
       <div class="table-operator">
         <a-button type="primary" icon="plus" @click="openForm('add')">新建路由</a-button>
@@ -120,6 +67,7 @@
           <a-icon v-if="record.icon" :type="record.icon"></a-icon>
         </template>
       </a-table>
+      <a-empty v-else/>
 
     </a-card>
 
@@ -135,6 +83,7 @@
 
 import {getRoutes, deleteRoute, updateRouteStatus, getRoute} from '@/api/route-api'
 import PermissionRouteForm from './components/PermissionRouteForm'
+import ApplicationSelect from './components/ApplicationSelect'
 
 import {filterNonChildren} from "@/utils/util";
 
@@ -168,6 +117,7 @@ export default {
   name: 'PermissionRoute',
   components: {
     PermissionRouteForm,
+    ApplicationSelect
   },
   data() {
     return {
@@ -281,9 +231,16 @@ export default {
     };
   },
   created() {
+    this.initQueryParams(this.$route.query)
     this.loadTableData();
   },
   methods: {
+    initQueryParams(query) {
+      this.queryParam.applicationId = query.applicationId
+    },
+    handleApplicationSelectChange(value) {
+      this.loadTableData()
+    },
     getTypeDesc(value) {
       return routeTypeDictionary[value]
     },
@@ -339,7 +296,8 @@ export default {
           const {data} = await getRoute(record.id)
           model = data
           break
-        default: break;
+        default:
+          break;
       }
       this.$refs['routeForm'].open(model, type)
     },
@@ -363,6 +321,7 @@ export default {
         filterNonChildren(item);
         return item;
       });
+      console.log(this.routes);
       this.pagination.total = data.total
       this.toggleLoading()
     }

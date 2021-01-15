@@ -27,31 +27,31 @@
               <a-card-meta :title="item.name">
               </a-card-meta>
               <template slot="actions">
-                <a-tooltip title="下载">
-                  <a-icon type="download"/>
+                <a-tooltip title="查看路由">
+                  <a-icon type="menu" @click="viewRoute(item)"/>
+                </a-tooltip>
+                <a-tooltip title="查看Api">
+                  <a-icon type="api" @click="viewApi(item)"/>
                 </a-tooltip>
                 <a-tooltip title="编辑">
                   <a-icon type="edit" @click="handleEdit(item)"/>
                 </a-tooltip>
-                <a-tooltip title="分享">
-                  <a-icon type="share-alt"/>
-                </a-tooltip>
-                <a-dropdown>
-                  <a class="ant-dropdown-link">
-                    <a-icon type="ellipsis"/>
-                  </a>
-                  <a-menu slot="overlay">
-                    <a-menu-item>
-                      <a href="javascript:;">1st menu item</a>
-                    </a-menu-item>
-                    <a-menu-item>
-                      <a href="javascript:;">2nd menu item</a>
-                    </a-menu-item>
-                    <a-menu-item>
-                      <a href="javascript:;">3rd menu item</a>
-                    </a-menu-item>
-                  </a-menu>
-                </a-dropdown>
+                <!--                <a-dropdown>-->
+                <!--                  <a class="ant-dropdown-link">-->
+                <!--                    <a-icon type="ellipsis"/>-->
+                <!--                  </a>-->
+                <!--                  <a-menu slot="overlay">-->
+                <!--                    <a-menu-item>-->
+                <!--                      <a href="javascript:;">1st menu item</a>-->
+                <!--                    </a-menu-item>-->
+                <!--                    <a-menu-item>-->
+                <!--                      <a href="javascript:;">2nd menu item</a>-->
+                <!--                    </a-menu-item>-->
+                <!--                    <a-menu-item>-->
+                <!--                      <a href="javascript:;">3rd menu item</a>-->
+                <!--                    </a-menu-item>-->
+                <!--                  </a-menu>-->
+                <!--                </a-dropdown>-->
               </template>
               <div class="">
                 <card-info active-user="100" new-user="999" :status="item.status"></card-info>
@@ -71,7 +71,6 @@
 </template>
 
 <script>
-
 import {TagSelect, StandardFormRow, Ellipsis} from '@/components'
 import CardInfo from './components/CardInfo'
 import PermissionApplicationForm from './components/PermissionApplicationForm'
@@ -101,6 +100,22 @@ export default {
     this.loadData()
   },
   methods: {
+    viewRoute(item) {
+      this.$router.push({
+        name: 'permission:route',
+        query: {
+          applicationId: item.id
+        }
+      })
+    },
+    viewApi(item) {
+      this.$router.push({
+        name: 'permission:api',
+        query: {
+          applicationId: item.id
+        }
+      })
+    },
     handleEdit(record) {
       this.$refs['applicationForm'].open(record, 'edit')
     },

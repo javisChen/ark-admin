@@ -132,7 +132,6 @@ export default {
     }
   },
   created() {
-    console.log(123)
     if (this.tableEditable) {
       this.data = this.elementData.map(item => {
         const newItem = {...item}
