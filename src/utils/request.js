@@ -50,9 +50,16 @@ const errorHandler = (error) => {
     }
     if (error.response.status === 400 || error.response.status === 500) {
       const result = error.response.data
+      let description;
+      const {code, msg, data} = result
+      if (code === 'A0003') {
+        description = result.data.defaultMsg
+      } else {
+        description = result.msg
+      }
       notification.error({
         message: '出了点小问题~',
-        description: result.msg,
+        description,
         duration: 4
       })
     }

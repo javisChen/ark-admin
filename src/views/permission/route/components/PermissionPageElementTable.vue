@@ -3,7 +3,8 @@
     type="inner"
     title="页面元素"
     size="small">
-    <a-button icon="plus"
+    <a-button v-if="tableEditable"
+              icon="plus"
               type="primary"
               class="editable-add-btn"
               @click="handleAddElement">
@@ -61,7 +62,7 @@
           </template>
         </div>
       </template>
-      <template slot="operation" slot-scope="text, record, index">
+      <template v-if="tableEditable" slot="operation" slot-scope="text, record, index">
         <div class="editable-row-operations">
         <span v-if="record.editable">
           <a @click="() => save(record)">保存</a>
@@ -81,31 +82,8 @@
 </template>
 
 <script>
-import cloneDeep from 'lodash.clonedeep'
 
 import {pageElementTypeDictionary} from '../../dictionary'
-
-const columns = [
-  {
-    title: '元素名称',
-    dataIndex: 'name',
-    width: '33%',
-    scopedSlots: {customRender: 'name'},
-  },
-  {
-    title: '元素类型',
-    dataIndex: 'age',
-    width: '33%',
-    scopedSlots: {customRender: 'type'},
-  },
-  {
-    title: '操作',
-    dataIndex: 'operation',
-    scopedSlots: {customRender: 'operation'},
-  }
-];
-
-const data = [];
 
 export default {
   name: 'PermissionPageElementTable',
@@ -115,23 +93,58 @@ export default {
       required: false,
       default: () => []
     },
+    tableEditable: {
+      type: Boolean,
+      required: false,
+      default: true
+    },
+  },
+  watch: {
+    tableEditable(val) {
+      console.log(val)
+    }
   },
   data() {
     return {
       typeDictionary: pageElementTypeDictionary,
       data: [],
       cacheData: [],
-      columns,
+      columns: [
+        {
+          title: '元素名称',
+          dataIndex: 'name',
+          width: '33%',
+          scopedSlots: {customRender: 'name'},
+        },
+        {
+          title: '元素类型',
+          dataIndex: 'age',
+          width: '33%',
+          scopedSlots: {customRender: 'type'},
+        },
+        {
+          title: '操作',
+          dataIndex: 'operation',
+          scopedSlots: {customRender: 'operation'},
+        }
+      ],
       editingKey: ''
     }
   },
   created() {
-    this.data = this.elementData.map(item => {
-      const newItem = {...item}
-      newItem.editable = false
-      return newItem;
-    })
-    this.cacheData = this.data.map(item => ({...item}))
+    console.log(123)
+    if (this.tableEditable) {
+      this.data = this.elementData.map(item => {
+        const newItem = {...item}
+        newItem.editable = false
+        return newItem;
+      })
+      this.cacheData = this.data.map(item => ({...item}))
+    } else {
+      this.data = this.elementData
+      console.log(this.columns)
+      this.columns.splice(this.columns.findIndex(item => item.dataIndex === 'operation'), 1)
+    }
   },
   methods: {
     rowKey(record) {

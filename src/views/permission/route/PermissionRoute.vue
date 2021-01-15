@@ -67,7 +67,7 @@
       <!--      </div>-->
 
       <div class="table-operator">
-        <a-button type="primary" icon="plus" @click="showRouteForm">新建路由</a-button>
+        <a-button type="primary" icon="plus" @click="openForm('add')">新建路由</a-button>
       </div>
 
       <a-table
@@ -102,8 +102,9 @@
         </template>
 
         <template slot="action" slot-scope="text, record">
-          <k-tooltip-button title="添加子路由" @click="handleAddChildren(record)" icon="plus"/>&nbsp;
-          <k-tooltip-button title="编辑" @click="handleEdit(record)" icon="edit"/>&nbsp;
+          <k-tooltip-button title="添加子路由" @click="openForm('addChildren', record)" icon="plus"/>&nbsp;
+          <k-tooltip-button title="查看" @click="openForm('view', record)" icon="search"/>&nbsp;
+          <k-tooltip-button title="编辑" @click="openForm('edit', record)" icon="edit"/>&nbsp;
           <k-tooltip-button title="删除" @click="handleDelete(record)" type="danger" icon="delete"/>
         </template>
 
@@ -180,7 +181,7 @@ export default {
         {
           title: '路由名称',
           dataIndex: 'name',
-          width: 200,
+          width: 180,
           filtered: true,
           sortOrder: 'descend',
           fixed: 'left',
@@ -188,8 +189,8 @@ export default {
         {
           title: '组件名',
           dataIndex: 'component',
-          width: 150,
-          align: "center",
+          width: 180,
+          align: "left",
           customRender: (text, row, index) => {
             return text || '-'
           },
@@ -202,6 +203,21 @@ export default {
           customRender: (text, row, index) => {
             return text || '-'
           },
+        },
+        {
+          title: '层级',
+          dataIndex: 'level',
+          width: 50,
+          ellipsis: true,
+          customRender: (text, row, index) => {
+            return text || '-'
+          },
+        },
+        {
+          title: '所属应用',
+          align: "center",
+          dataIndex: 'applicationName',
+          width: 100,
         },
         {
           title: '类型',
@@ -302,25 +318,30 @@ export default {
     },
     handleEditFormCancel() {
     },
-    showRouteForm() {
-      this.$refs['routeForm'].open()
-    },
     rowKey(record) {
       return record.id
     },
-    handleAddChildren({levelPath, code, id, path}) {
-      // 添加子路由的时候默认回显当前的路径、添加的pid就是当前父路由的id
-      const model = {
-        levelPath,
-        code: code + ':',
-        path: path + '/',
-        pid: id
+    async openForm(type, record) {
+      let model;
+      switch (type) {
+        case 'addChildren':
+          const {levelPath, code, id, path, applicationId} = record
+          model = {
+            levelPath,
+            code: code + ':',
+            path: path + '/',
+            pid: id,
+            applicationId
+          }
+          break
+        case 'edit':
+        case 'view':
+          const {data} = await getRoute(record.id)
+          model = data
+          break
+        default: break;
       }
-      this.$refs['routeForm'].open(model, 'add')
-    },
-    async handleEdit(record) {
-      const {data} = await getRoute(record.id)
-      this.$refs['routeForm'].open(data, 'edit')
+      this.$refs['routeForm'].open(model, type)
     },
     handleDelete(record) {
       this.$confirm({

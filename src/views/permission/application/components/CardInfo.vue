@@ -10,12 +10,18 @@
     </div>
     <div>
       <p>状态</p>
-      <p>上线</p>
+      <p>{{getStatusDesc(status)}}</p>
     </div>
   </div>
 </template>
 
+
 <script>
+const statusOptions = {
+  1: '已上线',
+  2: '已下线',
+}
+
 export default {
   name: 'CardInfo',
   props: {
@@ -23,11 +29,20 @@ export default {
       type: [String, Number],
       default: 0
     },
+    status: {
+      type: [Number],
+      required: true
+    },
     newUser: {
       type: [String, Number],
       default: 0
     }
-  }
+  },
+  methods: {
+    getStatusDesc(value) {
+      return statusOptions[value]
+    }
+  },
 }
 </script>
 

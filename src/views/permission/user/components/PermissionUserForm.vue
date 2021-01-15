@@ -221,13 +221,13 @@ export default {
         this.toggleConfirmLoading()
         if (this.mode === FORM_MODE_ADD) {
           addUser(form)
-            .then(({data}) => this.afterSuccess($form))
+            .then(({data}) => this.afterSuccess())
             .catch(e => e)
             .finally(() => this.closeConfirmLoading())
         } else {
           delete form.phone;
           updateUser(form)
-            .then(({data}) => this.afterSuccess($form))
+            .then(({data}) => this.afterSuccess())
             .catch(e => e)
             .finally(() => this.closeConfirmLoading())
         }

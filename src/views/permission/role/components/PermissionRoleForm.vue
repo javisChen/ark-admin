@@ -114,12 +114,12 @@ export default {
         const form = Object.assign({}, this.formModel)
         if (this.mode === FORM_MODE_ADD) {
           addRole(form)
-            .then(({data}) => this.afterSuccess($form))
+            .then(({data}) => this.afterSuccess())
             .catch(e => e)
             .finally(() => this.closeConfirmLoading())
         } else {
           updateRole(form)
-            .then(({data}) => this.afterSuccess($form))
+            .then(({data}) => this.afterSuccess())
             .catch(e => e)
             .finally(() => this.closeConfirmLoading())
         }

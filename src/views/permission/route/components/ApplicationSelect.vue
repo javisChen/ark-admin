@@ -5,21 +5,22 @@
     :allowClear="true"
     show-search
     :disabled="disabled"
-    placeholder="请选择路由组件"
+    placeholder="请选择应用"
     option-filter-prop="children"
     :filter-option="filterOption"
   >
-    <a-select-option v-for="(key, value) in routerComponents" :key="value" :value="value">
-      {{ value }}
+    <a-select-option v-for="(value) in applicationsOptions" :key="value.id" :value="value.id">
+      {{ value.name }}
     </a-select-option>
   </a-select>
 </template>
 
 <script>
-import routerComponents from "@/router/router-components";
+import {getApplications} from "@/api/application-api";
+
 
 export default {
-  name: "RouteComponentSelect",
+  name: "ApplicationSelect",
   props: ["value", 'disabled'],
   model: {
     prop: 'value',
@@ -27,10 +28,18 @@ export default {
   },
   data() {
     return {
-      routerComponents
+      applicationsOptions: []
     }
   },
+  created() {
+    this.loadOptions()
+  },
   methods: {
+    loadOptions() {
+      getApplications({})
+      .then(({data}) => {this.applicationsOptions = data})
+      .catch(e => e)
+    },
     handleChange(value) {
       this.$emit('change', value)
     },

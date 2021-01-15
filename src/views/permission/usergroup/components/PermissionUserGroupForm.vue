@@ -135,12 +135,12 @@ export default {
         this.toggleConfirmLoading()
         if (this.mode === FORM_MODE_ADD) {
           addUserGroup(form)
-            .then(({data}) => this.afterSuccess($form))
+            .then(({data}) => this.afterSuccess())
             .catch(e => e)
             .finally(() => this.closeConfirmLoading())
         } else {
           updateUserGroup(form)
-            .then(({data}) => this.afterSuccess($form))
+            .then(({data}) => this.afterSuccess())
             .catch(e => e)
             .finally(() => this.closeConfirmLoading())
         }

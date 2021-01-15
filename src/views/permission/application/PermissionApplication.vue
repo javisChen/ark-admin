@@ -24,14 +24,14 @@
                 style="margin-top: 24px;">
           <a-list-item slot="renderItem" slot-scope="item">
             <a-card :body-style="{ paddingBottom: 20 }" hoverable>
-              <a-card-meta :title="item.title">
+              <a-card-meta :title="item.name">
               </a-card-meta>
               <template slot="actions">
                 <a-tooltip title="下载">
                   <a-icon type="download"/>
                 </a-tooltip>
                 <a-tooltip title="编辑">
-                  <a-icon type="edit"/>
+                  <a-icon type="edit" @click="handleEdit(item)"/>
                 </a-tooltip>
                 <a-tooltip title="分享">
                   <a-icon type="share-alt"/>
@@ -54,7 +54,7 @@
                 </a-dropdown>
               </template>
               <div class="">
-                <card-info active-user="100" new-user="999"></card-info>
+                <card-info active-user="100" new-user="999" :status="item.status"></card-info>
               </div>
             </a-card>
           </a-list-item>
@@ -64,8 +64,8 @@
 
     <!-- 创建路由信息表单-->
     <permission-application-form ref="applicationForm"
-                          @success="handleFormOnSuccess"
-                          @cancel="handleEditFormCancel"/>
+                                 @success="handleFormOnSuccess"
+                                 @cancel="handleEditFormCancel"/>
 
   </page-header-wrapper>
 </template>
@@ -75,6 +75,8 @@
 import {TagSelect, StandardFormRow, Ellipsis} from '@/components'
 import CardInfo from './components/CardInfo'
 import PermissionApplicationForm from './components/PermissionApplicationForm'
+import {getApplications} from "@/api/application-api";
+
 
 const TagSelectOption = TagSelect.Option
 
@@ -91,58 +93,35 @@ export default {
   data() {
     return {
       data: [],
-      form: this.$form.createForm(this),
       loading: true
     }
   },
-  filters: {
-  },
+  filters: {},
   mounted() {
-    this.getList()
+    this.loadData()
   },
   methods: {
+    handleEdit(record) {
+      this.$refs['applicationForm'].open(record, 'edit')
+    },
+    handleEditFormCancel() {
+    },
+    handleFormOnSuccess() {
+      this.$message.success('保存成功')
+      this.loadData()
+    },
     showApplicationForm() {
       this.$refs['applicationForm'].open()
     },
     handleChange(value) {
       console.log(`selected ${value}`)
     },
-    getList() {
-
-      this.data = [
-        {},
-        {
-          id: 1,
-          title: '权限中心'
-        },
-        {
-          id: 2,
-          title: '权限中心'
-        },
-        {
-          id: 2,
-          title: '权限中心'
-        },
-        {
-          id: 2,
-          title: '权限中心'
-        },
-        {
-          id: 2,
-          title: '权限中心'
-        },
-        {
-          id: 2,
-          title: '权限中心'
-        }]
-      console.log(this.data)
-      this.loading = false
-      // this.$http.get('/list/article', {params: {count: 8}}).then(res => {
-      //   console.log('res', res)
-      //   this.data = res.data
-      //   console.log(this.data)
-      //   this.loading = false
-      // })
+    loadData() {
+      this.loading = true
+      getApplications({})
+        .then(({data}) => this.data = data)
+        .catch()
+        .finally(() => this.loading = false)
     }
   }
 }

@@ -23,11 +23,13 @@
       :wrapper-col="{span: 16}">
 
       <a-row :gutter="1">
+
         <a-col :span="12">
           <a-form-model-item ref="name" label="路由名称" prop="name" has-feedback>
             <a-input placeholder="路由名称" v-model="formModel.name"/>
           </a-form-model-item>
         </a-col>
+
         <a-col :span="12">
           <a-form-model-item label="路由编码" prop="code" has-feedback>
             <a-input placeholder="路由编码（格式 一级路由:二级路由:三级路由:...）" v-model="formModel.code"/>
@@ -132,6 +134,7 @@ const defaultModel = {
   icon: '',
   sequence: 0,
   hideChildren: false,
+  applicationId: 0,
   elements: [],
   type: ROUTE_TYPE_MENU
 }
@@ -174,6 +177,7 @@ export default {
         code: [{required: true, message: '请输入路由编码', trigger: 'blur'}],
         status: [{required: true, message: '请选择路由状态', trigger: 'blur'}],
         type: [{required: true, message: '请选择路由类型', trigger: 'blur'}],
+        applicationId: [{required: true, message: '请选择所属应用', trigger: 'blur'}],
         component: [{required: true, message: '请输入路由组件', trigger: 'blur'}],
         hideChildren: [{required: true, message: '', trigger: 'blur'}],
       }
@@ -247,12 +251,12 @@ export default {
         this.toggleConfirmLoading()
         if (this.type === FORM_MODE_ADD) {
           addRoute(this.formModel)
-            .then(({data}) => this.afterSuccess($form))
+            .then(({data}) => this.afterSuccess())
             .catch(e => e)
             .finally(() => this.closeConfirmLoading())
         } else {
           updateRoute(this.formModel)
-            .then(({data}) => this.afterSuccess($form))
+            .then(({data}) => this.afterSuccess())
             .catch(e => e)
             .finally(() => this.closeConfirmLoading())
         }
