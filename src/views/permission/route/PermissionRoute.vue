@@ -16,7 +16,7 @@
         </a-col>
 
         <a-col :span="21">
-          <a-card :title="selectedApplication.name + '-接口列表'" :bordered="true" size="small" type="inner">
+          <a-card :title="selectedApplication.name + '-路由列表'" :bordered="true" size="small" type="inner">
 
             <template slot="extra">
               <a-button type="primary" icon="plus" @click="openForm('add')">添加路由</a-button>
