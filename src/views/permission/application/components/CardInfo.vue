@@ -2,11 +2,11 @@
   <div class="cardInfo">
     <div>
       <p>接口数量</p>
-      <p>{{ activeUser }}</p>
+      <p>{{ apiCount }}</p>
     </div>
     <div>
       <p>路由数量</p>
-      <p>{{ newUser }}</p>
+      <p>{{ routeCount }}</p>
     </div>
     <div>
       <p>状态</p>
@@ -25,16 +25,16 @@ const statusOptions = {
 export default {
   name: 'CardInfo',
   props: {
-    activeUser: {
-      type: [String, Number],
+    apiCount: {
+      type: [Number],
       default: 0
     },
     status: {
       type: [Number],
       required: true
     },
-    newUser: {
-      type: [String, Number],
+    routeCount: {
+      type: [Number],
       default: 0
     }
   },

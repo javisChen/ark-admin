@@ -1,73 +1,91 @@
 <template>
   <page-header-wrapper>
     <a-card :bordered="false">
-      <div class="table-page-search-wrapper">
-        <a-form layout="inline">
-          <a-row :gutter="48">
-            <a-col :md="8" :sm="24">
-              <a-form-item label="所属应用">
-                <application-select @change="handleApplicationSelectChange" v-model="queryParam.applicationId"/>
-              </a-form-item>
-            </a-col>
-          </a-row>
-        </a-form>
-      </div>
+      <a-row :gutter="16">
 
-      <div class="table-operator">
-        <a-button type="primary" icon="plus" @click="openForm('add')">新建路由</a-button>
-      </div>
+        <a-col :span="3">
 
-      <a-table
-        v-if="routes && routes.length > 0"
-        bordered
-        @change="handleTableChange"
-        :pagination="pagination"
-        :loading="tableLoading"
-        :defaultExpandAllRows="defaultExpandAllRows"
-        :expandRowByClick="false"
-        :size="'middle'"
-        :scroll="scroll"
-        :indent-size="15"
-        :row-key="rowKey"
-        :columns="columns"
-        :data-source="routes">
+          <a-card :headStyle="{textAlign: 'center'}" title="应用列表" :bordered="true" size="small" type="inner">
+            <a-tree
+              :replaceFields="replaceFields"
+              :tree-data="applications"
+              @select="onSelect">
+            </a-tree>
+          </a-card>
 
-        <template slot="status" slot-scope="text, record">
-          <a-dropdown :trigger="['click']">
-            <a-menu slot="overlay" @click="routeStatusChange($event, record)">
-              <a-menu-item v-for="(value, key) in routeStatusDictionary" :key="key">
-                {{ value }}
-              </a-menu-item>
-            </a-menu>
-            <a-button
-              :style="record.status === 1 ? {'background-color': '#52c41a',border: 'none', 'color': 'white'}: {}"
-              shape="round" size="small" :type="record.status !== 1 ? 'danger' : ''">
-              {{ getStatusDesc(record.status) }}
-              <a-icon type="down"/>
-            </a-button>
-          </a-dropdown>
-        </template>
+        </a-col>
 
-        <template slot="action" slot-scope="text, record">
-          <k-tooltip-button title="添加子路由" @click="openForm('addChildren', record)" icon="plus"/>&nbsp;
-          <k-tooltip-button title="查看" @click="openForm('view', record)" icon="search"/>&nbsp;
-          <k-tooltip-button title="编辑" @click="openForm('edit', record)" icon="edit"/>&nbsp;
-          <k-tooltip-button title="删除" @click="handleDelete(record)" type="danger" icon="delete"/>
-        </template>
+        <a-col :span="21">
+          <a-card :title="selectedApplication.name + '-接口列表'" :bordered="true" size="small" type="inner">
 
-        <template slot="type" slot-scope="text, record">
-          {{ getTypeDesc(record.type) }}
-        </template>
+            <template slot="extra">
+              <a-button type="primary" icon="plus" @click="openForm('add')">添加路由</a-button>
+            </template>
+            <!--          <div class="table-page-search-wrapper">-->
+            <!--            <a-form layout="inline">-->
+            <!--              <a-row :gutter="48">-->
+            <!--                <a-col :md="8" :sm="24">-->
+            <!--                  <a-form-item label="所属应用">-->
+            <!--                    <application-select @change="handleApplicationSelectChange" v-model="queryParam.applicationId"/>-->
+            <!--                  </a-form-item>-->
+            <!--                </a-col>-->
+            <!--              </a-row>-->
+            <!--            </a-form>-->
+            <!--          </div>-->
 
-        <template slot="isHideChildren" slot-scope="text, record">
-          {{ record.isHideChildren ? '是' : '否' }}
-        </template>
+            <a-table
+              bordered
+              @change="handleTableChange"
+              :pagination="pagination"
+              :loading="tableLoading"
+              :defaultExpandAllRows="defaultExpandAllRows"
+              :expandRowByClick="false"
+              :size="'middle'"
+              :scroll="scroll"
+              :indent-size="15"
+              :row-key="rowKey"
+              :columns="columns"
+              :data-source="routes">
 
-        <template slot="icon" slot-scope="text, record">
-          <a-icon v-if="record.icon" :type="record.icon"></a-icon>
-        </template>
-      </a-table>
-      <a-empty v-else/>
+              <template slot="status" slot-scope="text, record">
+                <a-dropdown :trigger="['click']">
+                  <a-menu slot="overlay" @click="routeStatusChange($event, record)">
+                    <a-menu-item v-for="(value, key) in routeStatusDictionary" :key="key">
+                      {{ value }}
+                    </a-menu-item>
+                  </a-menu>
+                  <a-button
+                    :style="record.status === 1 ? {'background-color': '#52c41a',border: 'none', 'color': 'white'}: {}"
+                    shape="round" size="small" :type="record.status !== 1 ? 'danger' : ''">
+                    {{ getStatusDesc(record.status) }}
+                    <a-icon type="down"/>
+                  </a-button>
+                </a-dropdown>
+              </template>
+
+              <template slot="action" slot-scope="text, record">
+                <k-tooltip-button title="添加子路由" @click="openForm('addChildren', record)" icon="plus"/>&nbsp;
+                <k-tooltip-button title="查看" @click="openForm('view', record)" icon="search"/>&nbsp;
+                <k-tooltip-button title="编辑" @click="openForm('edit', record)" icon="edit"/>&nbsp;
+                <k-tooltip-button title="删除" @click="handleDelete(record)" type="danger" icon="delete"/>
+              </template>
+
+              <template slot="type" slot-scope="text, record">
+                {{ getTypeDesc(record.type) }}
+              </template>
+
+              <template slot="isHideChildren" slot-scope="text, record">
+                {{ record.isHideChildren ? '是' : '否' }}
+              </template>
+
+              <template slot="icon" slot-scope="text, record">
+                <a-icon v-if="record.icon" :type="record.icon"></a-icon>
+              </template>
+            </a-table>
+          </a-card>
+        </a-col>
+
+      </a-row>
 
     </a-card>
 
@@ -86,6 +104,7 @@ import PermissionRouteForm from './components/PermissionRouteForm'
 import ApplicationSelect from './components/ApplicationSelect'
 
 import {filterNonChildren} from "@/utils/util";
+import {getApplications} from "@/api/application-api";
 
 const routeStatusDictionary = {
   1: '已启用',
@@ -110,7 +129,8 @@ const pagination = {
 
 const queryParam = {
   current: pagination.defaultCurrent,
-  size: pagination.defaultPageSize
+  size: pagination.defaultPageSize,
+  applicationId: 1
 }
 
 export default {
@@ -121,6 +141,8 @@ export default {
   },
   data() {
     return {
+      selectedApplication: {},
+      applications: [],
       defaultExpandAllRows: false,
       tableLoading: false,
       advanced: false,
@@ -228,13 +250,30 @@ export default {
       routeStatusDictionary,
       addFormVisible: false,
       scroll: {x: 1000},
+      replaceFields: {children: 'children', title: 'name', key: 'permissionId'},
     };
   },
   created() {
     this.initQueryParams(this.$route.query)
-    this.loadTableData();
+    this.loadApplications()
   },
   methods: {
+    onSelect(selectedKeys, info) {
+      this.selectedApplication = info.node.dataRef
+      this.queryParam.applicationId = this.selectedApplication.id
+      this.loadTableData();
+    },
+    loadApplications() {
+      getApplications({})
+        .then(({data}) => {
+          this.applications = data
+          if (this.applications[0]) {
+            this.selectedApplication = this.applications[0]
+            this.queryParam.applicationId = this.selectedApplication.id
+            this.loadTableData();
+          }
+        })
+    },
     initQueryParams(query) {
       this.queryParam.applicationId = query.applicationId
     },

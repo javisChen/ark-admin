@@ -1,20 +1,20 @@
 <template>
   <page-header-wrapper>
     <a-card :bordered="false">
-      <a-form-item>
-        <tag-select>
-          <tag-select-option value="Category1">类目一</tag-select-option>
-          <tag-select-option value="Category2">类目二</tag-select-option>
-          <tag-select-option value="Category3">类目三</tag-select-option>
-          <tag-select-option value="Category4">类目四</tag-select-option>
-          <tag-select-option value="Category5">类目五</tag-select-option>
-          <tag-select-option value="Category6">类目六</tag-select-option>
-          <tag-select-option value="Category7">类目七</tag-select-option>
-          <tag-select-option value="Category8">类目八</tag-select-option>
-          <tag-select-option value="Category9">类目九</tag-select-option>
-          <tag-select-option value="Category10">类目十</tag-select-option>
-        </tag-select>
-      </a-form-item>
+<!--      <a-form-item>-->
+<!--        <tag-select>-->
+<!--          <tag-select-option value="Category1">类目一</tag-select-option>-->
+<!--          <tag-select-option value="Category2">类目二</tag-select-option>-->
+<!--          <tag-select-option value="Category3">类目三</tag-select-option>-->
+<!--          <tag-select-option value="Category4">类目四</tag-select-option>-->
+<!--          <tag-select-option value="Category5">类目五</tag-select-option>-->
+<!--          <tag-select-option value="Category6">类目六</tag-select-option>-->
+<!--          <tag-select-option value="Category7">类目七</tag-select-option>-->
+<!--          <tag-select-option value="Category8">类目八</tag-select-option>-->
+<!--          <tag-select-option value="Category9">类目九</tag-select-option>-->
+<!--          <tag-select-option value="Category10">类目十</tag-select-option>-->
+<!--        </tag-select>-->
+<!--      </a-form-item>-->
       <div class="table-operator">
         <a-button type="primary" icon="plus" @click="showApplicationForm">新建应用</a-button>
       </div>
@@ -36,25 +36,9 @@
                 <a-tooltip title="编辑">
                   <a-icon type="edit" @click="handleEdit(item)"/>
                 </a-tooltip>
-                <!--                <a-dropdown>-->
-                <!--                  <a class="ant-dropdown-link">-->
-                <!--                    <a-icon type="ellipsis"/>-->
-                <!--                  </a>-->
-                <!--                  <a-menu slot="overlay">-->
-                <!--                    <a-menu-item>-->
-                <!--                      <a href="javascript:;">1st menu item</a>-->
-                <!--                    </a-menu-item>-->
-                <!--                    <a-menu-item>-->
-                <!--                      <a href="javascript:;">2nd menu item</a>-->
-                <!--                    </a-menu-item>-->
-                <!--                    <a-menu-item>-->
-                <!--                      <a href="javascript:;">3rd menu item</a>-->
-                <!--                    </a-menu-item>-->
-                <!--                  </a-menu>-->
-                <!--                </a-dropdown>-->
               </template>
               <div class="">
-                <card-info active-user="100" new-user="999" :status="item.status"></card-info>
+                <card-info :api-count="item.apiCount" :route-count="item.routeCount" :status="item.status"></card-info>
               </div>
             </a-card>
           </a-list-item>

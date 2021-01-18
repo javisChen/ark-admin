@@ -1,7 +1,7 @@
 import {post, get, del, put} from '@/utils/request'
 
 const api = {
-  routeTree: '/routes/tree',
+  routeTree: '/routes/all',
   routes: '/routes',
   route: '/route',
   routeStatus: '/route/status',
