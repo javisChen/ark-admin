@@ -72,10 +72,9 @@ request.interceptors.request.use(config => {
   // 如果 token 存在
   // 让每个请求携带自定义 token 请根据实际情况自行修改
   if (token) {
-    config.headers['Access-Token'] = `Bearer ${token}`
-    // config.headers['Access-Token'] = `Bearer Admin`
+    config.headers['Authorization'] = `Bearer ${token}`
   }
-  config.headers['X-DEV-MODE'] = `DEV`
+  // config.headers['X-DEV-MODE'] = `DEV`
   return config
 }, errorHandler)
 

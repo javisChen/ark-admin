@@ -61,7 +61,7 @@
 import {getApis} from '@/api/api-api'
 import ApplicationSelect from '../../application/components/ApplicationSelect'
 import {updateRoleApiPermission, getRolePermissionApis} from "@/api/role-api";
-import {authTypeOptions, methodOptions} from "@/views/permission/api/variable";
+import {authTypeOptions} from "@/views/permission/api/variable";
 
 const defaultModel = {
   id: '',
@@ -103,7 +103,6 @@ export default {
           dataIndex: 'method',
           align: "center",
           width: 60,
-          scopedSlots: {customRender: 'method'},
         },
         {
           title: '认证授权类型',
@@ -152,9 +151,6 @@ export default {
     },
     getAuthTypeOptionDesc(value) {
       return authTypeOptions.find(item => item.value === value).desc
-    },
-    getMethodOptionDesc(value) {
-      return methodOptions.find(item => item.value === value).desc
     },
     async loadTableData() {
       this.toggleLoading()

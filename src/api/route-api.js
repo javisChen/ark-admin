@@ -4,8 +4,7 @@ const api = {
   routesAll: '/routes/all',
   routes: '/routes',
   route: '/route',
-  routeStatus: '/route/status',
-  routeElements: (routeId) => `/route/${routeId}/elements`,
+  routeStatus: '/route/status'
 }
 
 export default api

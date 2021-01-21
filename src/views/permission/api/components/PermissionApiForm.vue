@@ -118,8 +118,8 @@ export default {
   },
   data() {
     return {
-      routeStatusOptions,
       methodOptions,
+      routeStatusOptions,
       authTypeOptions,
       applicationsOptions: [],
       confirmLoading: false,

@@ -1,73 +1,63 @@
 <template>
   <page-header-wrapper>
-
     <a-card :bordered="false">
 
-      <a-row :gutter="16">
+      <div class="table-page-search-wrapper">
+        <a-form layout="inline">
+          <a-row :gutter="48">
+            <a-col :md="8" :sm="24">
+              <a-form-item label="所属应用">
+                <application-select @change="onApplicationSelectChange" v-model="queryParam.applicationId"/>
+              </a-form-item>
+            </a-col>
+          </a-row>
+        </a-form>
+      </div>
 
-        <a-col :span="3">
-          <a-card :headStyle="{textAlign: 'center'}" title="应用列表" :bordered="true" size="small" type="inner">
-            <a-tree
-              :replaceFields="replaceFields"
-              :tree-data="applications"
-              @select="onSelect">
-            </a-tree>
-          </a-card>
-        </a-col>
+      <div class="table-operator">
+        <a-button type="primary" icon="plus" @click="openForm('add')">添加接口</a-button>
+      </div>
 
-        <a-col :span="21">
-          <a-card :title="selectedApplication.name + '-接口列表'" :bordered="true" size="small" type="inner">
+      <a-table
+        bordered
+        @change="handleTableChange"
+        :pagination="false"
+        :loading="tableLoading"
+        :defaultExpandAllRows="defaultExpandAllRows"
+        :expandRowByClick="false"
+        :size="'small'"
+        :indent-size="15"
+        :row-key="rowKey"
+        :columns="columns"
+        :data-source="apis">
 
-            <template slot="extra">
-              <a-button type="primary" icon="plus" @click="openForm('add')">添加接口</a-button>
-            </template>
-            <a-table
-              bordered
-              @change="handleTableChange"
-              :pagination="false"
-              :loading="tableLoading"
-              :defaultExpandAllRows="defaultExpandAllRows"
-              :expandRowByClick="false"
-              :size="'small'"
-              :indent-size="15"
-              :row-key="rowKey"
-              :columns="columns"
-              :data-source="apis">
+        <template slot="status" slot-scope="text, record">
+          <a-dropdown :trigger="['click']">
+            <a-menu slot="overlay" @click="routeStatusChange($event, record)">
+              <a-menu-item v-for="(item) in routeStatusOptions" :key="item.value">
+                {{ item.desc }}
+              </a-menu-item>
+            </a-menu>
+            <a-button
+              :style="record.status === 1 ? {'background-color': '#52c41a',border: 'none', 'color': 'white'}: {}"
+              shape="round" size="small" :type="record.status !== 1 ? 'danger' : ''">
+              {{ getStatusDesc(record.status) }}
+              <a-icon type="down"/>
+            </a-button>
+          </a-dropdown>
+        </template>
 
-              <template slot="status" slot-scope="text, record">
-                <a-dropdown :trigger="['click']">
-                  <a-menu slot="overlay" @click="routeStatusChange($event, record)">
-                    <a-menu-item v-for="(item) in routeStatusOptions" :key="item.value">
-                      {{ item.desc }}
-                    </a-menu-item>
-                  </a-menu>
-                  <a-button
-                    :style="record.status === 1 ? {'background-color': '#52c41a',border: 'none', 'color': 'white'}: {}"
-                    shape="round" size="small" :type="record.status !== 1 ? 'danger' : ''">
-                    {{ getStatusDesc(record.status) }}
-                    <a-icon type="down"/>
-                  </a-button>
-                </a-dropdown>
-              </template>
+        <template slot="action" slot-scope="text, record">
+          <k-tooltip-button title="编辑" @click="openForm('edit', record)" icon="edit"/>&nbsp;
+          <k-tooltip-button title="删除" @click="handleDelete(record)" type="danger" icon="delete"/>
+        </template>
 
-              <template slot="action" slot-scope="text, record">
-                <k-tooltip-button title="编辑" @click="openForm('edit', record)" icon="edit"/>&nbsp;
-                <k-tooltip-button title="删除" @click="handleDelete(record)" type="danger" icon="delete"/>
-              </template>
+        <template slot="authType" slot-scope="text, record">
+          {{ getAuthTypeOptionDesc(record.authType) }}
+        </template>
 
-              <template slot="method" slot-scope="text, record">
-                {{ getMethodOptionDesc(record.method) }}
-              </template>
+      </a-table>
 
-              <template slot="authType" slot-scope="text, record">
-                {{ getAuthTypeOptionDesc(record.authType) }}
-              </template>
-
-            </a-table>
-
-          </a-card>
-        </a-col>
-      </a-row>
     </a-card>
 
     <!-- 创建路由信息表单-->
@@ -82,18 +72,19 @@
 <script>
 
 import {getApis, updateApi, deleteApi} from '@/api/api-api'
-import {getApplications} from '@/api/application-api'
 import PermissionApiForm from './components/PermissionApiForm'
-import {authTypeOptions, methodOptions, routeStatusOptions} from "./variable";
+import ApplicationSelect from '@/views/permission/application/components/ApplicationSelect'
+import {authTypeOptions, routeStatusOptions} from "./variable";
 
 const queryParam = {
-  applicationId: 0
+  applicationId: null
 }
 
 export default {
   name: 'PermissionRoute',
   components: {
     PermissionApiForm,
+    ApplicationSelect
   },
   data() {
     return {
@@ -126,7 +117,6 @@ export default {
           dataIndex: 'method',
           align: "center",
           width: 60,
-          scopedSlots: {customRender: 'method'},
         },
         {
           title: '状态',
@@ -157,14 +147,23 @@ export default {
     };
   },
   created() {
-    this.loadApplications()
+    console.log(123)
+    this.initQueryParams()
+    this.loadTableData();
   },
   methods: {
+    initQueryParams() {
+      const {query} = this.$route
+      console.log(query)
+      if (query) {
+        this.queryParam.applicationId = query.applicationId || 1
+      }
+    },
+    onApplicationSelectChange(val) {
+      this.loadTableData()
+    },
     getAuthTypeOptionDesc(value) {
       return authTypeOptions.find(item => item.value === value).desc
-    },
-    getMethodOptionDesc(value) {
-      return methodOptions.find(item => item.value === value).desc
     },
     getStatusDesc(value) {
       return routeStatusOptions.find(item => item.value === value).desc
@@ -173,17 +172,6 @@ export default {
       this.selectedApplication = info.node.dataRef
       this.queryParam.applicationId = this.selectedApplication.id
       this.loadTableData();
-    },
-    loadApplications() {
-      getApplications({})
-        .then(({data}) => {
-          this.applications = data
-          if (this.applications[0]) {
-            this.selectedApplication = this.applications[0]
-            this.queryParam.applicationId = this.selectedApplication.id
-            this.loadTableData();
-          }
-        })
     },
     handleTableChange(pagination, filters, sorter) {
       this.queryParam.current = pagination.current

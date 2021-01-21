@@ -1,9 +1,9 @@
 export const methodOptions = [
-  {desc: 'GET', value: 1},
-  {desc: 'POST', value: 2},
-  {desc: 'PUT', value: 3},
-  {desc: 'DELETE', value: 4},
-  {desc: 'PATCH', value: 5},
+  {desc: 'GET', value: 'GET'},
+  {desc: 'POST', value: 'POST'},
+  {desc: 'PUT', value: 'PUT'},
+  {desc: 'DELETE', value: 'DELETE'},
+  {desc: 'PATCH', value: 'PATCH'},
 ]
 
 export const authTypeOptions = [

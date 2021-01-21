@@ -1,5 +1,5 @@
 // eslint-disable-next-line
-import * as loginService from '@/api/login'
+import {getUserRoutes} from '@/api/user-api'
 // eslint-disable-next-line
 
 import constantRouterComponents from "./router-components";
@@ -27,13 +27,13 @@ const rootRouter = {
  * @param token
  * @returns {Promise<Router>}
  */
-export const generatorDynamicRouter = (token) => {
+export const generatorDynamicRouter = () => {
   return new Promise((resolve, reject) => {
-    loginService.getCurrentUserNav(token).then(({data, resp}) => {
+    getUserRoutes().then(({data, resp}) => {
       const menuNav = []
       const childrenNav = []
       //      后端数据, 根级树数组,  根级 PID
-      listToTree(data.routes, childrenNav, 0)
+      listToTree(data, childrenNav, 0)
       rootRouter.children = childrenNav
       menuNav.push(rootRouter)
       const routers = generator(menuNav)

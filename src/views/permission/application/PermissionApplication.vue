@@ -94,7 +94,7 @@ export default {
     },
     viewApi(item) {
       this.$router.push({
-        name: 'permission:api',
+        name: 'permission:interface',
         query: {
           applicationId: item.id
         }

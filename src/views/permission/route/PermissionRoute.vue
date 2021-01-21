@@ -1,80 +1,71 @@
 <template>
   <page-header-wrapper>
     <a-card :bordered="false">
-      <a-row :gutter="16">
+      <div class="table-page-search-wrapper">
+        <a-form layout="inline">
+          <a-row :gutter="48">
+            <a-col :md="8" :sm="24">
+              <a-form-item label="所属应用">
+                <application-select @change="onApplicationSelectChange" v-model="queryParam.applicationId"/>
+              </a-form-item>
+            </a-col>
+          </a-row>
+        </a-form>
+      </div>
 
-        <a-col :span="3">
+      <div class="table-operator">
+        <a-button type="primary" icon="plus" @click="openForm('add')">添加路由</a-button>
+      </div>
 
-          <a-card :headStyle="{textAlign: 'center'}" title="应用列表" :bordered="true" size="small" type="inner">
-            <a-tree
-              :replaceFields="replaceFields"
-              :tree-data="applications"
-              @select="onSelect">
-            </a-tree>
-          </a-card>
+      <a-table
+        bordered
+        @change="handleTableChange"
+        :pagination="pagination"
+        :loading="tableLoading"
+        :defaultExpandAllRows="defaultExpandAllRows"
+        :expandRowByClick="false"
+        :size="'middle'"
+        :scroll="scroll"
+        :indent-size="15"
+        :row-key="rowKey"
+        :columns="columns"
+        :data-source="routes">
 
-        </a-col>
+        <template slot="status" slot-scope="text, record">
+          <a-dropdown :trigger="['click']">
+            <a-menu slot="overlay" @click="routeStatusChange($event, record)">
+              <a-menu-item v-for="(value, key) in routeStatusDictionary" :key="key">
+                {{ value }}
+              </a-menu-item>
+            </a-menu>
+            <a-button
+              :style="record.status === 1 ? {'background-color': '#52c41a',border: 'none', 'color': 'white'}: {}"
+              shape="round" size="small" :type="record.status !== 1 ? 'danger' : ''">
+              {{ getStatusDesc(record.status) }}
+              <a-icon type="down"/>
+            </a-button>
+          </a-dropdown>
+        </template>
 
-        <a-col :span="21">
-          <a-card :title="selectedApplication.name + '-路由列表'" :bordered="true" size="small" type="inner">
+        <template slot="action" slot-scope="text, record">
+          <k-tooltip-button title="添加子路由" @click="openForm('addChildren', record)" icon="plus"/>&nbsp;
+          <k-tooltip-button title="查看" @click="openForm('view', record)" icon="search"/>&nbsp;
+          <k-tooltip-button title="编辑" @click="openForm('edit', record)" icon="edit"/>&nbsp;
+          <k-tooltip-button title="删除" @click="handleDelete(record)" type="danger" icon="delete"/>
+        </template>
 
-            <template slot="extra">
-              <a-button type="primary" icon="plus" @click="openForm('add')">添加路由</a-button>
-            </template>
+        <template slot="type" slot-scope="text, record">
+          {{ getTypeDesc(record.type) }}
+        </template>
 
-            <a-table
-              bordered
-              @change="handleTableChange"
-              :pagination="pagination"
-              :loading="tableLoading"
-              :defaultExpandAllRows="defaultExpandAllRows"
-              :expandRowByClick="false"
-              :size="'middle'"
-              :scroll="scroll"
-              :indent-size="15"
-              :row-key="rowKey"
-              :columns="columns"
-              :data-source="routes">
+        <template slot="isHideChildren" slot-scope="text, record">
+          {{ record.isHideChildren ? '是' : '否' }}
+        </template>
 
-              <template slot="status" slot-scope="text, record">
-                <a-dropdown :trigger="['click']">
-                  <a-menu slot="overlay" @click="routeStatusChange($event, record)">
-                    <a-menu-item v-for="(value, key) in routeStatusDictionary" :key="key">
-                      {{ value }}
-                    </a-menu-item>
-                  </a-menu>
-                  <a-button
-                    :style="record.status === 1 ? {'background-color': '#52c41a',border: 'none', 'color': 'white'}: {}"
-                    shape="round" size="small" :type="record.status !== 1 ? 'danger' : ''">
-                    {{ getStatusDesc(record.status) }}
-                    <a-icon type="down"/>
-                  </a-button>
-                </a-dropdown>
-              </template>
-
-              <template slot="action" slot-scope="text, record">
-                <k-tooltip-button title="添加子路由" @click="openForm('addChildren', record)" icon="plus"/>&nbsp;
-                <k-tooltip-button title="查看" @click="openForm('view', record)" icon="search"/>&nbsp;
-                <k-tooltip-button title="编辑" @click="openForm('edit', record)" icon="edit"/>&nbsp;
-                <k-tooltip-button title="删除" @click="handleDelete(record)" type="danger" icon="delete"/>
-              </template>
-
-              <template slot="type" slot-scope="text, record">
-                {{ getTypeDesc(record.type) }}
-              </template>
-
-              <template slot="isHideChildren" slot-scope="text, record">
-                {{ record.isHideChildren ? '是' : '否' }}
-              </template>
-
-              <template slot="icon" slot-scope="text, record">
-                <a-icon v-if="record.icon" :type="record.icon"></a-icon>
-              </template>
-            </a-table>
-          </a-card>
-        </a-col>
-
-      </a-row>
+        <template slot="icon" slot-scope="text, record">
+          <a-icon v-if="record.icon" :type="record.icon"></a-icon>
+        </template>
+      </a-table>
 
     </a-card>
 
@@ -90,10 +81,9 @@
 
 import {getRoutes, deleteRoute, updateRouteStatus, getRoute} from '@/api/route-api'
 import PermissionRouteForm from './components/PermissionRouteForm'
-import ApplicationSelect from '../application/components/ApplicationSelect'
+import ApplicationSelect from '@/views/permission/application/components/ApplicationSelect'
 
 import {filterNonChildren} from "@/utils/util";
-import {getApplications} from "@/api/application-api";
 
 const routeStatusDictionary = {
   1: '已启用',
@@ -119,7 +109,7 @@ const pagination = {
 const queryParam = {
   current: pagination.defaultCurrent,
   size: pagination.defaultPageSize,
-  applicationId: 1
+  applicationId: null
 }
 
 export default {
@@ -243,31 +233,23 @@ export default {
     };
   },
   created() {
-    this.initQueryParams(this.$route.query)
-    this.loadApplications()
+    this.initQueryParams()
+    this.loadTableData()
   },
   methods: {
+    onApplicationSelectChange(val) {
+      this.loadTableData()
+    },
     onSelect(selectedKeys, info) {
       this.selectedApplication = info.node.dataRef
       this.queryParam.applicationId = this.selectedApplication.id
       this.loadTableData();
     },
-    loadApplications() {
-      getApplications({})
-        .then(({data}) => {
-          this.applications = data
-          if (this.applications[0]) {
-            this.selectedApplication = this.applications[0]
-            this.queryParam.applicationId = this.selectedApplication.id
-            this.loadTableData();
-          }
-        })
-    },
-    initQueryParams(query) {
-      this.queryParam.applicationId = query.applicationId
-    },
-    handleApplicationSelectChange(value) {
-      this.loadTableData()
+    initQueryParams() {
+      const {query} = this.$route
+      if (query) {
+        this.queryParam.applicationId = query.applicationId || 1
+      }
     },
     getTypeDesc(value) {
       return routeTypeDictionary[value]
@@ -349,7 +331,6 @@ export default {
         filterNonChildren(item);
         return item;
       });
-      console.log(this.routes);
       this.pagination.total = data.total
       this.toggleLoading()
     }
