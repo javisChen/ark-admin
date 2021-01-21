@@ -21,17 +21,6 @@
             <template slot="extra">
               <a-button type="primary" icon="plus" @click="openForm('add')">添加路由</a-button>
             </template>
-            <!--          <div class="table-page-search-wrapper">-->
-            <!--            <a-form layout="inline">-->
-            <!--              <a-row :gutter="48">-->
-            <!--                <a-col :md="8" :sm="24">-->
-            <!--                  <a-form-item label="所属应用">-->
-            <!--                    <application-select @change="handleApplicationSelectChange" v-model="queryParam.applicationId"/>-->
-            <!--                  </a-form-item>-->
-            <!--                </a-col>-->
-            <!--              </a-row>-->
-            <!--            </a-form>-->
-            <!--          </div>-->
 
             <a-table
               bordered
@@ -101,7 +90,7 @@
 
 import {getRoutes, deleteRoute, updateRouteStatus, getRoute} from '@/api/route-api'
 import PermissionRouteForm from './components/PermissionRouteForm'
-import ApplicationSelect from './components/ApplicationSelect'
+import ApplicationSelect from '../application/components/ApplicationSelect'
 
 import {filterNonChildren} from "@/utils/util";
 import {getApplications} from "@/api/application-api";

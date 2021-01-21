@@ -1,7 +1,7 @@
 import {post, get, del, put} from '@/utils/request'
 
 const api = {
-  routeTree: '/routes/all',
+  routesAll: '/routes/all',
   routes: '/routes',
   route: '/route',
   routeStatus: '/route/status',
@@ -10,7 +10,7 @@ const api = {
 
 export default api
 
-export const getRoutesTree = (data) => post({url: api.routeTree, data})
+export const getRoutesTree = (data) => post({url: api.routesAll, data})
 
 export const getRoutes = (data) => post({url: api.routes, data})
 

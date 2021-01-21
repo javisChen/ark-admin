@@ -143,7 +143,7 @@
 
 import {updateRoute, addRoute} from '@/api/route-api'
 import RouteComponentSelect from "./RouteComponentSelect";
-import ApplicationSelect from "./ApplicationSelect";
+import ApplicationSelect from "../../application/components/ApplicationSelect";
 import PermissionPageElementTable from "./PermissionPageElementTable";
 
 const ROUTE_TYPE_MENU = 1
@@ -165,7 +165,7 @@ const defaultModel = {
   pid: 0,
   status: 1,
   icon: '',
-  applicationId: 0,
+  applicationId: 1,
   sequence: 0,
   hideChildren: false,
   elements: [],

@@ -124,7 +124,8 @@ export default {
         {
           title: 'method',
           dataIndex: 'method',
-          width: 80,
+          align: "center",
+          width: 60,
           scopedSlots: {customRender: 'method'},
         },
         {
@@ -143,20 +144,8 @@ export default {
           scopedSlots: {customRender: 'authType'},
         },
         {
-          title: '创建时间',
-          dataIndex: 'createTime',
-          align: "center",
-          width: 150,
-        },
-        {
-          title: '更新时间',
-          dataIndex: 'updateTime',
-          align: "center",
-          width: 150,
-        },
-        {
           title: '操作',
-          width: 100,
+          width: 60,
           align: 'center',
           scopedSlots: {customRender: 'action'},
         },

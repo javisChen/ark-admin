@@ -68,7 +68,8 @@
 
         <template slot="action" slot-scope="text, record">
           <k-tooltip-button title="编辑" @click="handleEdit(record)" icon="edit"/>&nbsp;
-          <k-tooltip-button title="授权" @click="handleGrant(record)" type="primary" icon="safety"/>&nbsp;
+          <k-tooltip-button title="路由授权" @click="handleGrant('route', record)" type="primary" icon="safety"/>&nbsp;
+          <k-tooltip-button title="接口授权" @click="handleGrant('api', record)" type="primary" icon="api"/>&nbsp;
           <k-tooltip-button title="删除" @click="handleDelete(record)" type="danger" icon="delete"/>
         </template>
       </a-table>
@@ -82,7 +83,12 @@
                           @cancel="handleEditFormCancel"/>
 
     <!-- 授权窗口-->
-    <permission-grant-form ref="grantForm"
+    <permission-route-grant-form ref="routeGrantForm"
+                          @success="handleFormOnSuccess"
+                          @cancel="handleEditFormCancel"/>
+
+    <!-- 授权窗口-->
+    <permission-api-grant-form ref="apiGrantForm"
                           @success="handleFormOnSuccess"
                           @cancel="handleEditFormCancel"/>
 
@@ -94,7 +100,8 @@
 
 import {getRoles} from '@/api/role-api'
 import PermissionRoleForm from "./components/PermissionRoleForm";
-import PermissionGrantForm from "./components/PermissionGrantForm";
+import PermissionRouteGrantForm from "./components/PermissionRouteGrantForm";
+import PermissionApiGrantForm from "./components/PermissionApiGrantForm";
 
 const routeStatusDictionary = {
   1: '已启用',
@@ -121,7 +128,8 @@ export default {
   name: 'PermissionRole',
   components: {
     PermissionRoleForm,
-    PermissionGrantForm
+    PermissionRouteGrantForm,
+    PermissionApiGrantForm
   },
   data() {
     return {
@@ -205,8 +213,8 @@ export default {
     rowKey(record) {
       return record.id
     },
-    handleGrant(record) {
-      this.$refs['grantForm'].open(record)
+    handleGrant(type, record) {
+      this.$refs[`${type}GrantForm`].open(record)
     },
     handleDelete(record) {
       this.$confirm({
