@@ -24,19 +24,18 @@ router.beforeEach((to, from, next) => {
       NProgress.done()
     } else {
       // check login user.roles is null
-      if (store.getters.roles.length === 0) {
+      console.log(store.getters.addRouters.length)
+      if (store.getters.addRouters.length === 0) {
         // request login userInfo
         store.dispatch('GetInfo')
           .then(({data}) => {
-            const roles = data && data.role
-            console.log(roles)
 
             // generate dynamic router
-            store.dispatch('GenerateRoutes', {roles}).then(() => {
+            store.dispatch('GenerateRoutes').then(() => {
               // 根据roles权限生成可访问的路由表
               // 动态添加可访问路由表
-              router.addRoutes(store.getters.addRouters)
               console.log(store.getters.addRouters)
+              router.addRoutes(store.getters.addRouters)
               // 请求带有 redirect 重定向时，登录自动重定向到该地址
               const redirect = decodeURIComponent(from.query.redirect || to.path)
               if (to.path === redirect) {

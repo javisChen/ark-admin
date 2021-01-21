@@ -14,7 +14,7 @@
       </div>
 
       <div class="table-operator">
-        <a-button type="primary" icon="plus" @click="openForm('add')">添加路由</a-button>
+        <a-button v-has-permission:PE00004 type="primary" icon="plus" @click="openForm('add')">添加路由</a-button>
       </div>
 
       <a-table
@@ -48,10 +48,10 @@
         </template>
 
         <template slot="action" slot-scope="text, record">
-          <k-tooltip-button title="添加子路由" @click="openForm('addChildren', record)" icon="plus"/>&nbsp;
-          <k-tooltip-button title="查看" @click="openForm('view', record)" icon="search"/>&nbsp;
-          <k-tooltip-button title="编辑" @click="openForm('edit', record)" icon="edit"/>&nbsp;
-          <k-tooltip-button title="删除" @click="handleDelete(record)" type="danger" icon="delete"/>
+          <k-tooltip-button v-hasPermission:PE00007 title="添加子路由" @click="openForm('addChildren', record)" icon="plus"/>&nbsp;
+          <k-tooltip-button v-hasPermission:PE00008 title="查看" @click="openForm('view', record)" icon="search"/>&nbsp;
+          <k-tooltip-button v-hasPermission:PE00005 title="编辑" @click="openForm('edit', record)" icon="edit"/>&nbsp;
+          <k-tooltip-button v-hasPermission:PE00006 title="删除" @click="handleDelete(record)" type="danger" icon="delete"/>
         </template>
 
         <template slot="type" slot-scope="text, record">

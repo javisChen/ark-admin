@@ -30,5 +30,15 @@ const action = Vue.directive('action', {
     })
   }
 })
+const hasPermission = Vue.directive('hasPermission', {
+  inserted: function (el, binding, vnode) {
+    const code = binding.arg
+    const actionPermissions = store.getters.actionPermissions
+    const some = actionPermissions.some(p => p.permissionCode === code);
+    if (!some) {
+      el.parentNode && el.parentNode.removeChild(el) || (el.style.display = 'none')
+    }
+  }
+})
 
 export default action

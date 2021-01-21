@@ -147,7 +147,6 @@ export default {
     };
   },
   created() {
-    console.log(123)
     this.initQueryParams()
     this.loadTableData();
   },
