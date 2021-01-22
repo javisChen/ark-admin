@@ -19,12 +19,12 @@ router.beforeEach((to, from, next) => {
   to.meta && (typeof to.meta.title !== 'undefined' && setDocumentTitle(`${i18nRender(to.meta.title)} - ${domTitle}`))
   /* has token */
   if (storage.get(ACCESS_TOKEN)) {
+    // 登录成功后，如果路由到登录页的话就重定向到默认首页
     if (to.path === loginRoutePath) {
       next({path: defaultRoutePath})
       NProgress.done()
     } else {
       // check login user.roles is null
-      console.log(store.getters.addRouters.length)
       if (store.getters.addRouters.length === 0) {
         // request login userInfo
         store.dispatch('GetInfo')
@@ -34,7 +34,6 @@ router.beforeEach((to, from, next) => {
             store.dispatch('GenerateRoutes').then(() => {
               // 根据roles权限生成可访问的路由表
               // 动态添加可访问路由表
-              console.log(store.getters.addRouters)
               router.addRoutes(store.getters.addRouters)
               // 请求带有 redirect 重定向时，登录自动重定向到该地址
               const redirect = decodeURIComponent(from.query.redirect || to.path)

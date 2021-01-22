@@ -19,7 +19,6 @@ const permission = {
     GenerateRoutes ({ commit }) {
       return new Promise(resolve => {
         generatorDynamicRouter().then(routers => {
-          console.log(routers)
           commit('SET_ROUTERS', routers)
           resolve()
         })

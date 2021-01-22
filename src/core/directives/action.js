@@ -30,6 +30,7 @@ const action = Vue.directive('action', {
     })
   }
 })
+
 const hasPermission = Vue.directive('hasPermission', {
   inserted: function (el, binding, vnode) {
     const code = binding.arg
