@@ -30,8 +30,7 @@
         <a-card title="路由列表"
                 size="small">
           <template slot="extra">
-            <a href="#" @click="checkAll">全选</a>&nbsp;
-            <a href="#" @click="invertCheckAll">全反选</a>
+            <a href="#" @click="checkAll">全选/反选</a>&nbsp;
           </template>
 
           <a-tree
@@ -44,7 +43,7 @@
             :expanded-keys="expandedKeys"
             :selected-keys="selectedKeys"
             @expand="onExpand"
-            :tree-data="treeData"
+            :tree-data="routesTreeData"
             @select="onSelect"
             @check="onCheckRoute">
           </a-tree>
@@ -97,8 +96,12 @@ export default {
   data() {
     return {
       loadTreeDataSuccess: false,
+      // 角色所拥有的路由权限
       rolePermissionRoutes: [],
+      rolePermissionRouteIds: [],
+      // 角色所拥有的页面元素权限
       rolePermissionElements: [],
+      rolePermissionElementIds: [],
       replaceFields: {children: 'children', title: 'name', key: 'permissionId'},
       expandedKeys: [],
       autoExpandParent: true,
@@ -107,7 +110,8 @@ export default {
       },
       defaultExpandedKeys: [],
       selectedKeys: [],
-      treeData: [],
+      routesTreeData: [],
+      routesData: [],
       checkedRoutePermissions: new Set(),
       checkedElementPermissions: [],
       columns: [
@@ -139,13 +143,36 @@ export default {
       visible: false,
       role: {},
       okText: '保存授权',
+
+      toAddRoutePermissionIds: [],
+      toRemoveRoutePermissionIds: [],
+      toAddElementPermissionIds: [],
+      toRemoveElementPermissionIds: [],
+
+      checkOrInvertAll: true
+    }
+  },
+  watch: {
+    checkedRoutePermissions: {
+      handler (val) {
+        const {rolePermissionRouteIds} = this
+        const checkedPermissionIds = [...val];
+        console.log(rolePermissionRouteIds)
+        this.toAddRoutePermissionIds = this.filterToAddPermissionIds(rolePermissionRouteIds, checkedPermissionIds);
+        this.toRemoveRoutePermissionIds = this.filterToRemovePermissionIds(rolePermissionRouteIds, checkedPermissionIds);
+      },
+    },
+    checkedElementPermissions(val) {
+      const {rolePermissionElementIds} = this
+      this.toAddElementPermissionIds = this.filterToAddPermissionIds(rolePermissionElementIds, val)
+      this.toRemoveElementPermissionIds = this.filterToRemovePermissionIds(rolePermissionElementIds, val)
     }
   },
   computed: {
     rowSelection() {
       return {
         selectedRowKeys: this.selectedRowKeys,
-        onChange: this.onSelectElementChange
+        onChange: this.onSelectElementChange,
       }
     }
   },
@@ -154,10 +181,13 @@ export default {
   },
   methods: {
     checkAll() {
-      this.updateNode(true, this.treeData)
+      this.updateNode(this.checkOrInvertAll, this.routesTreeData)
+      this.checkOrInvertAll = !this.checkOrInvertAll
+      // 重新赋值，不然触发不到watch
+      this.checkedRoutePermissions = new Set(this.checkedRoutePermissions)
     },
     invertCheckAll() {
-      this.updateNode(false, this.treeData)
+      this.updateNode(false, this.routesTreeData)
     },
     onApplicationSelectChange(val) {
       this.loadTreeData()
@@ -167,7 +197,8 @@ export default {
       getRolePermissionElements({roleId: this.role.id, applicationId: this.selectedApplicationId})
         .then(({data}) => {
           this.rolePermissionElements = data;
-          this.selectedRowKeys = this.rolePermissionElements.map(item => item.permissionId)
+          this.rolePermissionElementIds = this.rolePermissionElements.map(item => item.permissionId);
+          this.selectedRowKeys = this.rolePermissionElementIds
         })
         .catch()
     },
@@ -176,7 +207,8 @@ export default {
       getRolePermissionRoutes({roleId: this.role.id, applicationId: this.selectedApplicationId})
         .then(({data}) => {
           this.rolePermissionRoutes = data;
-          this.routeCheckedKeys = this.rolePermissionRoutes.map(item => item.permissionId)
+          this.rolePermissionRouteIds = this.rolePermissionRoutes.map(item => item.permissionId);
+          this.routeCheckedKeys = this.rolePermissionRouteIds
           this.defaultExpandedKeys = this.routeCheckedKeys;
           this.expandedKeys = this.defaultExpandedKeys;
           this.loadTreeDataSuccess = true
@@ -186,20 +218,22 @@ export default {
         })
         .catch()
     },
-    getCheckedPermission() {
-      const {checkedElementPermissions} = this
-      return {
-        checkedElementPermissions: checkedElementPermissions,
-        checkedRoutePermissions: this.routeCheckedKeys.checked || this.routeCheckedKeys
-      };
-    },
     onSelectElementChange(selectedRowKeys, selectedRows) {
       this.selectedRowKeys = selectedRowKeys
       this.checkedElementPermissions = selectedRowKeys
     },
+    buildNormalRouteData(data) {
+      data.forEach(item => {
+        this.routesData.push(item)
+        if (item.children && item.children.length > 0) {
+          this.buildNormalRouteData(item.children)
+        }
+      })
+    },
     async loadTreeData() {
       const {data} = await getRoutesTree({applicationId: this.selectedApplicationId})
-      this.treeData = data
+      this.routesTreeData = data
+      this.buildNormalRouteData(data);
     },
     elementTableRowKey(record) {
       return record.permissionId
@@ -208,8 +242,25 @@ export default {
       this.checkedRoutePermissions = new Set([...checked])
       const node = event.node
       const nodeChecked = event.checked
-      const children = node.dataRef.children
-      this.updateNode(nodeChecked, children);
+      const nodeData = node.dataRef;
+      const children = nodeData.children
+      console.log('on check route')
+      if (!children || children.length === 0) {
+        this.updateParentNode(nodeChecked, nodeData)
+      } else {
+        this.updateNode(nodeChecked, children);
+      }
+    },
+    updateParentNode(nodeChecked, nodeData) {
+      const routeCheckedKeys = this.checkedRoutePermissions
+      let {pid, level} = nodeData
+      // 选中子节点的时候，把所有父节点都选上
+      for (let i = 0; i < level - 1; i++) {
+        const route = this.routesData.find(item => item.id === pid);
+        routeCheckedKeys.add(route.permissionId)
+        pid = route.pid
+      }
+      this.updateRouteCheckedKeys()
     },
     checkOrUnCheckNode(checked, item) {
       const routeCheckedKeys = this.checkedRoutePermissions
@@ -220,11 +271,7 @@ export default {
       }
       this.updateChildNodeChecked(checked, item.children)
     },
-    updateNode: function (nodeChecked, children) {
-      // 自己实现了全选和反选
-      this.updateChildNodeChecked(nodeChecked, children)
-      console.log(this.checkedRoutePermissions)
-      // ant的bug，如果一进来没有做过勾选操作的话，是没有checked属性的，如果有勾选过就有
+    updateRouteCheckedKeys() {
       if (this.routeCheckedKeys.checked) {
         this.routeCheckedKeys.checked = [...this.checkedRoutePermissions]
       } else {
@@ -232,6 +279,12 @@ export default {
       }
       // 选中/反选后自动展开/折叠节点
       this.expandedKeys = [...this.checkedRoutePermissions]
+    },
+    updateNode(nodeChecked, children) {
+      // 自己实现了全选和反选
+      this.updateChildNodeChecked(nodeChecked, children)
+      // ant的bug，如果一进来没有做过勾选操作的话，是没有checked属性的，如果有勾选过就有
+      this.updateRouteCheckedKeys();
     },
     updateChildNodeChecked(checked, children) {
       if (!children || children.length === 0) {
@@ -275,20 +328,50 @@ export default {
     },
     resetForm() {
       this.formModel = Object.assign({}, defaultModel)
+      this.toAddRoutePermissionIds = []
+      this.toRemoveRoutePermissionIds = []
+      this.toAddElementPermissionIds = []
+      this.toRemoveElementPermissionIds = []
+      this.selectedRowKeys = []
+      this.routeCheckedKeys = []
+      this.tableData = []
+      this.expandedKeys = []
+      this.rolePermissionElementIds = []
+      this.rolePermissionRouteIds = []
+      this.checkedRoutePermissions = new Set()
+      this.checkedElementPermissions = []
+    },
+    filterToAddPermissionIds(originPermissions, currentPermission) {
+      const toAddIds = currentPermission.filter(item => !originPermissions.includes(item));
+      console.log('------------------过滤新增的权限------------------')
+      console.log('原权限 ->', originPermissions);
+      console.log('当前选中的权限 ->', currentPermission);
+      console.log('新权限 ->', toAddIds);
+      console.log('------------------过滤新增的权限------------------')
+      return toAddIds;
+    },
+    filterToRemovePermissionIds(originPermissions, currentPermission) {
+      const toRemoveIds = originPermissions.filter(item => !currentPermission.includes(item));
+      console.log('------------------过滤移除的权限------------------')
+      console.log('原权限 ->', originPermissions);
+      console.log('当前选中的权限 ->', currentPermission);
+      console.log('移除权限 ->', toRemoveIds);
+      console.log('------------------过滤移除的权限------------------')
+      return toRemoveIds;
     },
     async handleOk() {
       this.toggleConfirmLoading()
       try {
-        const checkedPermission = this.getCheckedPermission()
-        console.log('checkedPermission', checkedPermission)
         const data = {
           roleId: this.role.id,
-          applicationId: this.selectedApplicationId,
-          routePermissionIds: checkedPermission.checkedRoutePermissions,
-          elementPermissionIds: checkedPermission.checkedElementPermissions
+          toAddRoutePermissionIds: this.toAddRoutePermissionIds,
+          toRemoveRoutePermissionIds: this.toRemoveRoutePermissionIds,
+          toAddElementPermissionIds: this.toAddElementPermissionIds,
+          toRemoveElementPermissionIds: this.toRemoveElementPermissionIds
         };
+        console.log(data)
+        // return
         await updateRoleRoutePermission(data)
-
         this.afterSuccess()
       } catch (e) {
       } finally {

@@ -10,6 +10,7 @@ const getters = {
   roles: state => state.user.roles,
   actionPermissions: state => state.user.actionPermissions,
   userInfo: state => state.user.info,
+  isSuperAdmin: state => state.user.isSuperAdmin,
   addRouters: state => state.permission.addRouters,
   multiTab: state => state.app.multiTab
 }

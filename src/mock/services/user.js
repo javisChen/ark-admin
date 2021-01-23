@@ -744,5 +744,5 @@ const userRoutes = (options) => {
   return builder(nav)
 }
 
-Mock.mock(/\/api\/user\/info/, 'get', info)
+// Mock.mock(/\/api\/user\/info/, 'get', info)
 // Mock.mock(/\/api\/user\/menus/, 'get', userRoutes)

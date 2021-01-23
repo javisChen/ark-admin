@@ -1,6 +1,6 @@
 import storage from 'store'
 import {login, getInfo, logout} from '@/api/login'
-import {getUserPageElementPermissions} from '@/api/user-api'
+import {getUserPageElementPermissions, getUserInfo} from '@/api/user-api'
 import {ACCESS_TOKEN} from '@/store/mutation-types'
 import {welcome} from '@/utils/util'
 
@@ -12,7 +12,8 @@ const user = {
     avatar: '',
     roles: [],
     actionPermissions: [],
-    info: {}
+    info: {},
+    isSuperAdmin: false
   },
 
   mutations: {
@@ -22,6 +23,9 @@ const user = {
     SET_NAME: (state, {name, welcome}) => {
       state.name = name
       state.welcome = welcome
+    },
+    SET_IS_SUPER_ADMIN: (state, isSuperAdmin) => {
+      state.isSuperAdmin = isSuperAdmin
     },
     SET_AVATAR: (state, avatar) => {
       state.avatar = avatar
@@ -54,42 +58,15 @@ const user = {
 
     // 获取用户信息
     GetInfo({commit}) {
-      return new Promise((resolve, reject) => {
-        // getInfo().then(({data}) => {
-        //   const result = data
-        //   if (result.role && result.role.permissions.length > 0) {
-        //     const role = result.role
-        //     role.permissions = result.role.permissions
-        //     role.permissions.map(per => {
-        //       if (per.actionEntitySet != null && per.actionEntitySet.length > 0) {
-        //         const action = per.actionEntitySet.map(action => { return action.action })
-        //         per.actionList = action
-        //       }
-        //     })
-        //     role.permissionList = role.permissions.map(permission => { return permission.permissionId })
-        //     console.log('role.permissionList', role.permissionList)
-        //     commit('SET_ROLES', result.role)
-        //     commit('SET_INFO', result)
-        //   } else {
-        //     reject(new Error('getInfo: roles must be a non-null array !'))
-        //   }
-        //
-        //   commit('SET_NAME', { name: result.name, welcome: welcome() })
-        //   commit('SET_AVATAR', result.avatar)
-        //
-        //   resolve({data})
-        // }).catch(error => {
-        //   reject(error)
-        // })
-        getUserPageElementPermissions().then(({data}) => {
-          console.log('role.permissionList', data)
+      return new Promise(async (resolve, reject) => {
+        const userInfoResp = await getUserInfo();
+        const userInfo = userInfoResp.data
+        commit('SET_INFO', userInfo)
+        commit('SET_NAME', {name: userInfo.username, welcome: welcome()})
+        commit('SET_IS_SUPER_ADMIN', userInfo.isSuperAdmin)
+
+        await getUserPageElementPermissions().then(({data}) => {
           commit('SET_ACTION_PERMISSIONS', data)
-          // commit('SET_ROLES', result.role)
-          // commit('SET_INFO', result)
-
-          // commit('SET_NAME', {name: result.name, welcome: welcome()})
-          // commit('SET_AVATAR', result.avatar)
-
           resolve({data})
         }).catch(error => {
           reject(error)
@@ -104,6 +81,8 @@ const user = {
           commit('SET_TOKEN', '')
           commit('SET_ROLES', [])
           commit('SET_ACTION_PERMISSIONS', [])
+          commit('SET_ROUTERS', [])
+          commit('SET_IS_SUPER_ADMIN', false)
           storage.remove(ACCESS_TOKEN)
           resolve()
         }).catch(() => {

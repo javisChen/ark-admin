@@ -7,7 +7,7 @@
         </div>
         <div class="content">
           <div class="content-title">
-            {{ timeFix }}，{{ user.name }}<span class="welcome-text">，{{ welcome }}</span>
+            {{ timeFix }}，{{ user.username }}<span class="welcome-text">，{{ welcome }}</span>
           </div>
           <div>前端工程师 | 蚂蚁金服 - 某某某事业群 - VUE平台</div>
         </div>
@@ -65,7 +65,7 @@
                 <a-list-item-meta>
                   <a-avatar slot="avatar" :src="item.user.avatar"/>
                   <div slot="title">
-                    <span>{{ item.user.nickname }}</span>&nbsp;
+                    <span>{{ item.user.username }}</span>&nbsp;
                     在&nbsp;<a href="#">{{ item.project.name }}</a>&nbsp;
                     <span>{{ item.project.action }}</span>&nbsp;
                     <a href="#">{{ item.project.event }}</a>
@@ -192,7 +192,7 @@ export default {
   },
   computed: {
     ...mapState({
-      nickname: (state) => state.user.nickname,
+      nickname: (state) => state.user.username,
       welcome: (state) => state.user.welcome
     }),
     currentUser () {

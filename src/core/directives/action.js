@@ -16,6 +16,10 @@ import store from '@/store'
  */
 const action = Vue.directive('action', {
   inserted: function (el, binding, vnode) {
+    const isSuperAdmin = store.getters.isSuperAdmin
+    if (isSuperAdmin) {
+      return
+    }
     const actionName = binding.arg
     const roles = store.getters.roles
     const elVal = vnode.context.$route.meta.permission
@@ -33,6 +37,11 @@ const action = Vue.directive('action', {
 
 const hasPermission = Vue.directive('hasPermission', {
   inserted: function (el, binding, vnode) {
+    const isSuperAdmin = store.getters
+    console.log(isSuperAdmin)
+    if (isSuperAdmin) {
+      return
+    }
     const code = binding.arg
     const actionPermissions = store.getters.actionPermissions
     const some = actionPermissions.some(p => p.permissionCode === code);

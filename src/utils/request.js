@@ -74,8 +74,8 @@ request.interceptors.request.use(config => {
   if (token) {
     config.headers['Authorization'] = `Bearer ${token}`
   }
-  // config.headers['X-DEV-MODE'] = `DEV`
   return config
+
 }, errorHandler)
 
 // response interceptor

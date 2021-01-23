@@ -19,7 +19,20 @@ const rootRouter = {
   meta: {
     title: '首页'
   },
-  children: []
+  children: [
+    {
+      component: "Workplace",
+      name: "workplace",
+      path: "/dashboard/workplace",
+      key: "workplace",
+      meta: {
+        hideChildren: false,
+        icon: "",
+        show: true,
+        title: "工作台"
+      },
+    }
+  ]
 }
 
 /**
@@ -35,7 +48,9 @@ export const generatorDynamicRouter = () => {
       console.log(data)
       //      后端数据, 根级树数组,  根级 PID
       listToTree(data, childrenNav, 0)
-      rootRouter.children = childrenNav
+      console.log(rootRouter.children)
+      console.log(childrenNav)
+      rootRouter.children = rootRouter.children.concat(childrenNav)
       menuNav.push(rootRouter)
       const routers = generator(menuNav)
       console.log(routers)
@@ -56,7 +71,7 @@ export const generatorDynamicRouter = () => {
  */
 export const generator = (routerMap, parent) => {
   return routerMap.map(item => {
-    const { title, show, hideChildren, hiddenHeaderContent, target, icon } = item.meta || {}
+    const {title, show, hideChildren, hiddenHeaderContent, target, icon} = item.meta || {}
     const currentRouter = {
       // 如果路由设置了 path，则作为默认 path，否则 路由地址 动态拼接生成如 /dashboard/workplace
       path: item.path || `${parent && parent.path || ''}/${item.key}`,
@@ -95,6 +110,9 @@ export const generator = (routerMap, parent) => {
     if (item.children && item.children.length > 0) {
       // Recursion
       currentRouter.children = generator(item.children, currentRouter)
+    }
+    if (title === '工作台') {
+      console.log(JSON.stringify(item))
     }
     return currentRouter
   })
