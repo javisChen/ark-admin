@@ -153,14 +153,12 @@ export default {
     }
   },
   watch: {
-    checkedRoutePermissions: {
-      handler (val) {
-        const {rolePermissionRouteIds} = this
-        const checkedPermissionIds = [...val];
-        console.log(rolePermissionRouteIds)
-        this.toAddRoutePermissionIds = this.filterToAddPermissionIds(rolePermissionRouteIds, checkedPermissionIds);
-        this.toRemoveRoutePermissionIds = this.filterToRemovePermissionIds(rolePermissionRouteIds, checkedPermissionIds);
-      },
+    checkedRoutePermissions(val) {
+      const {rolePermissionRouteIds} = this
+      const checkedPermissionIds = [...val];
+      console.log(rolePermissionRouteIds)
+      this.toAddRoutePermissionIds = this.filterToAddPermissionIds(rolePermissionRouteIds, checkedPermissionIds);
+      this.toRemoveRoutePermissionIds = this.filterToRemovePermissionIds(rolePermissionRouteIds, checkedPermissionIds);
     },
     checkedElementPermissions(val) {
       const {rolePermissionElementIds} = this

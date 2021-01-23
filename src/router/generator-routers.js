@@ -9,6 +9,19 @@ const notFoundRouter = {
   path: '*', redirect: '/404', hidden: true
 }
 
+const workplaceRouter = {
+  component: "Workplace",
+  name: "workplace",
+  path: "/dashboard/workplace",
+  key: "workplace",
+  meta: {
+    hideChildren: false,
+    icon: "",
+    show: true,
+    title: "工作台"
+  },
+}
+
 // 根级菜单
 const rootRouter = {
   key: '',
@@ -48,9 +61,8 @@ export const generatorDynamicRouter = () => {
       console.log(data)
       //      后端数据, 根级树数组,  根级 PID
       listToTree(data, childrenNav, 0)
-      console.log(rootRouter.children)
-      console.log(childrenNav)
-      rootRouter.children = rootRouter.children.concat(childrenNav)
+      childrenNav.unshift(workplaceRouter)
+      rootRouter.children = childrenNav
       menuNav.push(rootRouter)
       const routers = generator(menuNav)
       console.log(routers)
