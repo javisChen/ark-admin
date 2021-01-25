@@ -96,7 +96,7 @@ const defaultModel = {
   id: '',
   name: '',
   url: '',
-  method: 1,
+  method: 'GET',
   authType: 1,
   status: 1,
   applicationId: 1,

@@ -16,7 +16,7 @@ const workplaceRouter = {
   key: "workplace",
   meta: {
     hideChildren: false,
-    icon: "",
+    icon: "desktop",
     show: true,
     title: "工作台"
   },

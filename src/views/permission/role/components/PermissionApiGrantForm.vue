@@ -69,6 +69,9 @@ const defaultModel = {
   status: 1,
 }
 
+// 需授权的API类型编码
+const NEED_AUTHORIZATION = 3
+
 export default {
   name: 'PermissionGrantForm',
   components: {
@@ -185,7 +188,7 @@ export default {
     },
     async loadTableData() {
       this.toggleLoading()
-      const {data} = await getApis({applicationId: this.selectedApplicationId})
+      const {data} = await getApis({applicationId: this.selectedApplicationId, authType: NEED_AUTHORIZATION})
       this.apis = data
       this.toggleLoading()
     },
