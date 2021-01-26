@@ -1,36 +1,36 @@
 <template>
   <page-header-wrapper>
     <a-card :bordered="false">
-<!--      <div class="table-page-search-wrapper">-->
-<!--        <a-form layout="inline">-->
-<!--          <a-row :gutter="48">-->
-<!--            <a-col :md="8" :sm="24">-->
-<!--              <a-form-item label="用户名称">-->
-<!--                <a-input v-model="queryParam.name" placeholder=""/>-->
-<!--              </a-form-item>-->
-<!--            </a-col>-->
-<!--            <a-col :md="8" :sm="24">-->
-<!--              <a-form-item label="使用状态">-->
-<!--                <a-select v-model="queryParam.status" placeholder="请选择" :default-value="0"-->
-<!--                          @change="handleQueryStatusChange">-->
-<!--                  <a-select-option v-for="(value, key) in routeStatusDictionary"-->
-<!--                                   :key="key"-->
-<!--                                   :value="key">-->
-<!--                    {{ value }}-->
-<!--                  </a-select-option>-->
-<!--                </a-select>-->
-<!--              </a-form-item>-->
-<!--            </a-col>-->
-<!--            <a-col :md="!advanced && 8 || 24" :sm="24">-->
-<!--                          <span class="table-page-search-submitButtons"-->
-<!--                                :style="advanced && { float: 'right', overflow: 'hidden' } || {} ">-->
-<!--                            <a-button type="primary" @click="loadTableData">查询</a-button>-->
-<!--                            <a-button style="margin-left: 8px" @click="resetQueryParams">重置</a-button>-->
-<!--                          </span>-->
-<!--            </a-col>-->
-<!--          </a-row>-->
-<!--        </a-form>-->
-<!--      </div>-->
+      <!--      <div class="table-page-search-wrapper">-->
+      <!--        <a-form layout="inline">-->
+      <!--          <a-row :gutter="48">-->
+      <!--            <a-col :md="8" :sm="24">-->
+      <!--              <a-form-item label="用户名称">-->
+      <!--                <a-input v-model="queryParam.name" placeholder=""/>-->
+      <!--              </a-form-item>-->
+      <!--            </a-col>-->
+      <!--            <a-col :md="8" :sm="24">-->
+      <!--              <a-form-item label="使用状态">-->
+      <!--                <a-select v-model="queryParam.status" placeholder="请选择" :default-value="0"-->
+      <!--                          @change="handleQueryStatusChange">-->
+      <!--                  <a-select-option v-for="(value, key) in routeStatusDictionary"-->
+      <!--                                   :key="key"-->
+      <!--                                   :value="key">-->
+      <!--                    {{ value }}-->
+      <!--                  </a-select-option>-->
+      <!--                </a-select>-->
+      <!--              </a-form-item>-->
+      <!--            </a-col>-->
+      <!--            <a-col :md="!advanced && 8 || 24" :sm="24">-->
+      <!--                          <span class="table-page-search-submitButtons"-->
+      <!--                                :style="advanced && { float: 'right', overflow: 'hidden' } || {} ">-->
+      <!--                            <a-button type="primary" @click="loadTableData">查询</a-button>-->
+      <!--                            <a-button style="margin-left: 8px" @click="resetQueryParams">重置</a-button>-->
+      <!--                          </span>-->
+      <!--            </a-col>-->
+      <!--          </a-row>-->
+      <!--        </a-form>-->
+      <!--      </div>-->
 
       <div class="table-operator">
         <a-button type="primary" icon="plus" @click="showRoleForm">新建角色</a-button>
@@ -75,22 +75,23 @@
       </a-table>
       <a-empty v-else/>
 
+
+      <!-- 创建路由信息表单-->
+      <permission-role-form ref="roleForm"
+                            @success="handleFormOnSuccess"
+                            @cancel="handleEditFormCancel"/>
+
+      <!-- 授权窗口-->
+      <permission-route-grant-form ref="routeGrantForm"
+                                   @success="handleFormOnSuccess"
+                                   @cancel="handleEditFormCancel"/>
+
+      <!-- 授权窗口-->
+      <permission-api-grant-form ref="apiGrantForm"
+                                 @success="handleFormOnSuccess"
+                                 @cancel="handleEditFormCancel"/>
+
     </a-card>
-
-    <!-- 创建路由信息表单-->
-    <permission-role-form ref="roleForm"
-                          @success="handleFormOnSuccess"
-                          @cancel="handleEditFormCancel"/>
-
-    <!-- 授权窗口-->
-    <permission-route-grant-form ref="routeGrantForm"
-                          @success="handleFormOnSuccess"
-                          @cancel="handleEditFormCancel"/>
-
-    <!-- 授权窗口-->
-    <permission-api-grant-form ref="apiGrantForm"
-                          @success="handleFormOnSuccess"
-                          @cancel="handleEditFormCancel"/>
 
   </page-header-wrapper>
 

@@ -35,63 +35,8 @@
         </a-select>
       </a-form-model-item>
 
-      <a-form-model-item label="所属分类" prop="method">
-        <a-select
-          v-model="formModel.categoryId"
-          :allowClear="true"
-          show-search
-          placeholder="所属分类"
-          option-filter-prop="children"
-          :filter-option="filterOption">
-          <a-select-option v-for="(value, index) in categories"
-                           :key="index" :value="value.id">
-            {{ value.name }}
-          </a-select-option>
-        </a-select>
-      </a-form-model-item>
-
-      <a-form-model-item label="接口名称" prop="name" has-feedback>
-        <a-input placeholder="接口名称" v-model="formModel.name"/>
-      </a-form-model-item>
-
-      <a-form-model-item label="接口Url" prop="url" has-feedback>
-        <a-input placeholder="接口Url" v-model="formModel.url"/>
-      </a-form-model-item>
-
-      <a-form-model-item label="Method" prop="method">
-        <a-select
-          v-model="formModel.method"
-          :allowClear="true"
-          show-search
-          placeholder="请选择接口方法"
-          option-filter-prop="children"
-          :filter-option="filterOption">
-          <a-select-option v-for="(value, index) in methodOptions"
-                           :key="index" :value="value.value">
-            {{ value.desc }}
-          </a-select-option>
-        </a-select>
-      </a-form-model-item>
-
-      <a-form-model-item label="认证授权类型" prop="userGroupIds">
-        <a-select
-          v-model="formModel.authType"
-          :allowClear="true"
-          show-search
-          placeholder="认证授权类型"
-          option-filter-prop="children"
-          :filter-option="filterOption">
-          <a-select-option v-for="(item) in authTypeOptions"
-                           :key="item.value" :value="item.value">
-            <span>{{ item.desc }}</span>
-          </a-select-option>
-        </a-select>
-      </a-form-model-item>
-
-      <a-form-model-item label="状态" prop="status" required>
-        <a-radio-group name="radioGroup" v-model="formModel.status" :default-value="1">
-          <a-radio v-for="item in routeStatusOptions" :value="item.value">{{ item.desc }}</a-radio>
-        </a-radio-group>
+      <a-form-model-item label="分类名称" prop="name" has-feedback>
+        <a-input placeholder="分类名称" v-model="formModel.name"/>
       </a-form-model-item>
 
     </a-form-model>
@@ -100,9 +45,8 @@
 
 <script>
 
-import {addApi, updateApi} from '@/api/api-api'
+import {addApiCategory, updateApiCategory} from '@/api/api-category-api'
 import {getApplications} from "@/api/application-api";
-import {authTypeOptions, methodOptions, routeStatusOptions} from "../variable";
 
 const FORM_MODE_EDIT = 'edit';
 const FORM_MODE_ADD = 'add';
@@ -110,26 +54,16 @@ const FORM_MODE_ADD = 'add';
 const defaultModel = {
   id: '',
   name: '',
-  url: '',
-  method: 'GET',
-  authType: 1,
-  status: 1,
   applicationId: 1,
-  categoryId: 1,
 }
 
 export default {
-  name: 'PermissionApiForm',
+  name: 'PermissionApiCategoryForm',
   components: {},
   props: {
     applicationId: {
       type: Number,
       required : false
-    },
-    categories: {
-      type: Array,
-      required : false,
-      default: []
     },
   },
   watch: {
@@ -139,9 +73,6 @@ export default {
   },
   data() {
     return {
-      methodOptions,
-      routeStatusOptions,
-      authTypeOptions,
       applicationsOptions: [],
       confirmLoading: false,
       mode: FORM_MODE_ADD,
@@ -151,10 +82,8 @@ export default {
       formModel: {...defaultModel},
       form: {},
       rules: {
-        name: [{required: true, message: '请输入接口名称', trigger: 'blur'}],
-        url: [{required: true, message: '请输入接口Url', trigger: 'blur'}],
-        method: [{required: true, message: '请输入接口Method', trigger: 'blur'}],
-        status: [{required: true, message: '请选择接口状态', trigger: 'blur'}],
+        name: [{required: true, message: '请输入分类名称', trigger: 'blur'}],
+        applicationId: [{required: true, message: '请选择所属应用', trigger: 'blur'}],
       }
     }
   },
@@ -165,7 +94,7 @@ export default {
   },
   methods: {
     formTitle() {
-      let title = '接口';
+      let title = '接口分类';
       switch (this.mode) {
         case FORM_MODE_EDIT:
           title = '编辑' + title;
@@ -191,7 +120,6 @@ export default {
       this.confirmLoading = !this.confirmLoading
     },
     open(formModel, mode = FORM_MODE_ADD) {
-      console.log(formModel)
       if (formModel) {
         this.formModel = Object.assign(this.formModel, formModel)
       }
@@ -226,13 +154,13 @@ export default {
         const form = {...this.formModel}
         this.toggleConfirmLoading()
         if (this.mode === FORM_MODE_ADD) {
-          addApi(form)
+          addApiCategory(form)
             .then(({data}) => this.afterSuccess())
             .catch(e => e)
             .finally(() => this.closeConfirmLoading())
         } else {
           delete form.phone;
-          updateApi(form)
+          updateApiCategory(form)
             .then(({data}) => this.afterSuccess())
             .catch(e => e)
             .finally(() => this.closeConfirmLoading())

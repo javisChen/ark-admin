@@ -1,13 +1,13 @@
 <template>
   <a-select
-    :value="value"
-    @change="handleChange"
-    :allowClear="true"
-    show-search
-    :disabled="disabled"
-    placeholder="请选择应用"
-    option-filter-prop="children"
-    :filter-option="filterOption"
+      :value="value"
+      @change="handleChange"
+      :allowClear="true"
+      show-search
+      :disabled="disabled"
+      placeholder="请选择应用"
+      option-filter-prop="children"
+      :filter-option="filterOption"
   >
     <a-select-option v-for="(value) in applicationsOptions" :key="value.id" :value="value.id">
       {{ value.name }}
@@ -37,15 +37,22 @@ export default {
   methods: {
     loadOptions() {
       getApplications({})
-      .then(({data}) => {this.applicationsOptions = data})
-      .catch(e => e)
+          .then(({data}) => {
+            this.applicationsOptions = [...data]
+            const item = this.applicationsOptions[0]
+            if (item) {
+              this.handleChange(item.id)
+            }
+          })
+          .catch(e => e)
     },
     handleChange(value) {
+      this.$emit('change', value)
       this.$emit('change', value)
     },
     filterOption(input, option) {
       return (
-        option.componentOptions.children[0].text.toLowerCase().indexOf(input.toLowerCase()) >= 0
+          option.componentOptions.children[0].text.toLowerCase().indexOf(input.toLowerCase()) >= 0
       );
     },
   },

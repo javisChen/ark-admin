@@ -14,7 +14,7 @@
 
 export default {
   navTheme: 'light', // theme for nav menu
-  primaryColor: '#1890ff', // primary color of ant design
+  primaryColor: '#13C2C2', // primary color of ant design
   layout: 'sidemenu', // nav menu position: `sidemenu` or `topmenu`
   contentWidth: 'Fluid', // layout of content: `Fluid` or `Fixed`, only works when layout is topmenu
   fixedHeader: true, // sticky header
@@ -23,10 +23,8 @@ export default {
   menu: {
     locale: true
   },
-  title: 'Ant Design Pro',
+  title: 'IAM Center',
   pwa: false,
   iconfontUrl: '',
   production: process.env.NODE_ENV === 'production' && process.env.VUE_APP_PREVIEW !== 'true'
 }
-
-

@@ -38,7 +38,6 @@ const action = Vue.directive('action', {
 const hasPermission = Vue.directive('hasPermission', {
   inserted: function (el, binding, vnode) {
     const isSuperAdmin = store.getters
-    console.log(isSuperAdmin)
     if (isSuperAdmin) {
       return
     }

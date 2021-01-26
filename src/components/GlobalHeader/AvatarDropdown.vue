@@ -42,6 +42,8 @@ export default {
       default: true
     }
   },
+  created() {
+  },
   methods: {
     handleToCenter () {
       this.$router.push({ path: '/account/center' })

@@ -26,7 +26,6 @@ router.beforeEach((to, from, next) => {
     } else {
       // check login user.roles is null
       if (store.getters.addRouters.length === 0) {
-        console.log(123)
         // request login userInfo
         store.dispatch('GetInfo')
           .then(({data}) => {
@@ -35,17 +34,13 @@ router.beforeEach((to, from, next) => {
             store.dispatch('GenerateRoutes').then(() => {
               // 根据roles权限生成可访问的路由表
               // 动态添加可访问路由表
-              console.log(312)
               router.addRoutes(store.getters.addRouters)
               // 请求带有 redirect 重定向时，登录自动重定向到该地址
               const redirect = decodeURIComponent(from.query.redirect || to.path)
               if (to.path === redirect) {
-                console.log(store.getters.addRouters)
-                console.log(to)
                 // set the replace: true so the navigation will not leave a history record
                 next({path: to.path, replace: true})
               } else {
-                console.log(77777)
                 // 跳转到目的路由
                 next({path: redirect})
               }
@@ -62,7 +57,6 @@ router.beforeEach((to, from, next) => {
             })
           })
       } else {
-        console.log(5555)
         next()
       }
     }

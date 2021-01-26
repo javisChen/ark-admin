@@ -123,9 +123,6 @@ export const generator = (routerMap, parent) => {
       // Recursion
       currentRouter.children = generator(item.children, currentRouter)
     }
-    if (title === '工作台') {
-      console.log(JSON.stringify(item))
-    }
     return currentRouter
   })
 }
