@@ -48,7 +48,6 @@ export default {
     },
     handleChange(value) {
       this.$emit('change', value)
-      this.$emit('change', value)
     },
     filterOption(input, option) {
       return (

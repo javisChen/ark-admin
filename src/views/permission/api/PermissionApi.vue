@@ -27,6 +27,7 @@
           v-if="selectedApplication"
           :show-action="!grant"
           @update="onCategoryUpdate"
+          @removeupdate="onCategoryRemoveUpdate"
           @change="onCategoryChange"
           :application-id="selectedApplication"/>
       </a-col>
@@ -199,7 +200,7 @@ export default {
     selectedRowKeys: {
       type: Array,
       required: false,
-      default: []
+      default: () => []
     }
   },
   computed: {
@@ -248,8 +249,24 @@ export default {
       getApiCategories({applicationId: this.selectedApplication})
         .then(({data}) => {
           this.categories = data
-          this.queryParam.categoryId = this.categories[0].id
-          this.loadTableData()
+
+          console.log('new category', this.categories)
+          // this.queryParam.categoryId = this.categories[0].id
+          // this.loadTableData()
+        })
+        .finally(() => {
+          setTimeout(() => {
+            this.toggleLoading();
+          }, 200)
+        })
+    },
+    loadApiCategories2() {
+      this.toggleLoading()
+      getApiCategories({applicationId: this.selectedApplication})
+        .then(({data}) => {
+          console.log('new category', this.categories)
+          // this.queryParam.categoryId = this.categories[0].id
+          // this.loadTableData()
         })
         .finally(() => {
           setTimeout(() => {
@@ -258,7 +275,36 @@ export default {
         })
     },
     onCategoryUpdate() {
-      this.loadApiCategories()
+      console.log('update')
+      this.categories = [
+        {"applicationId": 1, "id": 1, "name": "用户管理"}, {
+          "applicationId": 1,
+          "id": 3,
+          "name": "接口管理"
+        }, {"applicationId": 1, "id": 4, "name": "用户组管理"}, {
+          "applicationId": 1,
+          "id": 5,
+          "name": "角色管理"
+        },
+        {"applicationId": 1, "id": 19, "name": "321"},
+        {"applicationId": 1, "id": 20, "name": "312"}, {"applicationId": 1, "id": 20, "name": "6666"}]
+      // this.loadApiCategories2()
+    },
+    onCategoryRemoveUpdate() {
+      console.log('remove update')
+      // this.categories = [{"applicationId": 1, "id": 1, "name": "用户管理"}]
+      this.categories = [
+        {"applicationId": 1, "id": 1, "name": "用户管理"}, {
+          "applicationId": 1,
+          "id": 3,
+          "name": "接口管理"
+        }, {"applicationId": 1, "id": 4, "name": "用户组管理"}, {
+          "applicationId": 1,
+          "id": 5,
+          "name": "角色管理"
+        },
+        {"applicationId": 1, "id": 19, "name": "321"},
+        {"applicationId": 1, "id": 20, "name": "312"}, {"applicationId": 1, "id": 20, "name": "6666"}]
     },
     onCategoryChange(category) {
       this.queryParam.categoryId = category.id

@@ -6,8 +6,8 @@
         <a-button shape="circle" size="small" type="primary" icon="plus"
                   @click="openCategoryForm('add')"></a-button>
       </template>
-      <template v-if="data && data.length > 0">
-        <div v-for="item in data">
+      <template v-if="categories && categories.length > 0">
+        <div v-for="item in categories">
           <div style="cursor: pointer"
                class="category-item"
                :class="{activated: item.onhover || item.activated}">
@@ -69,7 +69,7 @@ export default {
     categories: {
       type: Array,
       required: true,
-      default: []
+      default: () => []
     },
     showAction: {
       type: Boolean,
@@ -83,8 +83,8 @@ export default {
       this.loadApiCategories()
     },
     categories(val) {
-      this.data = this.$cloneDeep(val)
-      this.rebuild()
+      this.categories = val
+      // this.rebuild()
     }
   },
   data() {
@@ -105,9 +105,9 @@ export default {
     },
     handleClick(item) {
       this.data.forEach(item => {
-        this.$set(item, 'activated', false)
+        // this.$set(item, 'activated', false)
       })
-      this.$set(item, 'activated', true)
+      // this.$set(item, 'activated', true)
       this.notify(item)
     },
     notify(item) {
@@ -116,14 +116,17 @@ export default {
     notifyUpdate() {
       this.$emit('update')
     },
+    notifyremoveUpdate() {
+      this.$emit('removeupdate')
+    },
     hover(item, f) {
-      this.$set(item, 'onhover', f)
+      // this.$set(item, 'onhover', f)
     },
     hoverDelete(item, f) {
-      this.$set(item, 'onhoverdelete', f)
+      // this.$set(item, 'onhoverdelete', f)
     },
     hoverEdit(item, f) {
-      this.$set(item, 'onhoveredit', f)
+      // this.$set(item, 'onhoveredit', f)
     },
     openCategoryForm(type, record) {
       let model;
@@ -135,10 +138,13 @@ export default {
           break;
       }
       this.$refs['categoryForm'].open(model, type)
+      // this.notifyremoveUpdate()
     },
     handleCategoryFormOnSuccess() {
       this.$message.success('保存成功')
-      this.notifyUpdate()
+      setTimeout(() => {
+        this.notifyremoveUpdate()
+      }, 200)
     },
     handleEditFormCancel() {
     },
@@ -149,6 +155,7 @@ export default {
         onOk: async () => {
           const {data} = await deleteApiCategory({id: record.id})
           this.notifyUpdate()
+
         }
       })
     }
@@ -162,10 +169,10 @@ export default {
   display: flex;
   flex-direction: row;
   padding: 5px;
+  margin-bottom: 5px;
 }
 
 .category-item.activated {
-  color: #1890ff;
   background-color: #e6fffb;
   border-right: 2px #13c2c2 solid;
 }
