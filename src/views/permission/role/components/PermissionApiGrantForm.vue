@@ -69,20 +69,20 @@ export default {
   methods: {
     filterToAddPermissionIds(originPermissions, currentPermission) {
       const toAddIds = currentPermission.filter(item => !originPermissions.includes(item));
-      console.log('------------------过滤新增的权限------------------')
-      console.log('原权限 ->', originPermissions);
-      console.log('当前选中的权限 ->', currentPermission);
-      console.log('新权限 ->', toAddIds);
-      console.log('------------------过滤新增的权限------------------')
+      // console.log('------------------过滤新增的权限------------------')
+      // console.log('原权限 ->', originPermissions);
+      // console.log('当前选中的权限 ->', currentPermission);
+      // console.log('新权限 ->', toAddIds);
+      // console.log('------------------过滤新增的权限------------------')
       return toAddIds;
     },
     filterToRemovePermissionIds(originPermissions, currentPermission) {
       const toRemoveIds = originPermissions.filter(item => !currentPermission.includes(item));
-      console.log('------------------过滤移除的权限------------------')
-      console.log('原权限 ->', originPermissions);
-      console.log('当前选中的权限 ->', currentPermission);
-      console.log('移除权限 ->', toRemoveIds);
-      console.log('------------------过滤移除的权限------------------')
+      // console.log('------------------过滤移除的权限------------------')
+      // console.log('原权限 ->', originPermissions);
+      // console.log('当前选中的权限 ->', currentPermission);
+      // console.log('移除权限 ->', toRemoveIds);
+      // console.log('------------------过滤移除的权限------------------')
       return toRemoveIds;
     },
     // 加载角色所拥有的api权限
@@ -91,11 +91,12 @@ export default {
         .then(({data}) => {
           this.rolePermissionApis = data;
           this.rolePermissionApiIds = this.rolePermissionApis.map(item => item.permissionId)
+          this.checkedApiPermissions = this.checkedApiPermissions.concat(this.rolePermissionApiIds)
         })
         .catch()
     },
     onSelectElementChange(selectedRowKeys, selectedRows) {
-      this.checkedApiPermissions = selectedRows.map(item => item.permissionId)
+      this.checkedApiPermissions = selectedRowKeys
     },
     toggleConfirmLoading() {
       this.confirmLoading = !this.confirmLoading

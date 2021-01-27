@@ -17,6 +17,8 @@ export const getRoles = (data) => post({url: api.roles, data})
 
 export const getAllRoles = (data) => get({url: api.rolesAll, data})
 
+export const deleteRole = (params) => del({url: api.role, params})
+
 export const addRole = (data) => post({url: api.role, data})
 
 export const updateRole = (data) => put({url: api.role, data})

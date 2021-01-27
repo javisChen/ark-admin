@@ -24,12 +24,10 @@
       <a-col :span="4">
         <api-category-tree
           :categories="categories"
-          v-if="selectedApplication"
           :show-action="!grant"
           @update="onCategoryUpdate"
-          @removeupdate="onCategoryRemoveUpdate"
           @change="onCategoryChange"
-          :application-id="selectedApplication"/>
+          :application-id="queryParam.applicationId"/>
       </a-col>
       <a-col :span="20">
         <a-card :bordered="true" size="small">
@@ -195,7 +193,7 @@ export default {
     grant: {
       type: Boolean,
       required: false,
-      default: false
+      default: () => false
     },
     selectedRowKeys: {
       type: Array,
@@ -238,6 +236,7 @@ export default {
     if (this.grant) {
       this.columns = grantColumns
     }
+    this.loadApiCategories()
   },
   methods: {
     onSelectChange(selectedRowKeys, selectedRows) {
@@ -246,27 +245,12 @@ export default {
     },
     loadApiCategories() {
       this.toggleLoading()
-      getApiCategories({applicationId: this.selectedApplication})
+      getApiCategories({applicationId: this.queryParam.applicationId})
         .then(({data}) => {
           this.categories = data
-
-          console.log('new category', this.categories)
-          // this.queryParam.categoryId = this.categories[0].id
-          // this.loadTableData()
-        })
-        .finally(() => {
-          setTimeout(() => {
-            this.toggleLoading();
-          }, 200)
-        })
-    },
-    loadApiCategories2() {
-      this.toggleLoading()
-      getApiCategories({applicationId: this.selectedApplication})
-        .then(({data}) => {
-          console.log('new category', this.categories)
-          // this.queryParam.categoryId = this.categories[0].id
-          // this.loadTableData()
+          console.log(this.categories)
+          this.queryParam.categoryId = this.categories[0].id
+          this.loadTableData()
         })
         .finally(() => {
           setTimeout(() => {
@@ -275,36 +259,7 @@ export default {
         })
     },
     onCategoryUpdate() {
-      console.log('update')
-      this.categories = [
-        {"applicationId": 1, "id": 1, "name": "用户管理"}, {
-          "applicationId": 1,
-          "id": 3,
-          "name": "接口管理"
-        }, {"applicationId": 1, "id": 4, "name": "用户组管理"}, {
-          "applicationId": 1,
-          "id": 5,
-          "name": "角色管理"
-        },
-        {"applicationId": 1, "id": 19, "name": "321"},
-        {"applicationId": 1, "id": 20, "name": "312"}, {"applicationId": 1, "id": 20, "name": "6666"}]
-      // this.loadApiCategories2()
-    },
-    onCategoryRemoveUpdate() {
-      console.log('remove update')
-      // this.categories = [{"applicationId": 1, "id": 1, "name": "用户管理"}]
-      this.categories = [
-        {"applicationId": 1, "id": 1, "name": "用户管理"}, {
-          "applicationId": 1,
-          "id": 3,
-          "name": "接口管理"
-        }, {"applicationId": 1, "id": 4, "name": "用户组管理"}, {
-          "applicationId": 1,
-          "id": 5,
-          "name": "角色管理"
-        },
-        {"applicationId": 1, "id": 19, "name": "321"},
-        {"applicationId": 1, "id": 20, "name": "312"}, {"applicationId": 1, "id": 20, "name": "6666"}]
+      this.loadApiCategories()
     },
     onCategoryChange(category) {
       this.queryParam.categoryId = category.id

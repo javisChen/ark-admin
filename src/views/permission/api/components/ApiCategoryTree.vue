@@ -6,9 +6,9 @@
         <a-button shape="circle" size="small" type="primary" icon="plus"
                   @click="openCategoryForm('add')"></a-button>
       </template>
-      <template v-if="categories && categories.length > 0">
-        <div v-for="item in categories">
-          <div style="cursor: pointer"
+      <template v-if="data && data.length > 0">
+        <div class="category-wrapper">
+          <div v-for="item in data" style="cursor: pointer"
                class="category-item"
                :class="{activated: item.onhover || item.activated}">
             <div class="category-item-title"
@@ -78,13 +78,9 @@ export default {
     },
   },
   watch: {
-    applicationId(val) {
-      this.applicationId = val
-      this.loadApiCategories()
-    },
     categories(val) {
-      this.categories = val
-      // this.rebuild()
+      this.data = this.$cloneDeep(val)
+      this.rebuild()
     }
   },
   data() {
@@ -105,9 +101,9 @@ export default {
     },
     handleClick(item) {
       this.data.forEach(item => {
-        // this.$set(item, 'activated', false)
+        this.$set(item, 'activated', false)
       })
-      // this.$set(item, 'activated', true)
+      this.$set(item, 'activated', true)
       this.notify(item)
     },
     notify(item) {
@@ -116,17 +112,14 @@ export default {
     notifyUpdate() {
       this.$emit('update')
     },
-    notifyremoveUpdate() {
-      this.$emit('removeupdate')
-    },
     hover(item, f) {
-      // this.$set(item, 'onhover', f)
+      this.$set(item, 'onhover', f)
     },
     hoverDelete(item, f) {
-      // this.$set(item, 'onhoverdelete', f)
+      this.$set(item, 'onhoverdelete', f)
     },
     hoverEdit(item, f) {
-      // this.$set(item, 'onhoveredit', f)
+      this.$set(item, 'onhoveredit', f)
     },
     openCategoryForm(type, record) {
       let model;
@@ -138,13 +131,10 @@ export default {
           break;
       }
       this.$refs['categoryForm'].open(model, type)
-      // this.notifyremoveUpdate()
     },
     handleCategoryFormOnSuccess() {
       this.$message.success('保存成功')
-      setTimeout(() => {
-        this.notifyremoveUpdate()
-      }, 200)
+      this.notifyUpdate()
     },
     handleEditFormCancel() {
     },
@@ -164,6 +154,11 @@ export default {
 </script>
 
 <style type="text/css" scoped>
+
+.category-wrapper {
+  /*height: 500px;*/
+  /*border: 1px solid red;*/
+}
 
 .category-item {
   display: flex;

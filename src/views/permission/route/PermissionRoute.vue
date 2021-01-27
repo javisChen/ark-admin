@@ -238,12 +238,9 @@ export default {
   },
   methods: {
     onApplicationSelectChange(val) {
+      this.selectedApplication = val
+      console.log(this.selectedApplication)
       this.loadTableData()
-    },
-    onSelect(selectedKeys, info) {
-      this.selectedApplication = info.node.dataRef
-      this.queryParam.applicationId = this.selectedApplication.id
-      this.loadTableData();
     },
     initQueryParams() {
       const {query} = this.$route
@@ -305,6 +302,11 @@ export default {
         case 'view':
           const {data} = await getRoute(record.id)
           model = data
+          break
+        case 'add':
+          model = {
+            applicationId: this.queryParam.applicationId,
+          }
           break
         default:
           break;

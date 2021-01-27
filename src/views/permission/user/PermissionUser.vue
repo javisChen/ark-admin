@@ -92,7 +92,7 @@
 
 <script>
 
-import {getUsers, getUser} from '@/api/user-api'
+import {deleteUser, getUsers, getUser} from '@/api/user-api'
 import PermissionUserForm from "./components/PermissionUserForm";
 
 
@@ -227,6 +227,8 @@ export default {
         title: `提示`,
         content: `确定要禁用[${record.name}]用户吗？`,
         onOk: async () => {
+          deleteUser({id: record.id})
+          .then(() => this.loadTableData())
         }
       })
     },

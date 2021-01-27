@@ -157,7 +157,7 @@ const FORM_MODE_ADD = 'add';
 const FORM_MODE_ADD_CHILDREN = 'addChildren';
 const FORM_MODE_VIEW = 'view';
 
-const defaultModel = {
+let defaultModel = {
   id: '',
   name: '',
   code: '',
@@ -203,7 +203,7 @@ export default {
       visible: false,
       labelCol: {span: 6},
       wrapperCol: {span: 10},
-      formModel: Object.assign({}, defaultModel),
+      formModel: {...defaultModel},
       mode: FORM_MODE_EDIT,
       form: {},
       routesOptionsDefaultValue: [],
@@ -283,7 +283,7 @@ export default {
       this.resetForm()
     },
     resetForm() {
-      this.formModel = Object.assign({}, defaultModel)
+      this.formModel = this.$cloneDeep(defaultModel)
       this.routesOptionsDefaultValue = []
     },
     handleClose() {

@@ -40,9 +40,6 @@ export default {
           .then(({data}) => {
             this.applicationsOptions = [...data]
             const item = this.applicationsOptions[0]
-            if (item) {
-              this.handleChange(item.id)
-            }
           })
           .catch(e => e)
     },

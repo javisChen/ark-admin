@@ -81,12 +81,12 @@
                             @success="handleFormOnSuccess"
                             @cancel="handleEditFormCancel"/>
 
-      <!-- 授权窗口-->
+      <!-- 菜单授权窗口-->
       <permission-route-grant-form ref="routeGrantForm"
                                    @success="handleFormOnSuccess"
                                    @cancel="handleEditFormCancel"/>
 
-      <!-- 授权窗口-->
+      <!-- api授权窗口-->
       <permission-api-grant-form ref="apiGrantForm"
                                  @success="handleFormOnSuccess"
                                  @cancel="handleEditFormCancel"/>
@@ -99,7 +99,7 @@
 
 <script>
 
-import {getRoles} from '@/api/role-api'
+import {getRoles, deleteRole} from '@/api/role-api'
 import PermissionRoleForm from "./components/PermissionRoleForm";
 import PermissionRouteGrantForm from "./components/PermissionRouteGrantForm";
 import PermissionApiGrantForm from "./components/PermissionApiGrantForm";
@@ -222,6 +222,8 @@ export default {
         title: `提示`,
         content: `确定要禁用[${record.name}]角色吗？`,
         onOk: async () => {
+          deleteRole({id: record.id})
+          .then(() => this.loadTableData())
         }
       })
     },

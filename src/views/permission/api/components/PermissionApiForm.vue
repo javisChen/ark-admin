@@ -21,18 +21,7 @@
       :wrapper-col="wrapperCol">
 
       <a-form-model-item label="所属应用" prop="method">
-        <a-select
-          v-model="formModel.applicationId"
-          :allowClear="true"
-          show-search
-          placeholder="所属应用"
-          option-filter-prop="children"
-          :filter-option="filterOption">
-          <a-select-option v-for="(value, index) in applicationsOptions"
-                           :key="index" :value="value.id">
-            {{ value.name }}
-          </a-select-option>
-        </a-select>
+        <application-select v-model="formModel.applicationId"/>
       </a-form-model-item>
 
       <a-form-model-item label="所属分类" prop="method">
@@ -103,6 +92,7 @@
 import {addApi, updateApi} from '@/api/api-api'
 import {getApplications} from "@/api/application-api";
 import {authTypeOptions, methodOptions, routeStatusOptions} from "../variable";
+import ApplicationSelect from "@/views/permission/application/components/ApplicationSelect";
 
 const FORM_MODE_EDIT = 'edit';
 const FORM_MODE_ADD = 'add';
@@ -120,15 +110,15 @@ const defaultModel = {
 
 export default {
   name: 'PermissionApiForm',
-  components: {},
+  components: {ApplicationSelect},
   props: {
     applicationId: {
       type: Number,
-      required : false
+      required: false
     },
     categories: {
       type: Array,
-      required : false,
+      required: false,
       default: []
     },
   },
@@ -159,10 +149,8 @@ export default {
     }
   },
   created() {
-    this.initApplications()
   },
-  computed: {
-  },
+  computed: {},
   methods: {
     formTitle() {
       let title = '接口';
@@ -176,12 +164,6 @@ export default {
       }
       return title;
     },
-    initApplications() {
-      getApplications({})
-      .then(({data}) => {
-        this.applicationsOptions = data
-      })
-    },
     filterOption(input, option) {
       return (
         option.componentOptions.children[0].text.toLowerCase().indexOf(input.toLowerCase()) >= 0
@@ -191,7 +173,6 @@ export default {
       this.confirmLoading = !this.confirmLoading
     },
     open(formModel, mode = FORM_MODE_ADD) {
-      console.log(formModel)
       if (formModel) {
         this.formModel = Object.assign(this.formModel, formModel)
       }

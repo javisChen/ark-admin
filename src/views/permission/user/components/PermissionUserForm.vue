@@ -32,7 +32,7 @@
         <a-input type="password" placeholder="用户密码（6~18位，数字字母0-9A-Za-z）" v-model="formModel.password"/>
       </a-form-model-item>
 
-      <a-form-model-item label="所属角色" prop="roleIds">
+      <a-form-model-item label="拥有角色" prop="roleIds">
         <a-select
           :value="formModel.roleIds"
           mode="multiple"
