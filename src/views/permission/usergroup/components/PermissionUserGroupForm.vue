@@ -23,7 +23,7 @@
       <a-form-model-item label="用户组名称" prop="name" has-feedback>
         <a-input placeholder="用户组名称" v-model="formModel.name"/>
       </a-form-model-item>
-      
+
       <a-form-model-item label="所属用户组" prop="pid" has-feedback>
         <a-cascader popupPlacement="bottomLeft"
                     :changeOnSelect="true"
@@ -32,6 +32,10 @@
                     placeholder="请选择上级用户组"
                     :default-value="userGroupsOptionsDefaultValue"
                     @change="onSelectUserGroupsChange"/>
+      </a-form-model-item>
+
+      <a-form-model-item label="拥有角色" prop="pid" has-feedback>
+        <role-select v-model="formModel.roleIds"/>
       </a-form-model-item>
 
       <a-form-model-item label="状态" prop="status" required>
@@ -48,6 +52,7 @@
 <script>
 
 import {addUserGroup, updateUserGroup} from '@/api/usergroup-api'
+import RoleSelect from "@/views/permission/role/components/RoleSelect";
 
 const FORM_MODE_EDIT = 'edit';
 const FORM_MODE_ADD = 'add';
@@ -56,12 +61,14 @@ const defaultModel = {
   id: '',
   name: '',
   status: 1,
-  pid: 0
+  pid: 0,
+  roleIds: []
 }
 
 export default {
   name: 'PermissionUserGroupForm',
   components: {
+    RoleSelect
   },
   props: {
     userGroups: {
