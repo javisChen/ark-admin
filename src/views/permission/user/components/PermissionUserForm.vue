@@ -33,37 +33,11 @@
       </a-form-model-item>
 
       <a-form-model-item label="拥有角色" prop="roleIds">
-        <a-select
-          :value="formModel.roleIds"
-          mode="multiple"
-          @change="handleRoleOptionsChange"
-          :allowClear="true"
-          show-search
-          placeholder="请选择角色"
-          option-filter-prop="children"
-          :filter-option="filterOption">
-          <a-select-option v-for="(value, index) in roleOptions"
-                           :key="index" :value="value.id">
-            {{ value.name }}
-          </a-select-option>
-        </a-select>
+        <role-select v-model="formModel.roleIds"/>
       </a-form-model-item>
 
       <a-form-model-item label="所属用户组" prop="userGroupIds">
-        <a-select
-          :value="formModel.userGroupIds"
-          mode="multiple"
-          @change="handleUserGroupOptionsChange"
-          :allowClear="true"
-          show-search
-          placeholder="请选择用户组"
-          option-filter-prop="children"
-          :filter-option="filterOption">
-          <a-select-option v-for="(value, index) in userGroupOptions"
-                           :key="index" :value="value.id">
-            <span>{{ value.name }} <a href="#">({{getLevelDesc(value.level) + '级'}})</a></span>
-          </a-select-option>
-        </a-select>
+        <user-group-select v-model="formModel.userGroupIds"/>
       </a-form-model-item>
 
       <a-form-model-item label="状态" prop="status" required>
@@ -82,8 +56,9 @@
 import md5 from 'md5'
 
 import {addUser, updateUser} from '@/api/user-api'
-import {getAllRoles} from "@/api/role-api";
 import {getAllUserGroups} from "@/api/usergroup-api";
+import RoleSelect from "@/views/permission/role/components/RoleSelect";
+import UserGroupSelect from "@/views/permission/usergroup/components/UserGroupSelect";
 
 
 const FORM_MODE_EDIT = 'edit';
@@ -99,22 +74,12 @@ const defaultModel = {
   userGroupIds: [],
 }
 
-const levelDict = {
-  1: '一',
-  2: '二',
-  3: '三',
-  4: '四',
-  5: '五',
-}
-
 export default {
   name: 'PermissionUserForm',
-  components: {},
+  components: {UserGroupSelect, RoleSelect},
   props: {},
   data() {
     return {
-      roleOptions: [],
-      userGroupOptions: [],
       confirmLoading: false,
       mode: FORM_MODE_ADD,
       visible: false,
@@ -136,50 +101,18 @@ export default {
     }
   },
   created() {
-    this.loadRoleOptions()
-    this.loadUserGroupOptions()
   },
   computed: {
     isEditMode() {
       return this.mode === FORM_MODE_EDIT
     },
-    filteredRoleOptions() {
-      console.log('this.formModel.roleIds', this.formModel.roleIds)
-      var filter = this.roleOptions.filter(o => !this.formModel.roleIds.includes(o.id));
-      console.log('filter', filter)
-      return filter;
-    },
-    filteredUserGroupOptions() {
-      return this.userGroupOptions.filter(o => !this.formModel.userGroupIds.includes(o.id));
-    },
   },
   methods: {
-    getLevelDesc(value) {
-      return levelDict[value]
-    },
-    filterOption(input, option) {
-      return (
-        option.componentOptions.children[0].text.toLowerCase().indexOf(input.toLowerCase()) >= 0
-      );
-    },
     handleRoleOptionsChange(value) {
       this.formModel.roleIds = value
     },
     handleUserGroupOptionsChange(value) {
       this.formModel.userGroupIds = value
-    },
-    loadRoleOptions() {
-      getAllRoles()
-        .then(({data}) => {
-          this.roleOptions = data
-          console.log('this.roleOptions', this.roleOptions)
-        })
-    },
-    loadUserGroupOptions() {
-      getAllUserGroups()
-        .then(({data}) => {
-          this.userGroupOptions = data
-        })
     },
     toggleConfirmLoading() {
       this.confirmLoading = !this.confirmLoading

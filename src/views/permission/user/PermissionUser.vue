@@ -128,7 +128,7 @@ export default {
       defaultExpandAllRows: false,
       tableLoading: false,
       advanced: false,
-      queryParam,
+      queryParam: {...queryParam},
       tableData: [],
       columns: [
         {
@@ -190,7 +190,7 @@ export default {
       this.loadTableData()
     },
     resetQueryParams() {
-      this.queryParam = Object.assign({}, queryParam)
+      this.queryParam = {...queryParam}
       this.loadTableData()
     },
     handleQueryStatusChange(value) {
