@@ -24,7 +24,7 @@
         <application-select v-model="formModel.applicationId"/>
       </a-form-model-item>
 
-      <a-form-model-item label="所属分类" prop="method">
+      <a-form-model-item label="所属分类" prop="categoryId">
         <a-select
           v-model="formModel.categoryId"
           :allowClear="true"
@@ -32,7 +32,7 @@
           placeholder="所属分类"
           option-filter-prop="children"
           :filter-option="filterOption">
-          <a-select-option v-for="(value, index) in categories"
+          <a-select-option v-for="(value, index) in categoryOptions"
                            :key="index" :value="value.id">
             {{ value.name }}
           </a-select-option>
@@ -122,13 +122,9 @@ export default {
       default: []
     },
   },
-  watch: {
-    applicationId(val) {
-      this.formModel.applicationId = val
-    }
-  },
   data() {
     return {
+      categoryOptions: [],
       methodOptions,
       routeStatusOptions,
       authTypeOptions,
@@ -145,10 +141,28 @@ export default {
         url: [{required: true, message: '请输入接口Url', trigger: 'blur'}],
         method: [{required: true, message: '请输入接口Method', trigger: 'blur'}],
         status: [{required: true, message: '请选择接口状态', trigger: 'blur'}],
+        categoryId: [
+          {type: 'number', required: true, message: '请选择接口分类', trigger: 'blur'},
+          {type: 'number',min: 1, message: '请选择接口分类'}
+        ],
       }
     }
   },
   created() {
+    console.log(this.categories)
+  },
+  watch: {
+    applicationId(val) {
+      this.formModel.applicationId = val
+    },
+    categories(val) {
+      this.categoryOptions = this.$cloneDeep(val)
+      if (this.categoryOptions.length === 0) {
+        this.categoryOptions = [{id: 0, name: '没有可选分类，请先添加分类'}]
+      }
+      console.log(this.categoryOptions)
+      return this.categoryOptions
+    }
   },
   computed: {},
   methods: {
@@ -173,6 +187,7 @@ export default {
       this.confirmLoading = !this.confirmLoading
     },
     open(formModel, mode = FORM_MODE_ADD) {
+      console.log(formModel)
       if (formModel) {
         this.formModel = Object.assign(this.formModel, formModel)
       }

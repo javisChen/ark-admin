@@ -94,7 +94,9 @@ export default {
   computed: {},
   methods: {
     rebuild() {
-      this.data[0].activated = true
+      if (this.data.length > 0) {
+        this.data[0].activated = true
+      }
     },
     toggleLoading() {
       this.spinning = !this.spinning

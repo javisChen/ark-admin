@@ -248,9 +248,13 @@ export default {
       getApiCategories({applicationId: this.queryParam.applicationId})
         .then(({data}) => {
           this.categories = data
-          console.log(this.categories)
-          this.queryParam.categoryId = this.categories[0].id
-          this.loadTableData()
+          if (this.categories.length > 0) {
+            this.queryParam.categoryId = this.categories[0].id
+            this.loadTableData()
+          } else {
+            this.queryParam.categoryId = 0
+            this.apis = []
+          }
         })
         .finally(() => {
           setTimeout(() => {
