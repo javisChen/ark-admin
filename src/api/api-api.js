@@ -12,6 +12,8 @@ export const getApis = (data) => post({url: api.apis, data})
 
 export const addApi = (data) => post({url: api.api, data})
 
+export const getApi = (params) => get({url: api.api, params})
+
 export const deleteApi = (id) => del({url: `${api.api}/${id}`})
 
 export const updateApi = (data) => put({url: api.api, data})

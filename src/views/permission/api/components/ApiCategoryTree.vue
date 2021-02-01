@@ -42,8 +42,7 @@
         暂无分类
       </div>
 
-      <permission-api-category-form :application-id="applicationId"
-                                    ref="categoryForm"
+      <permission-api-category-form ref="categoryForm"
                                     @success="handleCategoryFormOnSuccess"
                                     @cancel="handleEditFormCancel"/>
     </a-card>
@@ -64,7 +63,7 @@ export default {
     applicationId: {
       type: Number,
       required: false,
-      default: 0
+      default: () => 0
     },
     categories: {
       type: Array,
@@ -128,6 +127,11 @@ export default {
       switch (type) {
         case 'edit':
           model = record
+          break
+        case 'add':
+          model = {
+            applicationId: this.applicationId
+          }
           break
         default:
           break;

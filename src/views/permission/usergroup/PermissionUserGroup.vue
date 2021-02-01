@@ -50,6 +50,11 @@
         :row-key="rowKey"
         :columns="columns">
 
+
+        <template slot="roles" slot-scope="text, record">
+          <a-tag color="blue" v-for="item in record.roles" :key="item">{{ item }}</a-tag>
+        </template>
+
         <template slot="status" slot-scope="text, record">
           <a-dropdown :trigger="['click']">
             <a-menu slot="overlay" @click="routeStatusChange($event, record)">
@@ -87,10 +92,11 @@
 
 <script>
 
-import {getUserGroups} from '@/api/usergroup-api'
+import {getUserGroups, getUserGroup} from '@/api/usergroup-api'
 import PermissionUserGroupForm from "./components/PermissionUserGroupForm";
 import PermissionUserGroupTree from "./components/PermissionUserGroupTree";
 import {filterNonChildren} from "@/utils/util";
+import {getUser} from "@/api/user-api";
 
 const routeStatusDictionary = {
   1: '已启用',
@@ -134,13 +140,19 @@ export default {
           dataIndex: 'name',
         },
         {
+          title: '角色权限',
+          scopedSlots: {customRender: 'roles'},
+        },
+        {
           title: '创建时间',
           align: 'center',
+          width: '200px',
           dataIndex: 'createTime',
         },
         {
           title: '更新时间',
           align: 'center',
+          width: '200px',
           dataIndex: 'updateTime',
         },
         {
@@ -159,7 +171,8 @@ export default {
   },
   methods: {
     async handleEdit(record) {
-      this.$refs['userGroupForm'].open(record, 'edit')
+      const {data} = await getUserGroup({id: record.id})
+      this.$refs['userGroupForm'].open(data, 'edit')
     },
     handleTableChange(pagination, filters, sorter) {
       this.queryParam.current = pagination.current

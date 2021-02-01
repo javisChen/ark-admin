@@ -133,6 +133,7 @@ export default {
       this.$emit('cancel', '')
     },
     afterSuccess: function () {
+      this.handleClose()
       this.$message.success('保存成功')
     }
   },

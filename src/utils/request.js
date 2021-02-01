@@ -30,15 +30,15 @@ const errorHandler = (error) => {
     const token = storage.get(ACCESS_TOKEN)
     if (error.response.status === 403) {
       notification.error({
-        message: 'Forbidden',
-        description: data.message
+        message: '拒绝访问：权限不足',
+        description: data.msg
       })
     }
     if (error.response.status === 401 && !(data.result && data.result.isLogin)) {
-      notification.error({
-        message: 'Unauthorized',
-        description: error.response.msg
-      })
+      // notification.error({
+      //   message: 'Unauthorized',
+      //   description: error.response.msg
+      // })
       if (token) {
         store.dispatch('Logout').then(() => {
           setTimeout(() => {

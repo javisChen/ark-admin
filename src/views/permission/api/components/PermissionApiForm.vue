@@ -149,7 +149,6 @@ export default {
     }
   },
   created() {
-    console.log(this.categories)
   },
   watch: {
     applicationId(val) {
@@ -160,7 +159,6 @@ export default {
       if (this.categoryOptions.length === 0) {
         this.categoryOptions = [{id: 0, name: '没有可选分类，请先添加分类'}]
       }
-      console.log(this.categoryOptions)
       return this.categoryOptions
     }
   },
@@ -187,7 +185,6 @@ export default {
       this.confirmLoading = !this.confirmLoading
     },
     open(formModel, mode = FORM_MODE_ADD) {
-      console.log(formModel)
       if (formModel) {
         this.formModel = Object.assign(this.formModel, formModel)
       }

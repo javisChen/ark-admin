@@ -16,8 +16,9 @@
       </a-form>
     </div>
 
-    <div class="table-operator">
-      <a-button v-if="!grant" type="primary" icon="plus" @click="openForm('add')">添加接口</a-button>
+    <div v-if="!grant" class="table-operator">
+      <a-button type="primary" icon="plus" @click="openForm('add')">添加接口</a-button>
+      <a-button type="primary" icon="reload" @click="updateApiCache">更新缓存</a-button>
     </div>
 
     <a-row :gutter="8">
@@ -30,49 +31,46 @@
           :application-id="queryParam.applicationId"/>
       </a-col>
       <a-col :span="20">
-        <a-card :bordered="true" size="small">
-          <a-table
-            bordered
-            @change="handleTableChange"
-            :row-selection="grant ? rowSelection : null"
-            :pagination="false"
-            :loading="tableLoading"
-            :defaultExpandAllRows="defaultExpandAllRows"
-            :expandRowByClick="false"
-            :size="'small'"
-            :indent-size="15"
-            :row-key="rowKey"
-            :columns="columns"
-            :data-source="apis">
+        <a-table
+          bordered
+          @change="handleTableChange"
+          :row-selection="grant ? rowSelection : null"
+          :pagination="false"
+          :loading="tableLoading"
+          :defaultExpandAllRows="defaultExpandAllRows"
+          :expandRowByClick="false"
+          :size="'small'"
+          :indent-size="15"
+          :row-key="rowKey"
+          :columns="columns"
+          :data-source="apis">
 
-            <template slot="status" slot-scope="text, record">
-              <a-dropdown :trigger="['click']">
-                <a-menu slot="overlay" @click="routeStatusChange($event, record)">
-                  <a-menu-item v-for="(item) in routeStatusOptions" :key="item.value">
-                    {{ item.desc }}
-                  </a-menu-item>
-                </a-menu>
-                <a-button
-                  :style="record.status === 1 ? {'background-color': '#52c41a',border: 'none', 'color': 'white'}: {}"
-                  shape="round" size="small" :type="record.status !== 1 ? 'danger' : ''">
-                  {{ getStatusDesc(record.status) }}
-                  <a-icon type="down"/>
-                </a-button>
-              </a-dropdown>
-            </template>
+          <template slot="status" slot-scope="text, record">
+            <a-dropdown :trigger="['click']">
+              <a-menu slot="overlay" @click="routeStatusChange($event, record)">
+                <a-menu-item v-for="(item) in routeStatusOptions" :key="item.value">
+                  {{ item.desc }}
+                </a-menu-item>
+              </a-menu>
+              <a-button
+                :style="record.status === 1 ? {'background-color': '#52c41a',border: 'none', 'color': 'white'}: {}"
+                shape="round" size="small" :type="record.status !== 1 ? 'danger' : ''">
+                {{ getStatusDesc(record.status) }}
+                <a-icon type="down"/>
+              </a-button>
+            </a-dropdown>
+          </template>
 
-            <template slot="action" slot-scope="text, record">
-              <k-tooltip-button title="编辑" @click="openForm('edit', record)" icon="edit"/>&nbsp;
-              <k-tooltip-button title="删除" @click="handleDelete(record)" type="danger" icon="delete"/>
-            </template>
+          <template slot="action" slot-scope="text, record">
+            <k-tooltip-button title="编辑" @click="openForm('edit', record)" icon="edit"/>&nbsp;
+            <k-tooltip-button title="删除" @click="handleDelete(record)" type="danger" icon="delete"/>
+          </template>
 
-            <template slot="authType" slot-scope="text, record">
-              {{ getAuthTypeOptionDesc(record.authType) }}
-            </template>
+          <template slot="authType" slot-scope="text, record">
+            {{ getAuthTypeOptionDesc(record.authType) }}
+          </template>
 
-          </a-table>
-
-        </a-card>
+        </a-table>
       </a-col>
     </a-row>
 
@@ -88,7 +86,7 @@
 
 <script>
 
-import {getApis, updateApi, deleteApi} from '@/api/api-api'
+import {getApis, updateApi, deleteApi, updateCache, getApi} from '@/api/api-api'
 import PermissionApiForm from './components/PermissionApiForm'
 import PermissionApiCategoryForm from "@/views/permission/api/components/PermissionApiCategoryForm";
 import ApplicationSelect from '@/views/permission/application/components/ApplicationSelect'
@@ -98,7 +96,8 @@ import {getApiCategories} from "@/api/api-category-api";
 
 const queryParam = {
   applicationId: null,
-  categoryId: null
+  categoryId: null,
+  authType: null
 }
 
 const NEED_AUTHORIZATION = 3
@@ -222,7 +221,7 @@ export default {
       defaultExpandAllRows: false,
       tableLoading: false,
       advanced: false,
-      queryParam,
+      queryParam: Object.assign({}, queryParam),
       apis: [],
       applications: [],
       columns: defaultColumns,
@@ -237,6 +236,7 @@ export default {
       this.columns = grantColumns
     }
     this.loadApiCategories()
+    console.log('grant', this.grant)
   },
   methods: {
     onSelectChange(selectedRowKeys, selectedRows) {
@@ -324,17 +324,26 @@ export default {
       let model;
       switch (type) {
         case 'edit':
-          model = record
+          const {data} = await getApi({id: record.id})
+          model = data
           break
         case 'add':
           model = {
-            categoryId: this.queryParam.categoryId
+            categoryId: this.queryParam.categoryId,
+            applicationId: this.queryParam.applicationId,
           }
           break
         default:
           break;
       }
       this.$refs['apiForm'].open(model, type)
+    },
+    updateApiCache() {
+      updateCache()
+        .then((resp) => {
+          this.$message.success('缓存更新成功')
+        })
+        .catch((e) => e)
     },
     handleDelete(record) {
       this.$confirm({
@@ -353,8 +362,10 @@ export default {
       this.toggleLoading()
       // 如果是授权调用组件的时候只筛选需要授权的api
       if (this.grant) {
+        console.log('2312313123123')
         this.queryParam.authType = NEED_AUTHORIZATION
       }
+      console.log(this.queryParam)
       const {data} = await getApis(this.queryParam)
       this.apis = data
       this.toggleLoading()

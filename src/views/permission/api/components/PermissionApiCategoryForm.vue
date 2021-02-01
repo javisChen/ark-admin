@@ -61,14 +61,10 @@ export default {
   name: 'PermissionApiCategoryForm',
   components: {},
   props: {
-    applicationId: {
-      type: Number,
-      required : false
-    },
   },
   watch: {
     applicationId(val) {
-      this.formModel.applicationId = val
+      this.formModel.applicationId = this.$cloneDeep(val)
     }
   },
   data() {

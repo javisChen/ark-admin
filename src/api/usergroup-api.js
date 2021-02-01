@@ -11,6 +11,8 @@ export default api
 
 export const getUserGroups = (data) => post({url: api.usergroups, data})
 
+export const getUserGroup = (params) => get({url: api.usergroup, params})
+
 export const getAllUserGroups = (data) => get({url: api.usergroupsAll, data})
 
 export const getUserGroupsTree = (data) => post({url: api.usergroupsTree, data})
