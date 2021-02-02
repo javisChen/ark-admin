@@ -1,5 +1,4 @@
 <template>
-  <page-header-wrapper>
     <a-card :bordered="false">
       <div class="table-page-search-wrapper">
         <a-form layout="inline">
@@ -67,14 +66,14 @@
         </template>
       </a-table>
 
+
+      <!-- 创建路由信息表单-->
+      <permission-route-form :routes="routes" ref="routeForm"
+                             @success="handleFormOnSuccess"
+                             @cancel="handleEditFormCancel"/>
+
     </a-card>
 
-    <!-- 创建路由信息表单-->
-    <permission-route-form :routes="routes" ref="routeForm"
-                           @success="handleFormOnSuccess"
-                           @cancel="handleEditFormCancel"/>
-
-  </page-header-wrapper>
 </template>
 
 <script>

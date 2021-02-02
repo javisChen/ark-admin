@@ -58,14 +58,12 @@ export const generatorDynamicRouter = () => {
     getUserRoutes().then(({data, resp}) => {
       const menuNav = []
       const childrenNav = []
-      console.log(data)
       //      后端数据, 根级树数组,  根级 PID
       listToTree(data, childrenNav, 0)
       childrenNav.unshift(workplaceRouter)
       rootRouter.children = childrenNav
       menuNav.push(rootRouter)
       const routers = generator(menuNav)
-      console.log(routers)
       routers.push(notFoundRouter)
       resolve(routers)
     }).catch(err => {

@@ -59,18 +59,19 @@ const user = {
     // 获取用户信息
     GetInfo({commit}) {
       return new Promise(async (resolve, reject) => {
-        const userInfoResp = await getUserInfo();
-        const userInfo = userInfoResp.data
-        commit('SET_INFO', userInfo)
-        commit('SET_NAME', {name: userInfo.username, welcome: welcome()})
-        commit('SET_IS_SUPER_ADMIN', userInfo.isSuperAdmin)
+        try {
+          const userInfoResp = await getUserInfo();
+          const userInfo = userInfoResp.data
+          commit('SET_INFO', userInfo)
+          commit('SET_NAME', {name: userInfo.username, welcome: welcome()})
+          commit('SET_IS_SUPER_ADMIN', userInfo.isSuperAdmin)
 
-        await getUserPageElementPermissions().then(({data}) => {
-          commit('SET_ACTION_PERMISSIONS', data)
-          resolve({data})
-        }).catch(error => {
-          reject(error)
-        })
+          const userPermissionsResp = await getUserPageElementPermissions()
+          commit('SET_ACTION_PERMISSIONS', userPermissionsResp.data)
+          resolve({data: userPermissionsResp.data})
+        } catch (e) {
+          reject(e)
+        }
       })
     },
 

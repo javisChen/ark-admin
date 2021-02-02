@@ -1,5 +1,5 @@
 <template>
-  <page-header-wrapper>
+<!--  <page-header-wrapper>-->
     <a-card :bordered="false">
       <div class="table-page-search-wrapper">
         <a-form layout="inline">
@@ -79,14 +79,14 @@
       </a-table>
       <a-empty v-else/>
 
+      <!-- 创建路由信息表单-->
+      <permission-user-form ref="userForm"
+                            @success="handleFormOnSuccess"
+                            @cancel="handleEditFormCancel"/>
+
     </a-card>
 
-    <!-- 创建路由信息表单-->
-    <permission-user-form ref="userForm"
-                          @success="handleFormOnSuccess"
-                          @cancel="handleEditFormCancel"/>
-
-  </page-header-wrapper>
+<!--  </page-header-wrapper>-->
 
 </template>
 

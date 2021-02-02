@@ -21,6 +21,7 @@ router.beforeEach((to, from, next) => {
   if (storage.get(ACCESS_TOKEN)) {
     // 登录成功后，如果路由到登录页的话就重定向到默认首页
     if (to.path === loginRoutePath) {
+      console.log(66666)
       next({path: defaultRoutePath})
       NProgress.done()
     } else {
@@ -30,6 +31,7 @@ router.beforeEach((to, from, next) => {
         store.dispatch('GetInfo')
           .then(({data}) => {
 
+            console.log(6666)
             // generate dynamic router
             store.dispatch('GenerateRoutes').then(() => {
               // 根据roles权限生成可访问的路由表
@@ -51,6 +53,7 @@ router.beforeEach((to, from, next) => {
               message: '错误',
               description: '请求用户信息失败，请重试'
             })
+            console.log(123123)
             // 失败时，获取用户信息失败时，调用登出，来清空历史保留信息
             store.dispatch('Logout').then(() => {
               next({path: loginRoutePath, query: {redirect: to.fullPath}})

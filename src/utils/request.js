@@ -2,6 +2,7 @@ import axios from 'axios'
 import store from '@/store'
 import storage from 'store'
 import notification from 'ant-design-vue/es/notification'
+import message from 'ant-design-vue/es/message'
 import {VueAxios} from './axios'
 import {SUCCESS_CODE} from './code'
 import {ACCESS_TOKEN} from '@/store/mutation-types'
@@ -56,9 +57,11 @@ const errorHandler = (error) => {
       } else {
         description = result.msg
       }
-      notification.error({
-        message: '出了点小问题~',
-        description,
+
+      description = description || '服务器有点小问题，请稍等...'
+
+      message.error({
+        content: description,
         duration: 4
       })
     }

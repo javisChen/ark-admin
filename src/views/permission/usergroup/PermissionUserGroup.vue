@@ -1,5 +1,4 @@
 <template>
-  <page-header-wrapper>
     <a-card :bordered="false">
       <!--          <div style="  background: #00a0e9;">123</div>-->
 <!--      <div class="table-page-search-wrapper">-->
@@ -77,16 +76,16 @@
         </template>
       </a-table>
       <a-empty v-else/>
+
+      <!-- 创建路由信息表单-->
+      <permission-user-group-form ref="userGroupForm"
+                                  @success="handleFormOnSuccess"
+                                  @cancel="handleEditFormCancel"
+                                  :user-groups="userGroups"/>
+
     </a-card>
 
-    <!-- 创建路由信息表单-->
-    <permission-user-group-form ref="userGroupForm"
-                                @success="handleFormOnSuccess"
-                                @cancel="handleEditFormCancel"
-                                :user-groups="userGroups"/>
 
-
-  </page-header-wrapper>
 
 </template>
 

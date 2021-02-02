@@ -1,5 +1,4 @@
 <template>
-  <page-header-wrapper>
     <a-card :bordered="false">
 <!--      <a-form-item>-->
 <!--        <tag-select>-->
@@ -44,14 +43,14 @@
           </a-list-item>
         </a-list>
       </div>
+
+      <!-- 创建路由信息表单-->
+      <permission-application-form ref="applicationForm"
+                                   @success="handleFormOnSuccess"
+                                   @cancel="handleEditFormCancel"/>
+
     </a-card>
 
-    <!-- 创建路由信息表单-->
-    <permission-application-form ref="applicationForm"
-                                 @success="handleFormOnSuccess"
-                                 @cancel="handleEditFormCancel"/>
-
-  </page-header-wrapper>
 </template>
 
 <script>
