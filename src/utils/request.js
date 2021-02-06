@@ -36,10 +36,10 @@ const errorHandler = (error) => {
       })
     }
     if (error.response.status === 401 && !(data.result && data.result.isLogin)) {
-      // notification.error({
-      //   message: 'Unauthorized',
-      //   description: error.response.msg
-      // })
+      notification.error({
+        message: '认证已失效，请重新登录',
+        description: error.response.msg
+      })
       if (token) {
         store.dispatch('Logout').then(() => {
           setTimeout(() => {
