@@ -47,7 +47,7 @@ const user = {
       return new Promise((resolve, reject) => {
         login(userInfo).then(({data}) => {
           const result = data
-          storage.set(ACCESS_TOKEN, result.accessToken, result.expires)
+          storage.set(ACCESS_TOKEN, result.accessToken, result.expires * 1000)
           commit('SET_TOKEN', result.accessToken)
           resolve()
         }).catch(error => {
@@ -78,7 +78,7 @@ const user = {
     // 登出
     Logout({commit, state}) {
       return new Promise((resolve) => {
-        logout(state.token).then(() => {
+        logout().then(() => {
           commit('SET_TOKEN', '')
           commit('SET_ROLES', [])
           commit('SET_ACTION_PERMISSIONS', [])
