@@ -49,9 +49,16 @@
         :row-key="rowKey"
         :columns="columns">
 
-
         <template slot="roles" slot-scope="text, record">
           <a-tag color="blue" v-for="item in record.roles" :key="item">{{ item }}</a-tag>
+        </template>
+
+        <template slot="inheritType" slot-scope="text, record">
+          {{record.inheritType}}
+        </template>
+
+        <template slot="type" slot-scope="text, record">
+          {{record.type}}
         </template>
 
         <template slot="status" slot-scope="text, record">
@@ -141,6 +148,14 @@ export default {
         {
           title: '角色权限',
           scopedSlots: {customRender: 'roles'},
+        },
+        {
+          title: '用户组类型',
+          scopedSlots: {customRender: 'type'},
+        },
+        {
+          title: '继承类型',
+          scopedSlots: {customRender: 'inheritType'},
         },
         {
           title: '创建时间',

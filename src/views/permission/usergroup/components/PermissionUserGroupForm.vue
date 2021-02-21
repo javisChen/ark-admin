@@ -38,6 +38,30 @@
         <role-select v-model="formModel.roleIds"/>
       </a-form-model-item>
 
+      <a-form-model-item label="用户组类型" prop="type" required>
+        <a-select
+          v-model="formModel.type"
+          :allowClear="true"
+          placeholder="用户组类型"
+        >
+          <a-select-option v-for="(value) in typeOptions" :key="value.value" :value="value.value">
+            {{ value.desc }}
+          </a-select-option>
+        </a-select>
+      </a-form-model-item>
+
+      <a-form-model-item label="继承类型" prop="inheritType" required>
+        <a-select
+          v-model="formModel.inheritType"
+          :allowClear="true"
+          placeholder="继承类型"
+        >
+          <a-select-option v-for="(value) in inheritTypeOptions" :key="value.value" :value="value.value">
+            {{ value.desc }}
+          </a-select-option>
+        </a-select>
+      </a-form-model-item>
+
       <a-form-model-item label="状态" prop="status" required>
         <a-radio-group name="radioGroup" v-model="formModel.status" :default-value="1">
           <a-radio :value="1">启用</a-radio>
@@ -57,11 +81,24 @@ import RoleSelect from "@/views/permission/role/components/RoleSelect";
 const FORM_MODE_EDIT = 'edit';
 const FORM_MODE_ADD = 'add';
 
+const typeOptions = [
+  {value: 1, desc: '公司'},
+  {value: 2, desc: '部门'},
+]
+
+const inheritTypeOptions = [
+  {value: 0, desc: '不继承'},
+  {value: 1, desc: '继承上级用户组'},
+  {value: 2, desc: '继承所有用户组'},
+]
+
 const defaultModel = {
   id: '',
   name: '',
   status: 1,
   pid: 0,
+  inheritType: 0,
+  type: 1,
   roleIds: []
 }
 
@@ -78,6 +115,8 @@ export default {
     },},
   data() {
     return {
+      typeOptions,
+      inheritTypeOptions,
       confirmLoading: false,
       mode: FORM_MODE_ADD,
       visible: false,

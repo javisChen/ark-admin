@@ -207,6 +207,7 @@ export default {
   },
   created () {
     this.user = this.userInfo
+    console.log(this.user)
     this.avatar = this.userInfo.avatar
 
     // getRoleList().then(res => {
