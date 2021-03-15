@@ -145,6 +145,11 @@ export default {
           width: 100
         },
         {
+          title: '角色编码',
+          dataIndex: 'code',
+          width: 100
+        },
+        {
           title: '创建时间',
           align: 'center',
           width: 200,

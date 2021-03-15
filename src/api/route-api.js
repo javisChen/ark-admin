@@ -13,7 +13,7 @@ export const getRoutesTree = (data) => post({url: api.routesAll, data})
 
 export const getRoutes = (data) => post({url: api.routes, data})
 
-export const getRoute = (id) => get({url: `${api.route}/${id}`})
+export const getRoute = (params) => get({url: `${api.route}`, params})
 
 export const addRoute = (data) => post({url: api.route, data})
 

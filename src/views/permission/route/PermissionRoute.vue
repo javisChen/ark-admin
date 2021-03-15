@@ -1,78 +1,78 @@
 <template>
-    <a-card :bordered="false">
-      <div class="table-page-search-wrapper">
-        <a-form layout="inline">
-          <a-row :gutter="48">
-            <a-col :md="8" :sm="24">
-              <a-form-item label="所属应用">
-                <application-select @change="onApplicationSelectChange" v-model="queryParam.applicationId"/>
-              </a-form-item>
-            </a-col>
-          </a-row>
-        </a-form>
-      </div>
+  <a-card :bordered="false">
+    <div class="table-page-search-wrapper">
+      <a-form layout="inline">
+        <a-row :gutter="48">
+          <a-col :md="8" :sm="24">
+            <a-form-item label="所属应用">
+              <application-select @change="onApplicationSelectChange" v-model="queryParam.applicationId"/>
+            </a-form-item>
+          </a-col>
+        </a-row>
+      </a-form>
+    </div>
 
-      <div class="table-operator">
-        <a-button v-has-permission:PE00004 type="primary" icon="plus" @click="openForm('add')">添加路由</a-button>
-      </div>
+    <div class="table-operator">
+      <a-button v-has-permission:PE00004 type="primary" icon="plus" @click="openForm('add')">添加路由</a-button>
+    </div>
 
-      <a-table
-        bordered
-        @change="handleTableChange"
-        :pagination="pagination"
-        :loading="tableLoading"
-        :defaultExpandAllRows="defaultExpandAllRows"
-        :expandRowByClick="false"
-        :size="'middle'"
-        :scroll="scroll"
-        :indent-size="15"
-        :row-key="rowKey"
-        :columns="columns"
-        :data-source="routes">
+    <a-table
+      bordered
+      @change="handleTableChange"
+      :pagination="pagination"
+      :loading="tableLoading"
+      :defaultExpandAllRows="defaultExpandAllRows"
+      :expandRowByClick="false"
+      :size="'middle'"
+      :scroll="scroll"
+      :indent-size="15"
+      :row-key="rowKey"
+      :columns="columns"
+      :data-source="routes">
 
-        <template slot="status" slot-scope="text, record">
-          <a-dropdown :trigger="['click']">
-            <a-menu slot="overlay" @click="routeStatusChange($event, record)">
-              <a-menu-item v-for="(value, key) in routeStatusDictionary" :key="key">
-                {{ value }}
-              </a-menu-item>
-            </a-menu>
-            <a-button
-              :style="record.status === 1 ? {'background-color': '#52c41a',border: 'none', 'color': 'white'}: {}"
-              shape="round" size="small" :type="record.status !== 1 ? 'danger' : ''">
-              {{ getStatusDesc(record.status) }}
-              <a-icon type="down"/>
-            </a-button>
-          </a-dropdown>
-        </template>
+      <template slot="status" slot-scope="text, record">
+        <a-dropdown :trigger="['click']">
+          <a-menu slot="overlay" @click="routeStatusChange($event, record)">
+            <a-menu-item v-for="(value, key) in routeStatusDictionary" :key="key">
+              {{ value }}
+            </a-menu-item>
+          </a-menu>
+          <a-button
+            :style="record.status === 1 ? {'background-color': '#52c41a',border: 'none', 'color': 'white'}: {}"
+            shape="round" size="small" :type="record.status !== 1 ? 'danger' : ''">
+            {{ getStatusDesc(record.status) }}
+            <a-icon type="down"/>
+          </a-button>
+        </a-dropdown>
+      </template>
 
-        <template slot="action" slot-scope="text, record">
-          <k-tooltip-button v-hasPermission:PE00007 title="添加子路由" @click="openForm('addChildren', record)" icon="plus"/>&nbsp;
-          <k-tooltip-button v-hasPermission:PE00008 title="查看" @click="openForm('view', record)" icon="search"/>&nbsp;
-          <k-tooltip-button v-hasPermission:PE00005 title="编辑" @click="openForm('edit', record)" icon="edit"/>&nbsp;
-          <k-tooltip-button v-hasPermission:PE00006 title="删除" @click="handleDelete(record)" type="danger" icon="delete"/>
-        </template>
+      <template slot="action" slot-scope="text, record">
+        <k-tooltip-button v-hasPermission:PE00007 title="添加子路由" @click="openForm('addChildren', record)" icon="plus"/>&nbsp;
+        <k-tooltip-button v-hasPermission:PE00008 title="查看" @click="openForm('view', record)" icon="search"/>&nbsp;
+        <k-tooltip-button v-hasPermission:PE00005 title="编辑" @click="openForm('edit', record)" icon="edit"/>&nbsp;
+        <k-tooltip-button v-hasPermission:PE00006 title="删除" @click="handleDelete(record)" type="danger" icon="delete"/>
+      </template>
 
-        <template slot="type" slot-scope="text, record">
-          {{ getTypeDesc(record.type) }}
-        </template>
+      <template slot="type" slot-scope="text, record">
+        {{ getTypeDesc(record.type) }}
+      </template>
 
-        <template slot="isHideChildren" slot-scope="text, record">
-          {{ record.isHideChildren ? '是' : '否' }}
-        </template>
+      <template slot="isHideChildren" slot-scope="text, record">
+        {{ record.isHideChildren ? '是' : '否' }}
+      </template>
 
-        <template slot="icon" slot-scope="text, record">
-          <a-icon v-if="record.icon" :type="record.icon"></a-icon>
-        </template>
-      </a-table>
+      <template slot="icon" slot-scope="text, record">
+        <a-icon v-if="record.icon" :type="record.icon"></a-icon>
+      </template>
+    </a-table>
 
 
-      <!-- 创建路由信息表单-->
-      <permission-route-form :routes="routes" ref="routeForm"
-                             @success="handleFormOnSuccess"
-                             @cancel="handleEditFormCancel"/>
+    <!-- 创建路由信息表单-->
+    <permission-route-form :routes="routes" ref="routeForm"
+                           @success="handleFormOnSuccess"
+                           @cancel="handleEditFormCancel"/>
 
-    </a-card>
+  </a-card>
 
 </template>
 
@@ -299,7 +299,7 @@ export default {
           break
         case 'edit':
         case 'view':
-          const {data} = await getRoute(record.id)
+          const {data} = await getRoute({id: record.id})
           model = data
           break
         case 'add':

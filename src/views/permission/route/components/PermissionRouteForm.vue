@@ -145,6 +145,8 @@ import {updateRoute, addRoute} from '@/api/route-api'
 import RouteComponentSelect from "./RouteComponentSelect";
 import ApplicationSelect from "../../application/components/ApplicationSelect";
 import PermissionPageElementTable from "./PermissionPageElementTable";
+import {parseLevelPath} from "@/utils/util";
+
 
 const ROUTE_TYPE_MENU = 1
 const ROUTE_TYPE_PAGE = 2
@@ -261,15 +263,12 @@ export default {
     onSelectRouteChange(value, selectedOptions) {
       this.formModel.pid = value[value.length - 1]
     },
-    stringArrConvertToNumberArr: function () {
-      return this.formModel.levelPath.split('.').map(item => +item);
-    },
     open(formModel, mode = FORM_MODE_ADD) {
       this.visible = true
       if (formModel) {
         this.formModel = Object.assign(this.formModel, formModel)
         if (this.formModel.levelPath) {
-          this.routesOptionsDefaultValue = this.stringArrConvertToNumberArr(this.formModel.levelPath.split('.'))
+          this.routesOptionsDefaultValue = parseLevelPath(this.formModel.levelPath)
         }
       }
       this.mode = mode

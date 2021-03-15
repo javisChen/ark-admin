@@ -54,11 +54,11 @@
         </template>
 
         <template slot="inheritType" slot-scope="text, record">
-          {{record.inheritType}}
+          {{ getInheritTypeDesc(record.inheritType) }}
         </template>
 
         <template slot="type" slot-scope="text, record">
-          {{record.type}}
+          {{ getTypeDesc(record.type) }}
         </template>
 
         <template slot="status" slot-scope="text, record">
@@ -102,7 +102,8 @@ import {getUserGroups, getUserGroup} from '@/api/usergroup-api'
 import PermissionUserGroupForm from "./components/PermissionUserGroupForm";
 import PermissionUserGroupTree from "./components/PermissionUserGroupTree";
 import {filterNonChildren} from "@/utils/util";
-import {getUser} from "@/api/user-api";
+import {inheritTypeOptions, typeOptions} from "./dictionary";
+
 
 const routeStatusDictionary = {
   1: '已启用',
@@ -212,6 +213,12 @@ export default {
     },
     getStatusDesc(status) {
       return routeStatusDictionary[status]
+    },
+    getInheritTypeDesc(value) {
+      return inheritTypeOptions.filter(item => item.value === value)[0].desc
+    },
+    getTypeDesc(value) {
+      return typeOptions.filter(item => item.value === value)[0].desc
     },
     handleFormOnSuccess() {
       this.$message.success('保存成功')

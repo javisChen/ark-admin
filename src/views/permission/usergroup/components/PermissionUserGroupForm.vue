@@ -77,20 +77,12 @@
 
 import {addUserGroup, updateUserGroup} from '@/api/usergroup-api'
 import RoleSelect from "@/views/permission/role/components/RoleSelect";
+import {inheritTypeOptions, typeOptions} from "../dictionary";
+import {parseLevelPath} from "@/utils/util";
 
 const FORM_MODE_EDIT = 'edit';
 const FORM_MODE_ADD = 'add';
 
-const typeOptions = [
-  {value: 1, desc: '公司'},
-  {value: 2, desc: '部门'},
-]
-
-const inheritTypeOptions = [
-  {value: 0, desc: '不继承'},
-  {value: 1, desc: '继承上级用户组'},
-  {value: 2, desc: '继承所有用户组'},
-]
 
 const defaultModel = {
   id: '',
@@ -148,12 +140,14 @@ export default {
       this.formModel.pid = value[value.length - 1]
     },
     open(formModel, mode = FORM_MODE_ADD) {
+      this.visible = true
       if (formModel) {
         this.formModel = Object.assign(this.formModel, formModel)
+        if (this.formModel.levelPath) {
+          this.userGroupsOptionsDefaultValue = parseLevelPath(this.formModel.levelPath)
+        }
       }
       this.mode = mode
-      console.log(this.mode)
-      this.visible = true
     },
     close() {
       this.confirmLoading = false

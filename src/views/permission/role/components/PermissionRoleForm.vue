@@ -24,6 +24,10 @@
         <a-input placeholder="角色名称" v-model="formModel.name"/>
       </a-form-model-item>
 
+      <a-form-model-item label="角色编码" prop="code" has-feedback>
+        <a-input placeholder="角色编码" v-model="formModel.code"/>
+      </a-form-model-item>
+
       <a-form-model-item label="状态" prop="status" required>
         <a-radio-group name="radioGroup" v-model="formModel.status" :default-value="1">
           <a-radio :value="1">启用</a-radio>
@@ -46,6 +50,7 @@ const FORM_MODE_ADD = 'add';
 const defaultModel = {
   id: '',
   name: '',
+  code: '',
   status: 1,
 }
 
