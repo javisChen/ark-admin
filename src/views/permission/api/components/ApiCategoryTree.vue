@@ -51,7 +51,7 @@
 
 <script>
 
-import {deleteApiCategory, getApiCategories} from '@/api/api-category-api'
+import {deleteApiCategory, getApiCategories} from '@/api/iam/api-category-api'
 import PermissionApiCategoryForm from "@/views/permission/api/components/PermissionApiCategoryForm";
 
 export default {

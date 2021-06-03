@@ -57,7 +57,7 @@
 import {TagSelect, StandardFormRow, Ellipsis} from '@/components'
 import CardInfo from './components/CardInfo'
 import PermissionApplicationForm from './components/PermissionApplicationForm'
-import {getApplications} from "@/api/application-api";
+import {getApplications} from "@/api/iam/application-api";
 
 
 const TagSelectOption = TagSelect.Option

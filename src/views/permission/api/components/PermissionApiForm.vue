@@ -89,8 +89,8 @@
 
 <script>
 
-import {addApi, updateApi} from '@/api/api-api'
-import {getApplications} from "@/api/application-api";
+import {addApi, updateApi} from '@/api/iam/api-api'
+import {getApplications} from "@/api/iam/application-api";
 import {authTypeOptions, methodOptions, routeStatusOptions} from "../variable";
 import ApplicationSelect from "@/views/permission/application/components/ApplicationSelect";
 

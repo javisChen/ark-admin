@@ -14,7 +14,7 @@
 
 <script>
 
-import {getUserGroupsTree} from "@/api/usergroup-api";
+import {getUserGroupsTree} from "@/api/iam/usergroup-api";
 
 const treeData = [
   {

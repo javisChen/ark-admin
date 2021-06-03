@@ -16,7 +16,7 @@
 </template>
 <script>
 
-import {getAllUserGroups} from "@/api/usergroup-api";
+import {getAllUserGroups} from "@/api/iam/usergroup-api";
 
 const levelDict = {
   1: '一',

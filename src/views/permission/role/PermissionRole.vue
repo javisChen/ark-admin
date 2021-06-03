@@ -97,7 +97,7 @@
 
 <script>
 
-import {getRoles, deleteRole} from '@/api/role-api'
+import {getRoles, deleteRole} from '@/api/iam/role-api'
 import PermissionRoleForm from "./components/PermissionRoleForm";
 import PermissionRouteGrantForm from "./components/PermissionRouteGrantForm";
 import PermissionApiGrantForm from "./components/PermissionApiGrantForm";

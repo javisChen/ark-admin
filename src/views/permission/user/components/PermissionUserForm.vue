@@ -55,8 +55,8 @@
 
 import md5 from 'md5'
 
-import {addUser, updateUser} from '@/api/user-api'
-import {getAllUserGroups} from "@/api/usergroup-api";
+import {addUser, updateUser} from '@/api/iam/user-api'
+import {getAllUserGroups} from "@/api/iam/usergroup-api";
 import RoleSelect from "@/views/permission/role/components/RoleSelect";
 import UserGroupSelect from "@/views/permission/usergroup/components/UserGroupSelect";
 

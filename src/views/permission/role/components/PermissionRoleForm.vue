@@ -42,7 +42,7 @@
 
 <script>
 
-import {addRole, updateRole} from '@/api/role-api'
+import {addRole, updateRole} from '@/api/iam/role-api'
 
 const FORM_MODE_EDIT = 'edit';
 const FORM_MODE_ADD = 'add';

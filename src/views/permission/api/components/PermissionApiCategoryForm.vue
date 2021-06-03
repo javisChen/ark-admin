@@ -45,8 +45,8 @@
 
 <script>
 
-import {addApiCategory, updateApiCategory} from '@/api/api-category-api'
-import {getApplications} from "@/api/application-api";
+import {addApiCategory, updateApiCategory} from '@/api/iam/api-category-api'
+import {getApplications} from "@/api/iam/application-api";
 
 const FORM_MODE_EDIT = 'edit';
 const FORM_MODE_ADD = 'add';

@@ -1,8 +1,9 @@
 import {post, get, del, put} from '@/utils/request'
+import Base from "./iam-base-api";
 
 const api = {
-  applications: '/applications',
-  application: '/application',
+  applications: Base.serviceName + '/applications',
+  application: Base.serviceName + '/application',
 }
 
 export default api

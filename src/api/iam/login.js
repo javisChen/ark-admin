@@ -1,16 +1,17 @@
 import request from '@/utils/request'
+import Base from "./iam-base-api";
+
 
 const userApi = {
-  Login: '/auth/login',
-  Logout: '/auth/logout',
-  ForgePassword: '/auth/forge-password',
-  Register: '/auth/register',
-  twoStepCode: '/auth/2step-code',
-  SendSms: '/account/sms',
-  SendSmsErr: '/account/sms_err',
-  // get my info
-  UserInfo: '/user/info',
-  UserMenu: '/user/routes'
+  Login: Base.serviceName + '/auth/login',
+  Logout: Base.serviceName + '/auth/logout',
+  ForgePassword: Base.serviceName + '/auth/forge-password',
+  Register: Base.serviceName + '/auth/register',
+  twoStepCode: Base.serviceName + '/auth/2step-code',
+  SendSms: Base.serviceName + '/account/sms',
+  SendSmsErr: Base.serviceName + '/account/sms_err',
+  UserInfo: Base.serviceName + '/user/info',
+  UserMenu: Base.serviceName + '/user/routes'
 }
 
 /**
@@ -24,7 +25,7 @@ const userApi = {
  * @param parameter
  * @returns {*}
  */
-export function login (parameter) {
+export function login(parameter) {
   return request({
     url: userApi.Login,
     method: 'post',
@@ -32,7 +33,7 @@ export function login (parameter) {
   })
 }
 
-export function getSmsCaptcha (parameter) {
+export function getSmsCaptcha(parameter) {
   return request({
     url: userApi.SendSms,
     method: 'post',
@@ -40,7 +41,7 @@ export function getSmsCaptcha (parameter) {
   })
 }
 
-export function getInfo () {
+export function getInfo() {
   return request({
     url: userApi.UserInfo,
     method: 'get',
@@ -50,14 +51,14 @@ export function getInfo () {
   })
 }
 
-export function getCurrentUserNav () {
+export function getCurrentUserNav() {
   return request({
     url: userApi.UserMenu,
     method: 'get'
   })
 }
 
-export function logout () {
+export function logout() {
   return request({
     url: userApi.Logout,
     method: 'post',
@@ -71,7 +72,7 @@ export function logout () {
  * get user 2step code open?
  * @param parameter {*}
  */
-export function get2step (parameter) {
+export function get2step(parameter) {
   return request({
     url: userApi.twoStepCode,
     method: 'post',

@@ -16,7 +16,7 @@
 </template>
 <script>
 
-import {getAllRoles} from "@/api/role-api";
+import {getAllRoles} from "@/api/iam/role-api";
 
 export default {
   name: 'RoleSelect',

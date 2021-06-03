@@ -6,7 +6,7 @@ import message from 'ant-design-vue/es/message'
 import {VueAxios} from './axios'
 import {SUCCESS_CODE} from './code'
 import {ACCESS_TOKEN} from '@/store/mutation-types'
-import api from "@/api/route-api";
+import api from "@/api/iam/route-api";
 
 // 创建 axios 实例
 const request = axios.create({

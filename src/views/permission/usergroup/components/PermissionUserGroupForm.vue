@@ -75,7 +75,7 @@
 
 <script>
 
-import {addUserGroup, updateUserGroup} from '@/api/usergroup-api'
+import {addUserGroup, updateUserGroup} from '@/api/iam/usergroup-api'
 import RoleSelect from "@/views/permission/role/components/RoleSelect";
 import {inheritTypeOptions, typeOptions} from "../dictionary";
 import {parseLevelPath} from "@/utils/util";

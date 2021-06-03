@@ -24,7 +24,7 @@
 <script>
 
 import ApplicationSelect from '../../application/components/ApplicationSelect'
-import {updateRoleApiPermission, getRolePermissionApis} from "@/api/role-api";
+import {updateRoleApiPermission, getRolePermissionApis} from "@/api/iam/role-api";
 import PermissionApi from "@/views/permission/api/PermissionApi";
 
 const defaultModel = {

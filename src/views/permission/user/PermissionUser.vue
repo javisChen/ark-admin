@@ -92,7 +92,7 @@
 
 <script>
 
-import {deleteUser, getUsers, getUser} from '@/api/user-api'
+import {deleteUser, getUsers, getUser} from '@/api/iam/user-api'
 import PermissionUserForm from "./components/PermissionUserForm";
 
 

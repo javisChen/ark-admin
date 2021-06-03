@@ -1,5 +1,5 @@
 // eslint-disable-next-line
-import {getUserRoutes} from '@/api/user-api'
+import {getUserRoutes} from '@/api/iam/user-api'
 // eslint-disable-next-line
 
 import constantRouterComponents from "./router-components";

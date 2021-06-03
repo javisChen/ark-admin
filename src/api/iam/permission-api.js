@@ -1,7 +1,8 @@
 import {post, get, del, put} from '@/utils/request'
+import Base from "./iam-base-api";
 
 const api = {
-  permissionsElement: '/permission/elements',
+  permissionsElement: Base.serviceName + '/permission/elements',
 }
 
 export default api

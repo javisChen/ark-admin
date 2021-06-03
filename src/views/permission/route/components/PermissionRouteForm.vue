@@ -141,7 +141,7 @@
 
 <script>
 
-import {updateRoute, addRoute} from '@/api/route-api'
+import {updateRoute, addRoute} from '@/api/iam/route-api'
 import RouteComponentSelect from "./RouteComponentSelect";
 import ApplicationSelect from "../../application/components/ApplicationSelect";
 import PermissionPageElementTable from "./PermissionPageElementTable";

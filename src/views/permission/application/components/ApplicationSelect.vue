@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import {getApplications} from "@/api/application-api";
+import {getApplications} from "@/api/iam/application-api";
 
 
 export default {

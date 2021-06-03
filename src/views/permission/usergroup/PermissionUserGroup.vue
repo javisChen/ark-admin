@@ -97,7 +97,7 @@
 
 <script>
 
-import {getUserGroups, getUserGroup, deleteUserGroup} from '@/api/usergroup-api'
+import {getUserGroups, getUserGroup, deleteUserGroup} from '@/api/iam/usergroup-api'
 import PermissionUserGroupForm from "./components/PermissionUserGroupForm";
 import PermissionUserGroupTree from "./components/PermissionUserGroupTree";
 import {filterNonChildren} from "@/utils/util";

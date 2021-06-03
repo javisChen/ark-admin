@@ -86,13 +86,13 @@
 
 <script>
 
-import {getApis, updateApi, deleteApi, updateCache, getApi} from '@/api/api-api'
+import {getApis, updateApi, deleteApi, updateCache, getApi} from '@/api/iam/api-api'
 import PermissionApiForm from './components/PermissionApiForm'
 import PermissionApiCategoryForm from "@/views/permission/api/components/PermissionApiCategoryForm";
 import ApplicationSelect from '@/views/permission/application/components/ApplicationSelect'
 import {authTypeOptions, routeStatusOptions} from "./variable";
 import ApiCategoryTree from "@/views/permission/api/components/ApiCategoryTree";
-import {getApiCategories} from "@/api/api-category-api";
+import {getApiCategories} from "@/api/iam/api-category-api";
 
 const queryParam = {
   applicationId: null,

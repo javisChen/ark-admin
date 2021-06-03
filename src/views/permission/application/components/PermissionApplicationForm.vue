@@ -57,7 +57,7 @@
 
 <script>
 
-import {addApplication, updateApplication} from '@/api/application-api'
+import {addApplication, updateApplication} from '@/api/iam/application-api'
 
 const defaultModel = {
   id: '',

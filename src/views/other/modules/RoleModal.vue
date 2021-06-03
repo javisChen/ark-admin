@@ -22,7 +22,7 @@
 </template>
 
 <script>
-import { getPermissions } from '@/api/manage'
+import { getPermissions } from '@/api/iam/manage'
 import pick from 'lodash.pick'
 
 export default {

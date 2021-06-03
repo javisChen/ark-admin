@@ -1,6 +1,6 @@
 import storage from 'store'
-import {login, getInfo, logout} from '@/api/login'
-import {getUserPageElementPermissions, getUserInfo} from '@/api/user-api'
+import {login, getInfo, logout} from '@/api/iam/login'
+import {getUserPageElementPermissions, getUserInfo} from '@/api/iam/user-api'
 import {ACCESS_TOKEN} from '@/store/mutation-types'
 import {welcome} from '@/utils/util'
 

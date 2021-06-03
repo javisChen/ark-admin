@@ -49,20 +49,8 @@
       :columns="columns"
       :data-source="tableData">
 
-      <template slot="status" slot-scope="text, record">
-        <a-dropdown :trigger="['click']">
-          <a-menu slot="overlay" @click="routeStatusChange($event, record)">
-            <a-menu-item v-for="(value, key) in routeStatusDictionary" :key="key">
-              {{ value }}
-            </a-menu-item>
-          </a-menu>
-          <a-button
-            :style="record.status === 1 ? {'background-color': '#52c41a',border: 'none', 'color': 'white'}: {}"
-            shape="round" size="small" :type="record.status !== 1 ? 'danger' : ''">
-            {{ getStatusDesc(record.status) }}
-            <a-icon type="down"/>
-          </a-button>
-        </a-dropdown>
+      <template slot="gitReposUrl" slot-scope="text, record">
+        <a :href="text">{{text}}</a>
       </template>
 
       <template slot="action" slot-scope="text, record">
@@ -97,8 +85,8 @@
 
 <script>
 
-import {getRoles, deleteRole} from '@/api/role-api'
-import {getCodeProjectPageList} from '@/api/code-project-api'
+import {getRoles, deleteRole} from '@/api/iam/role-api'
+import {pageListCodeProject} from '@/api/cop/code-project-api'
 import PermissionRoleForm from "@/views/permission/role/components/PermissionRoleForm";
 import PermissionRouteGrantForm from "@/views/permission/role/components/PermissionRouteGrantForm";
 import PermissionApiGrantForm from "@/views/permission/role/components/PermissionApiGrantForm";
@@ -125,7 +113,7 @@ const queryParam = {
 }
 
 export default {
-  name: 'PermissionRole',
+  name: 'CodeProject',
   components: {
     PermissionRoleForm,
     PermissionRouteGrantForm,
@@ -141,26 +129,39 @@ export default {
       tableData: [],
       columns: [
         {
-          title: '角色名称',
+          title: '工程名称',
           dataIndex: 'name',
           width: 100
         },
         {
-          title: '角色编码',
+          title: '工程代码',
           dataIndex: 'code',
           width: 100
+        },
+        {
+          title: '工程类型',
+          align: 'center',
+          width: 200,
+          dataIndex: 'type',
+        },
+        {
+          title: '脚手架',
+          align: 'center',
+          width: 200,
+          dataIndex: 'scaffold',
+        },
+        {
+          title: '仓库地址',
+          align: 'center',
+          width: 200,
+          dataIndex: 'gitReposUrl',
+          scopedSlots: {customRender: 'gitReposUrl'},
         },
         {
           title: '创建时间',
           align: 'center',
           width: 200,
-          dataIndex: 'createTime',
-        },
-        {
-          title: '更新时间',
-          align: 'center',
-          width: 200,
-          dataIndex: 'updateTime',
+          dataIndex: 'gmtCreate',
         },
         {
           title: '操作',
@@ -236,7 +237,7 @@ export default {
     },
     async loadTableData() {
       this.toggleLoading()
-      const {data} = await getCodeProjectPageList(this.queryParam)
+      const {data} = await pageListCodeProject(this.queryParam)
       this.tableData = data.records;
       this.pagination.total = data.total
       this.toggleLoading()
