@@ -42,9 +42,8 @@
         </a-radio-group>
       </a-form-model-item>
 
-      <a-form-model-item ref="reposSource" label="仓库来源" prop="reposSource">
-        <span v-if="isViewMode">{{ formModel.reposSource }}</span>
-        <a-radio-group v-else v-model="formModel.reposSource" name="radioGroup">
+      <a-form-model-item v-if="!isViewMode" ref="reposSource" label="仓库来源" prop="reposSource">
+        <a-radio-group v-model="formModel.reposSource" name="radioGroup">
           <a-radio v-for="item in reposSourceOptions"
                    :key="item.value"
                    :value="item.value">{{ item.desc }}
@@ -52,9 +51,8 @@
         </a-radio-group>
       </a-form-model-item>
 
-      <a-form-model-item ref="generateMode" label="源码生成方式" prop="generateMode">
-        <span v-if="isViewMode">{{ formModel.generateMode }}</span>
-        <a-radio-group v-else v-model="formModel.generateMode" name="radioGroup">
+      <a-form-model-item v-if="!isViewMode" ref="generateMode" label="源码生成方式" prop="generateMode">
+        <a-radio-group v-model="formModel.generateMode" name="radioGroup">
           <a-radio v-for="item in generateModeOptions"
                    :key="item.value"
                    :value="item.value">{{ item.desc }}
@@ -63,8 +61,8 @@
       </a-form-model-item>
 
       <a-form-model-item label="脚手架" prop="scaffold">
-          <span v-if="isViewMode">{{ formModel.scaffold }}</span>
-        <a-select placeholder="请选择" :default-value="1">
+        <span v-if="isViewMode">{{ formModel.scaffold }}</span>
+        <a-select v-else placeholder="请选择" :default-value="1">
           <a-select-option  v-for="item in scaffoldOptions"
                             :key="item.value"
                             :value="item.value">
@@ -73,48 +71,53 @@
         </a-select>
       </a-form-model-item>
 
-      <a-form-model-item ref="springCloud.artifactId" label="artifactId" prop="springCloud.artifactId" has-feedback>
-        <span v-if="isViewMode">{{ formModel.artifactId }}</span>
-        <a-input disabled="disabled" v-else placeholder="示例（demo-service）" v-model="formModel.springCloud.artifactId"/>
+      <a-form-model-item label="仓库地址">
+        <span v-if="isViewMode">{{ formModel.gitReposUrl }}</span>
       </a-form-model-item>
 
-      <a-form-model-item ref="springCloud.groupId" label="groupId" prop="springCloud.groupId" has-feedback>
-        <span v-if="isViewMode">{{ formModel.groupId }}</span>
-        <a-input v-else placeholder="示例（com.xxx.xxx）" v-model="formModel.springCloud.groupId"/>
-      </a-form-model-item>
+      <template v-if="!isViewMode">
+        <a-form-model-item ref="springCloud.artifactId" label="artifactId" prop="springCloud.artifactId" has-feedback>
+          <span v-if="isViewMode">{{ formModel.artifactId }}</span>
+          <a-input disabled="disabled" v-else placeholder="示例（demo-service）" v-model="formModel.springCloud.artifactId"/>
+        </a-form-model-item>
 
-      <a-form-model-item ref="springCloud.packageName" label="package" prop="springCloud.packageName" has-feedback>
-        <span v-if="isViewMode">{{ formModel.name }}</span>
-        <a-input v-else placeholder="示例（com.xxx.xxx）" v-model="formModel.springCloud.packageName"/>
-      </a-form-model-item>
+        <a-form-model-item ref="springCloud.groupId" label="groupId" prop="springCloud.groupId" has-feedback>
+          <span v-if="isViewMode">{{ formModel.groupId }}</span>
+          <a-input v-else placeholder="示例（com.xxx.xxx）" v-model="formModel.springCloud.groupId"/>
+        </a-form-model-item>
 
-      <a-form-model-item ref="springCloud.genDAOCode" label="生成数据层代码" prop="springCloud.genDAOCode" has-feedback>
-        <span v-if="isViewMode">{{ formModel.generateMode }}</span>
-        <a-radio-group v-else
-                       v-model="formModel.springCloud.genDAOCode"
-                       name="radioGroup">
-          <a-radio :value="1">是</a-radio>
-          <a-radio :value="0">否</a-radio>
-        </a-radio-group>
-      </a-form-model-item>
+        <a-form-model-item ref="springCloud.packageName" label="package" prop="springCloud.packageName" has-feedback>
+          <span v-if="isViewMode">{{ formModel.name }}</span>
+          <a-input v-else placeholder="示例（com.xxx.xxx）" v-model="formModel.springCloud.packageName"/>
+        </a-form-model-item>
 
-      <a-form-model-item ref="springCloud.dsUsername" label="dsUsername" prop="springCloud.dsUsername" has-feedback>
-        <span v-if="isViewMode">{{ formModel.name }}</span>
-        <a-input v-else placeholder="User" v-model="formModel.springCloud.dsUsername"/>
-      </a-form-model-item>
+        <a-form-model-item ref="springCloud.genDAOCode" label="生成数据层代码" prop="springCloud.genDAOCode" has-feedback>
+          <span v-if="isViewMode">{{ formModel.generateMode }}</span>
+          <a-radio-group v-else
+                         v-model="formModel.springCloud.genDAOCode"
+                         name="radioGroup">
+            <a-radio :value="1">是</a-radio>
+            <a-radio :value="0">否</a-radio>
+          </a-radio-group>
+        </a-form-model-item>
+
+        <a-form-model-item ref="springCloud.dsUsername" label="dsUsername" prop="springCloud.dsUsername" has-feedback>
+          <span v-if="isViewMode">{{ formModel.name }}</span>
+          <a-input v-else placeholder="User" v-model="formModel.springCloud.dsUsername"/>
+        </a-form-model-item>
 
 
-      <a-form-model-item ref="springCloud.dsPassword" label="dsPassword" prop="springCloud.dsPassword" has-feedback>
-        <span v-if="isViewMode">{{ formModel.name }}</span>
-        <a-input v-else placeholder="Password" v-model="formModel.springCloud.dsPassword"/>
-      </a-form-model-item>
+        <a-form-model-item ref="springCloud.dsPassword" label="dsPassword" prop="springCloud.dsPassword" has-feedback>
+          <span v-if="isViewMode">{{ formModel.name }}</span>
+          <a-input v-else placeholder="Password" v-model="formModel.springCloud.dsPassword"/>
+        </a-form-model-item>
 
+        <a-form-model-item ref="springCloud.dsUrl" label="dsUrl" prop="springCloud.dsUrl" has-feedback>
+          <span v-if="isViewMode">{{ formModel.name }}</span>
+          <a-input v-else placeholder="URL" v-model="formModel.springCloud.dsUrl"/>
+        </a-form-model-item>
 
-      <a-form-model-item ref="springCloud.dsUrl" label="dsUrl" prop="springCloud.dsUrl" has-feedback>
-        <span v-if="isViewMode">{{ formModel.name }}</span>
-        <a-input v-else placeholder="URL" v-model="formModel.springCloud.dsUrl"/>
-      </a-form-model-item>
-
+      </template>
     </a-form-model>
     <form-action-bar :handle-close="handleClose"
                      :submit-form="submitForm"
@@ -219,9 +222,6 @@ export default {
     }
   },
   computed: {
-    isMenuType() {
-      return this.formModel.type === TYPE_BACKEND;
-    },
     formTitle() {
       let title = '工程';
       switch (this.mode) {
@@ -240,13 +240,19 @@ export default {
   },
   methods: {
     onCodeChange(event) {
-      console.log(event.target)
       this.formModel.springCloud.artifactId = event.target.value
     },
     onSelectRouteChange(value, selectedOptions) {
       this.formModel.pid = value[value.length - 1]
     },
     open(formModel, mode = FORM_MODE_ADD) {
+      if (formModel) {
+        this.formModel = Object.assign(this.formModel, formModel)
+        if (formModel.type === 1) {
+          this.formModel.springCloud = JSON.parse(formModel.extProperties)
+          console.log(this.formModel)
+        }
+      }
       this.visible = true
       this.mode = mode
     },

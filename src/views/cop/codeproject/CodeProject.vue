@@ -1,38 +1,38 @@
 <template>
   <a-card :bordered="false">
-    <!--      <div class="table-page-search-wrapper">-->
-    <!--        <a-form layout="inline">-->
-    <!--          <a-row :gutter="48">-->
-    <!--            <a-col :md="8" :sm="24">-->
-    <!--              <a-form-item label="用户名称">-->
-    <!--                <a-input v-model="queryParam.name" placeholder=""/>-->
-    <!--              </a-form-item>-->
-    <!--            </a-col>-->
-    <!--            <a-col :md="8" :sm="24">-->
-    <!--              <a-form-item label="使用状态">-->
-    <!--                <a-select v-model="queryParam.status" placeholder="请选择" :default-value="0"-->
-    <!--                          @change="handleQueryStatusChange">-->
-    <!--                  <a-select-option v-for="(value, key) in routeStatusDictionary"-->
-    <!--                                   :key="key"-->
-    <!--                                   :value="key">-->
-    <!--                    {{ value }}-->
-    <!--                  </a-select-option>-->
-    <!--                </a-select>-->
-    <!--              </a-form-item>-->
-    <!--            </a-col>-->
-    <!--            <a-col :md="!advanced && 8 || 24" :sm="24">-->
-    <!--                          <span class="table-page-search-submitButtons"-->
-    <!--                                :style="advanced && { float: 'right', overflow: 'hidden' } || {} ">-->
-    <!--                            <a-button type="primary" @click="loadTableData">查询</a-button>-->
-    <!--                            <a-button style="margin-left: 8px" @click="resetQueryParams">重置</a-button>-->
-    <!--                          </span>-->
-    <!--            </a-col>-->
-    <!--          </a-row>-->
-    <!--        </a-form>-->
-    <!--      </div>-->
+          <div class="table-page-search-wrapper">
+            <a-form layout="inline">
+              <a-row :gutter="48">
+                <a-col :md="8" :sm="24">
+                  <a-form-item label="用户名称">
+                    <a-input v-model="queryParam.name" placeholder=""/>
+                  </a-form-item>
+                </a-col>
+                <a-col :md="8" :sm="24">
+                  <a-form-item label="使用状态">
+                    <a-select v-model="queryParam.status" placeholder="请选择" :default-value="0"
+                              @change="handleQueryStatusChange">
+                      <a-select-option v-for="(value, key) in routeStatusDictionary"
+                                       :key="key"
+                                       :value="key">
+                        {{ value }}
+                      </a-select-option>
+                    </a-select>
+                  </a-form-item>
+                </a-col>
+                <a-col :md="!advanced && 8 || 24" :sm="24">
+                              <span class="table-page-search-submitButtons"
+                                    :style="advanced && { float: 'right', overflow: 'hidden' } || {} ">
+                                <a-button type="primary" @click="loadTableData">查询</a-button>
+                                <a-button style="margin-left: 8px" @click="resetQueryParams">重置</a-button>
+                              </span>
+                </a-col>
+              </a-row>
+            </a-form>
+          </div>
 
     <div class="table-operator">
-      <a-button type="primary" icon="plus" @click="showRoleForm">创建工程</a-button>
+      <a-button type="primary" icon="plus" @click="showForm">创建工程</a-button>
     </div>
 
     <a-table
@@ -54,7 +54,7 @@
       </template>
 
       <template slot="action" slot-scope="text, record">
-        <k-tooltip-button title="编辑" @click="handleEdit(record)" icon="edit"/>&nbsp;
+        <k-tooltip-button title="编辑" @click="handleView(record)" icon="search"/>&nbsp;
       </template>
     </a-table>
     <a-empty v-else/>
@@ -73,7 +73,7 @@
 
 <script>
 
-import {pageListCodeProject} from '@/api/cop/code-project-api'
+import {getCodeProjectInfo, pageListCodeProject} from '@/api/cop/code-project-api'
 import CodeProjectForm from "@/views/cop/codeproject/components/CodeProjectForm";
 
 const routeStatusDictionary = {
@@ -137,6 +137,7 @@ export default {
         },
         {
           title: '仓库地址',
+          align: 'center',
           width: 200,
           dataIndex: 'gitReposUrl',
           scopedSlots: {customRender: 'gitReposUrl'},
@@ -163,8 +164,10 @@ export default {
     this.loadTableData();
   },
   methods: {
-    async handleEdit(record) {
-      this.$refs['roleForm'].open(record, 'edit')
+    async handleView(record) {
+      const {data} = await getCodeProjectInfo({codeProjectId: record.id})
+      console.log(data)
+      this.$refs['codeProjectForm'].open(data, 'view')
     },
     handleTableChange(pagination, filters, sorter) {
       this.queryParam.current = pagination.current
@@ -197,7 +200,7 @@ export default {
     },
     handleEditFormCancel() {
     },
-    showRoleForm() {
+    showForm() {
       this.$refs['codeProjectForm'].open()
     },
     rowKey(record) {
