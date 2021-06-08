@@ -32,7 +32,7 @@
     <!--      </div>-->
 
     <div class="table-operator">
-      <a-button type="primary" icon="plus" @click="showRoleForm">新建角色</a-button>
+      <a-button type="primary" icon="plus" @click="showRoleForm">创建工程</a-button>
     </div>
 
     <a-table
@@ -50,33 +50,21 @@
       :data-source="tableData">
 
       <template slot="gitReposUrl" slot-scope="text, record">
-        <a :href="text">{{text}}</a>
+        <a @click="goToGit(text);" :href="text">{{text}}</a>
       </template>
 
       <template slot="action" slot-scope="text, record">
         <k-tooltip-button title="编辑" @click="handleEdit(record)" icon="edit"/>&nbsp;
-        <k-tooltip-button title="路由授权" @click="handleGrant('route', record)" type="primary" icon="safety"/>&nbsp;
-        <k-tooltip-button title="接口授权" @click="handleGrant('api', record)" type="primary" icon="api"/>&nbsp;
-        <k-tooltip-button title="删除" @click="handleDelete(record)" type="danger" icon="delete"/>
       </template>
     </a-table>
     <a-empty v-else/>
 
 
     <!-- 创建路由信息表单-->
-    <permission-role-form ref="roleForm"
+    <code-project-form ref="codeProjectForm"
                           @success="handleFormOnSuccess"
                           @cancel="handleEditFormCancel"/>
 
-    <!-- 菜单授权窗口-->
-    <permission-route-grant-form ref="routeGrantForm"
-                                 @success="handleFormOnSuccess"
-                                 @cancel="handleEditFormCancel"/>
-
-    <!-- api授权窗口-->
-    <permission-api-grant-form ref="apiGrantForm"
-                               @success="handleFormOnSuccess"
-                               @cancel="handleEditFormCancel"/>
 
   </a-card>
 
@@ -85,11 +73,8 @@
 
 <script>
 
-import {getRoles, deleteRole} from '@/api/iam/role-api'
 import {pageListCodeProject} from '@/api/cop/code-project-api'
-import PermissionRoleForm from "@/views/permission/role/components/PermissionRoleForm";
-import PermissionRouteGrantForm from "@/views/permission/role/components/PermissionRouteGrantForm";
-import PermissionApiGrantForm from "@/views/permission/role/components/PermissionApiGrantForm";
+import CodeProjectForm from "@/views/cop/codeproject/components/CodeProjectForm";
 
 const routeStatusDictionary = {
   1: '已启用',
@@ -115,9 +100,7 @@ const queryParam = {
 export default {
   name: 'CodeProject',
   components: {
-    PermissionRoleForm,
-    PermissionRouteGrantForm,
-    PermissionApiGrantForm
+    CodeProjectForm,
   },
   data() {
     return {
@@ -130,29 +113,30 @@ export default {
       columns: [
         {
           title: '工程名称',
+          align: 'center',
           dataIndex: 'name',
-          width: 100
+          width: 200
         },
         {
           title: '工程代码',
+          align: 'center',
           dataIndex: 'code',
-          width: 100
+          width: 200
         },
         {
           title: '工程类型',
           align: 'center',
-          width: 200,
+          width: 100,
           dataIndex: 'type',
         },
         {
           title: '脚手架',
           align: 'center',
-          width: 200,
+          width: 100,
           dataIndex: 'scaffold',
         },
         {
           title: '仓库地址',
-          align: 'center',
           width: 200,
           dataIndex: 'gitReposUrl',
           scopedSlots: {customRender: 'gitReposUrl'},
@@ -161,7 +145,7 @@ export default {
           title: '创建时间',
           align: 'center',
           width: 200,
-          dataIndex: 'gmtCreate',
+          dataIndex: 'createTime',
         },
         {
           title: '操作',
@@ -214,23 +198,13 @@ export default {
     handleEditFormCancel() {
     },
     showRoleForm() {
-      this.$refs['roleForm'].open()
+      this.$refs['codeProjectForm'].open()
     },
     rowKey(record) {
       return record.id
     },
-    handleGrant(type, record) {
-      this.$refs[`${type}GrantForm`].open(record)
-    },
-    handleDelete(record) {
-      this.$confirm({
-        title: `提示`,
-        content: `确定要禁用[${record.name}]角色吗？`,
-        onOk: async () => {
-          deleteRole({id: record.id})
-            .then(() => this.loadTableData())
-        }
-      })
+    goToGit(text) {
+      window.open(text)
     },
     toggleLoading() {
       this.tableLoading = !this.tableLoading
@@ -244,4 +218,5 @@ export default {
     }
   }
 };
+
 </script>

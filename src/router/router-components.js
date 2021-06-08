@@ -66,6 +66,6 @@ export default {
   'PermissionApi': () => import('@/views/permission/api/PermissionApi'),
 
   // cop
-  'CodeProject': () => import('@/views/cop/route/CodeProject.vue'),
+  'CodeProject': () => import('@/views/cop/codeproject/CodeProject.vue'),
 
 }

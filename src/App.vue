@@ -1,7 +1,6 @@
 <template>
   <a-config-provider :locale="locale"
-                     :auto-insert-space-in-button="false"
-                     :transform-cell-text="transformCellText ">
+                     :auto-insert-space-in-button="false">
 
     <div id="app">
       <router-view/>
@@ -19,10 +18,13 @@ export default {
     }
   },
   methods: {
-    transformCellText: (text, row, index) => {
-      console.log(text)
-      return text || '-'
-    },
+    // transformCellText: (text, row, index) => {
+    //   if (!text || text == 'undefined') {
+    //     return text || '-'
+    //   }
+    //   console.log(text)
+    //   return text
+    // },
   },
   computed: {
     locale () {

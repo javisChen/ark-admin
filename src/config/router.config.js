@@ -343,21 +343,21 @@ export const asyncRouterMap = [
  * @type { *[] }
  */
 export const constantRouterMap = [
-  {
-    path: '/cop',
-    name: 'cop',
-    component: RouteView,
-    meta: {title: '工程管理', icon: 'slack', permission: ['dashboard']},
-    redirect: '/cop/code-project',
-    children: [
-      {
-        path: '/cop/code-project',
-        name: 'CodeProject',
-        component: () => import('@/views/cop/route/CodeProject'),
-        meta: {title: 'IconSelector', icon: 'tool', keepAlive: true, permission: ['dashboard']}
-      },
-    ]
-  },
+  // {
+  //   path: '/cop',
+  //   name: 'cop',
+  //   component: RouteView,
+  //   meta: {title: '工程管理', icon: 'slack', permission: ['dashboard']},
+  //   redirect: '/cop/code-project',
+  //   children: [
+  //     {
+  //       path: '/cop/code-project',
+  //       name: 'CodeProject',
+  //       component: () => import('@/views/cop/codeproject/CodeProject'),
+  //       meta: {title: 'IconSelector', icon: 'tool', keepAlive: true, permission: ['dashboard']}
+  //     },
+  //   ]
+  // },
   {
     path: '/user',
     component: UserLayout,
