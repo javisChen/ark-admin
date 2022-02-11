@@ -2,9 +2,9 @@ import {post, get, del, put} from '@/utils/request'
 import Base  from './cop-base-api'
 
 const api = {
-  pageList: Base.serviceName + '/code-project/pageList',
-  create: Base.serviceName + '/code-project/create',
-  info: Base.serviceName + '/code-project/info',
+  pageList: Base.serviceName + '/v1/code-project/pageList',
+  create: Base.serviceName + '/v1/code-project/create',
+  info: Base.serviceName + '/v1/code-project/info',
 }
 
 export default api

@@ -3,8 +3,8 @@ import Base from "./iam-base-api";
 
 
 const api = {
-  apiCategories: Base.serviceName + '/api/categories',
-  apiCategory: Base.serviceName + '/api/category',
+  apiCategories: Base.serviceName + '/v1/api/categories',
+  apiCategory: Base.serviceName + '/v1/api/category',
 }
 
 export default api

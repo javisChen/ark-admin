@@ -4,22 +4,22 @@
             <a-form layout="inline">
               <a-row :gutter="48">
                 <a-col :md="8" :sm="24">
-                  <a-form-item label="用户名称">
-                    <a-input v-model="queryParam.name" placeholder=""/>
+                  <a-form-item label="工程名称">
+                    <a-input v-model="queryParam.projectName" placeholder=""/>
                   </a-form-item>
                 </a-col>
-                <a-col :md="8" :sm="24">
-                  <a-form-item label="使用状态">
-                    <a-select v-model="queryParam.status" placeholder="请选择" :default-value="0"
-                              @change="handleQueryStatusChange">
-                      <a-select-option v-for="(value, key) in routeStatusDictionary"
-                                       :key="key"
-                                       :value="key">
-                        {{ value }}
-                      </a-select-option>
-                    </a-select>
-                  </a-form-item>
-                </a-col>
+<!--                <a-col :md="8" :sm="24">-->
+<!--                  <a-form-item label="使用状态">-->
+<!--                    <a-select v-model="queryParam.status" placeholder="请选择" :default-value="0"-->
+<!--                              @change="handleQueryStatusChange">-->
+<!--                      <a-select-option v-for="(value, key) in routeStatusDictionary"-->
+<!--                                       :key="key"-->
+<!--                                       :value="key">-->
+<!--                        {{ value }}-->
+<!--                      </a-select-option>-->
+<!--                    </a-select>-->
+<!--                  </a-form-item>-->
+<!--                </a-col>-->
                 <a-col :md="!advanced && 8 || 24" :sm="24">
                               <span class="table-page-search-submitButtons"
                                     :style="advanced && { float: 'right', overflow: 'hidden' } || {} ">
@@ -38,12 +38,13 @@
     <a-table
       v-if="tableData && tableData.length > 0"
       bordered
+      :scroll="scroll"
       @change="handleTableChange"
       :pagination="pagination"
       :loading="tableLoading"
       :defaultExpandAllRows="defaultExpandAllRows"
       :expandRowByClick="true"
-      :size="'middle'"
+      :size="'small'"
       :indent-size="15"
       :row-key="rowKey"
       :columns="columns"
@@ -93,6 +94,7 @@ const pagination = {
 }
 
 const queryParam = {
+  projectName: '',
   current: 1,
   size: 15,
 }
@@ -104,55 +106,67 @@ export default {
   },
   data() {
     return {
+      scroll: {x: 1000},
       pagination,
       defaultExpandAllRows: false,
       tableLoading: false,
       advanced: false,
-      queryParam,
+      queryParam: Object.assign({}, queryParam),
       tableData: [],
       columns: [
         {
           title: '工程名称',
           align: 'center',
           dataIndex: 'name',
-          width: 200
+          fixed: 'left',
+          width: 150
         },
         {
           title: '工程代码',
           align: 'center',
           dataIndex: 'code',
-          width: 200
+          width: 150
         },
         {
           title: '工程类型',
           align: 'center',
-          width: 100,
           dataIndex: 'type',
         },
         {
           title: '脚手架',
           align: 'center',
-          width: 100,
           dataIndex: 'scaffold',
+          width: 110
         },
         {
           title: '仓库地址',
           align: 'center',
-          width: 200,
           dataIndex: 'gitReposUrl',
           scopedSlots: {customRender: 'gitReposUrl'},
+          width: 150
+        },
+        {
+          title: '仓库状态',
+          align: 'center',
+          dataIndex: 'reposStatus',
+        },
+        {
+          title: '推送状态',
+          align: 'center',
+          dataIndex: 'pushStatus',
         },
         {
           title: '创建时间',
           align: 'center',
-          width: 200,
           dataIndex: 'createTime',
+          width: 180
         },
         {
           title: '操作',
           align: 'center',
-          width: 100,
           scopedSlots: {customRender: 'action'},
+          fixed: 'right',
+          width: 80
         },
       ],
       selectedRoute: {},
@@ -174,7 +188,7 @@ export default {
       this.loadTableData()
     },
     resetQueryParams() {
-      this.queryParam = Object.assign({}, queryParam)
+      this.queryParam = Object.assign(this.queryParam, queryParam)
       this.loadTableData()
     },
     handleQueryStatusChange(value) {
@@ -182,17 +196,6 @@ export default {
     },
     toggleAdvanced() {
       this.advanced = !this.advanced;
-    },
-    async routeStatusChange(value, route) {
-      // try {
-      //   await updateRouteStatus({id: route.id, status: +value.key})
-      //   await this.loadTableData()
-      //   this.$message.success('修改成功')
-      // } catch (e) {
-      // }
-    },
-    getStatusDesc(status) {
-      return routeStatusDictionary[status]
     },
     handleFormOnSuccess() {
       this.$message.success('保存成功')

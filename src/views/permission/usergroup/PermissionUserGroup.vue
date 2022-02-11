@@ -43,7 +43,7 @@
       :loading="tableLoading"
       :defaultExpandAllRows="defaultExpandAllRows"
       :expandRowByClick="false"
-      :size="'middle'"
+      :size="'small'"
       :indent-size="15"
       :data-source="userGroups"
       :row-key="rowKey"

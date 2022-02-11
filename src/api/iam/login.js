@@ -3,15 +3,15 @@ import Base from "./iam-base-api";
 
 
 const userApi = {
-  Login: Base.serviceName + '/auth/login',
-  Logout: Base.serviceName + '/auth/logout',
-  ForgePassword: Base.serviceName + '/auth/forge-password',
-  Register: Base.serviceName + '/auth/register',
-  twoStepCode: Base.serviceName + '/auth/2step-code',
-  SendSms: Base.serviceName + '/account/sms',
-  SendSmsErr: Base.serviceName + '/account/sms_err',
-  UserInfo: Base.serviceName + '/user/info',
-  UserMenu: Base.serviceName + '/user/routes'
+  Login: Base.serviceName + '/v1/login/account',
+  Logout: Base.serviceName + '/v1/logout',
+  ForgePassword: Base.serviceName + '/v1/auth/forge-password',
+  Register: Base.serviceName + '/v1/auth/register',
+  twoStepCode: Base.serviceName + '/v1/auth/2step-code',
+  SendSms: Base.serviceName + '/v1/account/sms',
+  SendSmsErr: Base.serviceName + '/v1/account/sms_err',
+  UserInfo: Base.serviceName + '/v1/user/info',
+  UserMenu: Base.serviceName + '/v1/user/routes'
 }
 
 /**

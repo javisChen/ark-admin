@@ -1,3 +1,3 @@
 export default {
-  serviceName: 'cop'
+  serviceName: 'cop/cop'
 }

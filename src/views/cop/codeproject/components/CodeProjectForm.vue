@@ -63,22 +63,24 @@
       <a-form-model-item label="脚手架" prop="scaffold">
         <span v-if="isViewMode">{{ formModel.scaffold }}</span>
         <a-select v-else placeholder="请选择" :default-value="1">
-          <a-select-option  v-for="item in scaffoldOptions"
-                            :key="item.value"
-                            :value="item.value">
+          <a-select-option v-for="item in scaffoldOptions"
+                           :key="item.value"
+                           :value="item.value">
             {{ item.desc }}
           </a-select-option>
         </a-select>
       </a-form-model-item>
 
-      <a-form-model-item label="仓库地址">
-        <span v-if="isViewMode">{{ formModel.gitReposUrl }}</span>
+
+      <a-form-model-item v-if="isViewMode" label="仓库地址">
+        <a :href="formModel.gitReposUrl">{{ formModel.gitReposUrl }}</a>
       </a-form-model-item>
 
       <template v-if="!isViewMode">
         <a-form-model-item ref="springCloud.artifactId" label="artifactId" prop="springCloud.artifactId" has-feedback>
           <span v-if="isViewMode">{{ formModel.artifactId }}</span>
-          <a-input disabled="disabled" v-else placeholder="示例（demo-service）" v-model="formModel.springCloud.artifactId"/>
+          <a-input disabled="disabled" v-else placeholder="示例（demo-service）"
+                   v-model="formModel.springCloud.artifactId"/>
         </a-form-model-item>
 
         <a-form-model-item ref="springCloud.groupId" label="groupId" prop="springCloud.groupId" has-feedback>

@@ -43,7 +43,7 @@
         :pagination="pagination"
         :loading="tableLoading"
         :defaultExpandAllRows="defaultExpandAllRows"
-        :size="'middle'"
+        :size="'small'"
         :row-key="rowKey"
         :columns="columns"
         :data-source="tableData">

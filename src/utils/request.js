@@ -25,20 +25,24 @@ const del = ({url, params, data}) => request({url, method: 'delete', params, dat
 
 // 异常拦截处理器
 const errorHandler = (error) => {
-  if (error.response) {
-    const data = error.response.data
+  console.log('response error', error)
+  const response = error.response;
+  if (response) {
+    console.log('response error123', response)
+    const responseStatus = response.status;
+    console.log('response error123', responseStatus)
+    const data = response.data
     // 从 localstorage 获取 token
     const token = storage.get(ACCESS_TOKEN)
-    if (error.response.status === 403) {
+    if (responseStatus === 403) {
       notification.error({
         message: '拒绝访问：权限不足',
         description: data.msg
       })
-    }
-    if (error.response.status === 401 && !(data.result && data.result.isLogin)) {
+    } else if (responseStatus === 401 && !(data.result && data.result.isLogin)) {
       notification.error({
         message: '认证已失效，请重新登录',
-        description: error.response.msg
+        description: response.msg
       })
       if (token) {
         store.dispatch('Logout').then(() => {
@@ -47,9 +51,8 @@ const errorHandler = (error) => {
           }, 1500)
         })
       }
-    }
-    if (error.response.status === 400 || error.response.status === 500) {
-      const result = error.response.data
+    } else if (responseStatus === 400 || responseStatus === 500) {
+      const result = response.data
       let description;
       const {code, msg, data} = result
       if (code === 'A0003') {
@@ -62,6 +65,11 @@ const errorHandler = (error) => {
 
       message.error({
         content: description,
+        duration: 4
+      })
+    } else if (responseStatus === 503) {
+      message.error({
+        content: response.data.msg,
         duration: 4
       })
     }

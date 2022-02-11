@@ -23,7 +23,7 @@
       :loading="tableLoading"
       :defaultExpandAllRows="defaultExpandAllRows"
       :expandRowByClick="false"
-      :size="'middle'"
+      :size="'small'"
       :scroll="scroll"
       :indent-size="15"
       :row-key="rowKey"
