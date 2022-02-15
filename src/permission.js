@@ -19,7 +19,6 @@ router.beforeEach((to, from, next) => {
   to.meta && (typeof to.meta.title !== 'undefined' && setDocumentTitle(`${i18nRender(to.meta.title)} - ${domTitle}`))
   /* has token */
   if (storage.get(ACCESS_TOKEN)) {
-    console.log('123')
     // 登录成功后，如果路由到登录页的话就重定向到默认首页
     if (to.path === loginRoutePath) {
       next({path: defaultRoutePath})
@@ -62,7 +61,6 @@ router.beforeEach((to, from, next) => {
       }
     }
   } else {
-    console.log('321')
     if (allowList.includes(to.name)) {
       // 在免登录名单，直接进入
       next()

@@ -6,7 +6,6 @@ import message from 'ant-design-vue/es/message'
 import {VueAxios} from './axios'
 import {SUCCESS_CODE} from './code'
 import {ACCESS_TOKEN} from '@/store/mutation-types'
-import api from "@/api/iam/route-api";
 
 // 创建 axios 实例
 const request = axios.create({
@@ -25,18 +24,20 @@ const del = ({url, params, data}) => request({url, method: 'delete', params, dat
 
 // 异常拦截处理器
 const errorHandler = (error) => {
-  console.log('response error', error)
   const response = error.response;
   if (response) {
-    console.log('response error123', response)
     const responseStatus = response.status;
-    console.log('response error123', responseStatus)
     const data = response.data
     // 从 localstorage 获取 token
     const token = storage.get(ACCESS_TOKEN)
     if (responseStatus === 403) {
       notification.error({
         message: '拒绝访问：权限不足',
+        description: data.msg
+      })
+    } else if (responseStatus === 404) {
+      notification.error({
+        message: '服务器找不到资源~',
         description: data.msg
       })
     } else if (responseStatus === 401 && !(data.result && data.result.isLogin)) {
@@ -74,6 +75,7 @@ const errorHandler = (error) => {
       })
     }
   }
+  console.log('request error', error)
   return Promise.reject(error)
 }
 
@@ -83,7 +85,7 @@ request.interceptors.request.use(config => {
   // 如果 token 存在
   // 让每个请求携带自定义 token 请根据实际情况自行修改
   if (token) {
-    config.headers['Authorization'] = `Bearer ${token}`
+    config.headers['X-Authorization'] = `Bearer ${token}`
   }
   return config
 
