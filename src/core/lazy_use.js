@@ -61,6 +61,7 @@ import KTooltipButton from '@/components/KTooltipButton'
 import PageLoading from '@/components/PageLoading'
 import PermissionHelper from '@/core/permission/permission'
 import './directives/action'
+import './directives/hasPermission'
 
 Vue.use(KTooltipButton)
 Vue.use(Empty)

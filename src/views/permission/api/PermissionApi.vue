@@ -17,7 +17,7 @@
     </div>
 
     <div v-if="!grant" class="table-operator">
-      <a-button type="primary" icon="plus" @click="openForm('add')">添加接口</a-button>
+      <a-button v-has-permission:PE000000001 type="primary" icon="plus" @click="openForm('add')">添加接口</a-button>
       <a-button type="primary" icon="reload" @click="updateApiCache">更新缓存</a-button>
     </div>
 

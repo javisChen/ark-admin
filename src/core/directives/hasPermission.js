@@ -14,27 +14,20 @@ import store from '@/store'
  *
  *  @see https://github.com/vueComponent/ant-design-vue-pro/pull/53
  */
-const action = Vue.directive('action', {
+const hasPermission = Vue.directive('hasPermission', {
   inserted: function (el, binding, vnode) {
-    const isSuperAdmin = store.getters.isSuperAdmin
+    const isSuperAdmin = store.getters
+    // SuperAdmin不用校验
     if (isSuperAdmin) {
       return
     }
-    const actionName = binding.arg
-    const roles = store.getters.roles
-    const elVal = vnode.context.$route.meta.permission
-    const permissionId = elVal instanceof String && [elVal] || elVal
-    console.log(permissionId)
-    console.log(roles.permissions)
-    roles.permissions.forEach(p => {
-      if (!permissionId.includes(p.permissionId)) {
-        return
-      }
-      if (p.actionList && !p.actionList.includes(actionName)) {
-        el.parentNode && el.parentNode.removeChild(el) || (el.style.display = 'none')
-      }
-    })
+    const code = binding.arg
+    const actionPermissions = store.getters.actionPermissions
+    const some = actionPermissions.some(p => p.permissionCode === code);
+    if (!some) {
+      el.parentNode && el.parentNode.removeChild(el) || (el.style.display = 'none')
+    }
   }
 })
 
-export default action
+export default hasPermission

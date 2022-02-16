@@ -2,14 +2,14 @@ import {post, get, del, put} from '@/utils/request'
 import Base from "./iam-base-api";
 
 const api = {
-  roles: Base.serviceName + '/roles',
-  rolesAll: Base.serviceName + '/roles/all',
-  role: Base.serviceName + '/role',
-  rolePermissionRoutes: Base.serviceName + '/role/permission/routes',
-  rolePermissionRoute: Base.serviceName + '/role/permission/route',
-  rolePermissionElements: Base.serviceName + '/role/permission/elements',
-  rolePermissionApis: Base.serviceName + '/role/permission/apis',
-  rolePermissionApi: Base.serviceName + '/role/permission/api',
+  roles: Base.serviceName + '/v1/roles',
+  rolesAll: Base.serviceName + '/v1/roles/all',
+  role: Base.serviceName + '/v1/role',
+  rolePermissionRoutes: Base.serviceName + '/v1/role/permission/routes',
+  rolePermissionRoute: Base.serviceName + '/v1/role/permission/route',
+  rolePermissionElements: Base.serviceName + '/v1/role/permission/elements',
+  rolePermissionApis: Base.serviceName + '/v1/role/permission/apis',
+  rolePermissionApi: Base.serviceName + '/v1/role/permission/api',
 }
 
 export default api
