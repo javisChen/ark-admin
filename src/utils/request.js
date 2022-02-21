@@ -28,12 +28,16 @@ const errorHandler = (error) => {
   if (response) {
     const responseStatus = response.status;
     const data = response.data
+    console.log(response)
+    console.log(responseStatus)
+    console.log(data)
     // 从 localstorage 获取 token
     const token = storage.get(ACCESS_TOKEN)
     if (responseStatus === 403) {
       notification.error({
         message: '拒绝访问：权限不足',
-        description: data.msg
+        // description: data.msg
+        description: '请联系管理员授权'
       })
     } else if (responseStatus === 404) {
       notification.error({
@@ -73,9 +77,13 @@ const errorHandler = (error) => {
         content: response.data.msg,
         duration: 4
       })
+    } else {
+      message.error({
+        content: response.data.msg,
+        duration: 4
+      })
     }
   }
-  console.log('request error', error)
   return Promise.reject(error)
 }
 

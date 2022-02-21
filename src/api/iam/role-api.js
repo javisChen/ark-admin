@@ -6,7 +6,7 @@ const api = {
   rolesAll: Base.serviceName + '/v1/roles/all',
   role: Base.serviceName + '/v1/role',
   rolePermissionRoutes: Base.serviceName + '/v1/role/permission/routes',
-  rolePermissionRoute: Base.serviceName + '/v1/role/permission/route',
+  rolePermissionRoute: Base.serviceName + '/v1/role/permission/grant',
   rolePermissionElements: Base.serviceName + '/v1/role/permission/elements',
   rolePermissionApis: Base.serviceName + '/v1/role/permission/apis',
   rolePermissionApi: Base.serviceName + '/v1/role/permission/api',
@@ -22,7 +22,7 @@ export const deleteRole = (params) => del({url: api.role, params})
 
 export const addRole = (data) => post({url: api.role, data})
 
-export const updateRole = (data) => put({url: api.role, data})
+export const updateRole = (data) => post({url: api.role, data})
 
 /**
  * 提交角色路由权限

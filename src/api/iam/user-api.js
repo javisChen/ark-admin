@@ -27,4 +27,4 @@ export const getUserPageElementPermissions = (params) => get({url: api.userPermi
 
 export const addUser = (data) => post({url: api.createUser, data})
 
-export const updateUser = (data) => put({url: api.updateUser, data})
+export const updateUser = (data) => post({url: api.updateUser, data})

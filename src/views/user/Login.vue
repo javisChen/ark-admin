@@ -144,7 +144,6 @@ export default {
     }
   },
   created () {
-    console.log('login page')
     get2step({ })
       .then(res => {
         this.requiredTwoStepCaptcha = res.data.stepCode
