@@ -74,7 +74,7 @@
 
 <script>
 
-import {getCodeProjectInfo, pageListCodeProject} from '@/api/cop/code-project-api'
+import {getCodeProjectInfo, pageListCodeProject} from '@/api/eop/code-project-api'
 import CodeProjectForm from "@/views/cop/codeproject/components/CodeProjectForm";
 
 const routeStatusDictionary = {

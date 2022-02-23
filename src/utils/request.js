@@ -73,9 +73,15 @@ const errorHandler = (error) => {
         duration: 4
       })
     } else if (responseStatus === 503) {
+      let msg
+      if (response.data) {
+        msg = response.data.msg
+      } else {
+        msg = response.statusText
+      }
       message.error({
-        content: response.data.msg,
-        duration: 4
+        content: msg,
+        duration: 10
       })
     } else {
       message.error({

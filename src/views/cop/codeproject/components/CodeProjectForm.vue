@@ -129,7 +129,7 @@
 
 <script>
 
-import {createCodeProject} from '@/api/cop/code-project-api'
+import {createCodeProject} from '@/api/eop/code-project-api'
 import FormActionBar from "@/views/cop/codeproject/components/FormActionBar";
 
 const TYPE_BACKEND = 1

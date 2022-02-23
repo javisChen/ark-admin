@@ -1,5 +1,5 @@
 import {post, get, del, put} from '@/utils/request'
-import Base  from './cop-base-api'
+import Base  from './eop-base-api'
 
 const api = {
   pageList: Base.serviceName + '/v1/code-project/pageList',
