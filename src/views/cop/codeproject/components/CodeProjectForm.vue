@@ -137,6 +137,7 @@ const TYPE_FRONT = 2
 
 const FORM_MODE_ADD = 'add';
 const FORM_MODE_VIEW = 'view';
+const FORM_MODE_GET_CODE_PROJECT = 'get_code_project';
 
 let defaultModel = {
   name: "",

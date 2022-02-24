@@ -62,7 +62,9 @@ import PageLoading from '@/components/PageLoading'
 import PermissionHelper from '@/core/permission/permission'
 import './directives/action'
 import './directives/hasPermission'
+import VueClipboard from 'vue-clipboard2'
 
+Vue.use(VueClipboard)
 Vue.use(KTooltipButton)
 Vue.use(Empty)
 Vue.use(FormModel)
