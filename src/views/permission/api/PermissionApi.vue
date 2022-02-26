@@ -11,7 +11,7 @@
               <application-select @change="onApplicationSelectChange"
                                   v-model="queryParam.applicationId"/>
             </a-form-item>
-          </a-col>permi
+          </a-col>
         </a-row>
       </a-form>
     </div>

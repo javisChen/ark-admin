@@ -1,12 +1,13 @@
 <template>
   <a-modal
       title="获取工程代码"
-      :visible="getCodeModalVisible"
+      :visible="visible"
       :closable="true"
       :mask="true"
       :maskClosable="true"
       :footer="null"
-      :cancel="onClose"
+      @cancel="onClose"
+      @ok="onClose"
   >
     <div class="download-box">
       <div class="download-title">
@@ -21,47 +22,63 @@
         </div>
       </div>
     </div>
+
     <div class="download-box">
       <div class="download-title">
-        Git Clone 命令：
+        Git Clone SSH：
       </div>
       <div class="flex-row">
         <div class="download-input">
-          <a-input readOnly placeholder="Basic usage" :value="gitReposUrl"/>
+          <a-input readOnly placeholder="Basic usage" :value="gitSshUrl"/>
         </div>
         <div class="download-action">
-          <a href="/#" v-clipboard:copy="'git clone ' + gitReposUrl" v-clipboard:success="onCopy">复制</a>
+          <a href="/#" v-clipboard:copy="'git clone ' + gitSshUrl" v-clipboard:success="onCopy">复制</a>
         </div>
       </div>
     </div>
+
+
+    <div class="download-box">
+      <div class="download-title">
+        Git Clone Https：
+      </div>
+      <div class="flex-row">
+        <div class="download-input">
+          <a-input readOnly placeholder="Basic usage" :value="gitHttpsUrl"/>
+        </div>
+        <div class="download-action">
+          <a href="/#" v-clipboard:copy="'git clone ' + gitHttpsUrl" v-clipboard:success="onCopy">复制</a>
+        </div>
+      </div>
+    </div>
+
   </a-modal>
 </template>
 <script>
 export default {
-  name: 'get-project-modal',
+  name: 'GetProjectModal',
   props: {
   },
   data() {
     return {
-      getCodeModalVisible: false,
-      // Git仓库地址
-      gitReposUrl: '',
-      // 代码压缩包地址
+      visible: false,
+      gitSshUrl: '',
+      gitHttpsUrl: '',
       packageUrl: '',
     }
   },
   methods: {
-    open(data) {
-      this.gitReposUrl = data.gitReposUrl;
-      this.getCodeModalVisible = true
-    },
     onCopy() {
       this.$message.success('复制成功')
-      this.getCodeModalVisible = false
+      this.onClose()
+    },
+    open(data) {
+      this.gitSshUrl = data.gitSshUrl;
+      this.gitHttpsUrl = data.gitHttpsUrl;
+      this.visible = true
     },
     onClose() {
-      console.log(123)
-      this.getCodeModalVisible = false
+      this.visible = false
     }
   }
 }

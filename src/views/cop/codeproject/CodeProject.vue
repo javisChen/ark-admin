@@ -68,6 +68,7 @@
                        @success="handleFormOnSuccess"
                        @cancel="handleEditFormCancel"/>
 
+    <!-- 获取工程代码 -->
     <get-project-modal ref="getProjectModal"/>
 
   </a-card>
@@ -147,8 +148,9 @@ export default {
         {
           title: '仓库地址',
           align: 'center',
-          dataIndex: 'gitReposUrl',
+          dataIndex: 'gitHtmlUrl',
           scopedSlots: {customRender: 'gitReposUrl'},
+          ellipsis: true
           // width: 150
         },
         {
