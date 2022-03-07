@@ -71,9 +71,8 @@
         </a-select>
       </a-form-model-item>
 
-
       <a-form-model-item v-if="isViewMode" label="仓库地址">
-        <a :href="formModel.gitReposUrl">{{ formModel.gitReposUrl }}</a>
+        <a :href="formModel.gitHtmlUrl">{{ formModel.gitHtmlUrl }}</a>
       </a-form-model-item>
 
       <template v-if="!isViewMode">

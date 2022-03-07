@@ -50,6 +50,7 @@ router.beforeEach((to, from, next) => {
             // store.dispatch('Logout').then(() => {
             //   next({path: loginRoutePath, query: {redirect: to.fullPath}})
             // })
+            next({path: loginRoutePath, query: {redirect: to.fullPath}})
           })
       } else {
         next()
