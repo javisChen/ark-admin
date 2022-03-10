@@ -66,6 +66,13 @@ export default {
   'PermissionApi': () => import('@/views/permission/api/PermissionApi'),
 
   // cop
-  'CodeProject': () => import('@/views/cop/codeproject/CodeProject.vue'),
+  'CodeProject': () => import('@/views/eop/codeproject/CodeProject'),
+
+  // commodity
+  'CommodityCategory': () => import('@/views/commodity/category/CommodityCategory'),
+  
+  'CommodityBrand': () => import('@/views/commodity/brand/CommodityBrand'),
+  
+  'CommodityAttrTemplate': () => import('@/views/commodity/attr/attrTemplate/CommodityAttrTemplate'),
 
 }

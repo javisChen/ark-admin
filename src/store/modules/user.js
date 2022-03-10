@@ -89,6 +89,12 @@ const user = {
         }).catch(() => {
           resolve()
         }).finally(() => {
+          commit('SET_TOKEN', '')
+          commit('SET_ROLES', [])
+          commit('SET_ACTION_PERMISSIONS', [])
+          commit('SET_ROUTERS', [])
+          commit('SET_IS_SUPER_ADMIN', false)
+          storage.remove(ACCESS_TOKEN)
         })
       })
     }

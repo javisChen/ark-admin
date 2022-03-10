@@ -17,6 +17,7 @@
     </div>
 
     <a-table
+      v-if="routes.length > 0"
       bordered
       @change="handleTableChange"
       :pagination="pagination"
@@ -121,7 +122,7 @@ export default {
     return {
       selectedApplication: {},
       applications: [],
-      defaultExpandAllRows: false,
+      defaultExpandAllRows: true,
       tableLoading: false,
       advanced: false,
       queryParam,
@@ -251,6 +252,7 @@ export default {
       return routeTypeDictionary[value]
     },
     handleTableChange(pagination, filters, sorter) {
+      this.routes = []
       this.queryParam.current = pagination.current
       this.loadTableData()
     },

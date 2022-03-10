@@ -79,8 +79,8 @@
 <script>
 
 import {getCodeProjectInfo, pageListCodeProject} from '@/api/eop/code-project-api'
-import CodeProjectForm from "@/views/cop/codeproject/components/CodeProjectForm";
-import GetProjectModal from "@/views/cop/codeproject/components/GetProjectModal";
+import CodeProjectForm from "@/views/eop/codeproject/components/CodeProjectForm";
+import GetProjectModal from "@/views/eop/codeproject/components/GetProjectModal";
 
 const routeStatusDictionary = {
   1: '已启用',

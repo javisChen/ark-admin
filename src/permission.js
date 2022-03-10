@@ -24,11 +24,13 @@ router.beforeEach((to, from, next) => {
       next({path: defaultRoutePath})
       NProgress.done()
     } else {
+      console.log(321312)
       // check login user.roles is null
       if (store.getters.addRouters.length === 0) {
         // request login userInfo
         store.dispatch('GetInfo')
           .then(({data}) => {
+            console.log('get info')
             // generate dynamic router
             store.dispatch('GenerateRoutes').then(() => {
               // 根据roles权限生成可访问的路由表
@@ -46,11 +48,15 @@ router.beforeEach((to, from, next) => {
             })
           })
           .catch((e) => {
+            console.log('logout')
             // 失败时，获取用户信息失败时，调用登出，来清空历史保留信息
-            // store.dispatch('Logout').then(() => {
-            //   next({path: loginRoutePath, query: {redirect: to.fullPath}})
-            // })
-            next({path: loginRoutePath, query: {redirect: to.fullPath}})
+            store.dispatch('Logout').then(() => {
+              next({path: loginRoutePath, query: {redirect: to.fullPath}})
+            })
+              .catch((e) => {
+                console.log('3eeee')
+              })
+            // next({path: loginRoutePath, query: {redirect: to.fullPath}})
           })
       } else {
         next()
