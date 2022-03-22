@@ -28,9 +28,9 @@ const errorHandler = (error) => {
   if (response) {
     const responseStatus = response.status;
     const data = response.data
-    // console.log(response)
-    // console.log(responseStatus)
-    // console.log(data)
+    console.log(response)
+    console.log(responseStatus)
+    console.log(data)
     // 从 localstorage 获取 token
     const token = storage.get(ACCESS_TOKEN)
     if (responseStatus === 403) {
