@@ -28,21 +28,23 @@
         <a-input placeholder="letter" v-model="formModel.letter"/>
       </a-form-model-item>
 
-      <a-form-model-item label="状态" prop="status" required>
+      <a-form-model-item label="LOGO" prop="imageUrl" required>
         <a-upload
           list-type="picture-card"
-          :file-list="[]"
+          :file-list="fileList"
           :customRequest="customRequest"
           @preview="handlePreview"
-          @change="handleChange"
+          :remove="handleRemove"
         >
-          <a-icon type="plus"/>
-          <div class="ant-upload-text">
-            LOGO
+          <div v-if="fileList.length === 0">
+            <a-icon type="plus"/>
+            <div class="ant-upload-text">
+              LOGO
+            </div>
           </div>
         </a-upload>
-      </a-form-model-item>
 
+      </a-form-model-item>
     </a-form-model>
 
   </a-modal>
@@ -57,6 +59,7 @@ const defaultModel = {
   id: '',
   name: '',
   code: '',
+  imageUrl: ''
 }
 
 const FORM_MODE_EDIT = 'edit';
@@ -76,6 +79,7 @@ export default {
   components: {},
   data() {
     return {
+      fileList: [],
       confirmLoading: false,
       visible: false,
       labelCol: {span: 6},
@@ -103,12 +107,22 @@ export default {
       this.previewImage = file.url || file.preview;
       this.previewVisible = true;
     },
+    async handleRemove() {
+      this.fileList = []
+    },
     async customRequest(f) {
-      console.log(f)
+      const {file} = f
       const formData = new FormData();
-      formData.append('file', f.file);
+      formData.append('file', file);
       try {
-        const response = await upload(formData);
+        const {data} = await upload(formData);
+        this.formModel.imageUrl = data.url
+        this.fileList.push({
+          uid: file.uid,
+          name: file.name,
+          status: 'done',
+          url: this.formModel.imageUrl,
+        })
         this.$message.success('上传成功')
       } catch (e) {
         this.$message.error('上传失败')

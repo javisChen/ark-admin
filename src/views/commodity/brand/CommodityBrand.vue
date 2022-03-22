@@ -4,8 +4,8 @@
       <a-form layout="inline">
         <a-row :gutter="48">
           <a-col :md="8" :sm="24">
-            <a-form-item label="工程名称">
-              <a-input v-model="queryParam.projectName" placeholder=""/>
+            <a-form-item label="品牌名称">
+              <a-input v-model="queryParam.name" placeholder=""/>
             </a-form-item>
           </a-col>
           <!--                <a-col :md="8" :sm="24">-->
@@ -32,7 +32,7 @@
     </div>
 
     <div class="table-operator">
-      <a-button type="primary" icon="plus" @click="showForm">创建工程</a-button>
+      <a-button type="primary" icon="plus" @click="showForm">添加新品牌</a-button>
     </div>
 
     <a-table
@@ -50,14 +50,12 @@
       :columns="columns"
       :data-source="tableData">
 
-      <template slot="gitReposUrl" slot-scope="text, record">
-        <a @click="goToGit(text);" :href="text">{{ text }}</a>
+      <template slot="logo" slot-scope="text, record">
+        <img width="30" :src="record.imageUrl" alt="">
       </template>
 
       <template slot="action" slot-scope="text, record">
         <k-tooltip-button title="查看" @click="handleView(record)" icon="search"/>
-        &nbsp
-        <k-tooltip-button title="下载" @click="openDownloadView(record)" icon="download"/>&nbsp;
       </template>
     </a-table>
     <a-empty v-else/>
@@ -93,7 +91,7 @@ const pagination = {
 }
 
 const queryParam = {
-  projectName: '',
+  name: '',
   current: 1,
   size: 15,
 }
@@ -129,13 +127,14 @@ export default {
         {
           title: 'LOGO',
           align: 'center',
-          dataIndex: 'logo',
+          dataIndex: 'imageUrl',
+          scopedSlots: {customRender: 'logo'},
           // width: 100
         },
         {
           title: '创建时间',
           align: 'center',
-          dataIndex: 'createTime',
+          dataIndex: 'gmtCreate',
           // width: 180
         },
         {
@@ -158,9 +157,6 @@ export default {
     async handleView(record) {
       const {data} = await getInfo({codeProjectId: record.id})
       this.$refs['codeProjectForm'].open(data, 'view')
-    },
-    async openDownloadView(record) {
-      this.$refs['getProjectModal'].open(record)
     },
     handleTableChange(pagination, filters, sorter) {
       this.queryParam.current = pagination.current
