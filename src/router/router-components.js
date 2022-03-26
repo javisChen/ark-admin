@@ -75,4 +75,7 @@ export default {
   
   'CommodityAttrTemplate': () => import('@/views/commodity/attr/attrTemplate/CommodityAttrTemplate'),
 
+  'CommodityAttrGroup': () => import('@/views/commodity/attr/attrGroup/CommodityAttrGroup'),
+
+
 }

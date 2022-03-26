@@ -4,7 +4,7 @@
       <a-form layout="inline">
         <a-row :gutter="48">
           <a-col :md="8" :sm="24">
-            <a-form-item label="模板名称">
+            <a-form-item label="属性组名称">
               <a-input v-model="queryParam.name" placeholder=""/>
             </a-form-item>
           </a-col>
@@ -20,7 +20,7 @@
     </div>
 
     <div class="table-operator">
-      <a-button type="primary" icon="plus" @click="showForm">添加模板</a-button>
+      <a-button type="primary" icon="plus" @click="showForm">添加属性组</a-button>
     </div>
 
     <a-table
@@ -37,8 +37,8 @@
       :columns="columns"
       :data-source="tableData">
 
-      <template slot="setting" slot-scope="text, record">
-        <a href="#/" @click="toAttrGroup(record.id)">查看属性组</a>
+      <template slot="gitReposUrl" slot-scope="text, record">
+        <a @click="goToGit(text);" :href="text">{{ text }}</a>
       </template>
 
       <template slot="action" slot-scope="text, record">
@@ -51,7 +51,7 @@
 
 
     <!-- 创建路由信息表单-->
-    <commodity-attr-template-form ref="commodityAttrTemplateForm"
+    <commodity-attr-group-form ref="commodityAttrTemplateForm"
                        @success="handleFormOnSuccess"
                        @cancel="handleEditFormCancel"/>
 
@@ -62,8 +62,8 @@
 
 <script>
 
-import {getInfo, getPageList} from '@/api/commodity/attr-template-api'
-import CommodityAttrTemplateForm from "./components/CommodityAttrTemplateForm";
+import {getInfo, getPageList} from '@/api/commodity/attr-group-api'
+import CommodityAttrGroupForm from "./components/CommodityAttrGroupForm";
 
 const routeStatusDictionary = {
   1: '已启用',
@@ -83,14 +83,15 @@ const pagination = {
 
 const queryParam = {
   name: '',
+  attrTemplateId: 0,
   current: 1,
   size: 15,
 }
 
 export default {
-  name: 'CommodityAttrTemplate',
+  name: 'CommodityAttrGroup',
   components: {
-    CommodityAttrTemplateForm,
+    CommodityAttrGroupForm,
   },
   data() {
     return {
@@ -115,7 +116,7 @@ export default {
         {
           title: '设置',
           align: 'center',
-          scopedSlots: {customRender: 'setting'},
+          scopedSlots: {customRender: 'action'},
         },
         {
           title: '操作',
@@ -130,15 +131,11 @@ export default {
     };
   },
   created() {
+    console.log(this.$route)
+    this.queryParam.attrTemplateId = this.$route.query.templateId;
     this.loadTableData();
   },
   methods: {
-    toAttrGroup(id) {
-      this.$router.push({
-        path: '/commodity/attr/group',
-        query: {templateId: id},
-      })
-    },
     handleTableChange(pagination, filters, sorter) {
       this.queryParam.current = pagination.current
       this.loadTableData()
@@ -164,9 +161,6 @@ export default {
     },
     rowKey(record) {
       return record.id
-    },
-    goToGit(text) {
-      window.open(text)
     },
     toggleLoading() {
       this.tableLoading = !this.tableLoading
