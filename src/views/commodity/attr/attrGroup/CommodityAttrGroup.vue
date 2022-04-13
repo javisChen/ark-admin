@@ -130,8 +130,11 @@ export default {
     };
   },
   created() {
-    console.log(this.attrTemplateId)
-    this.queryParam.attrTemplateId = this.attrTemplateId;
+    if (this.$route.query.templateId) {
+      this.queryParam.attrTemplateId = this.$route.query.templateId;
+    } else {
+      this.queryParam.attrTemplateId = this.attrTemplateId;
+    }
     this.loadTableData();
   },
   methods: {

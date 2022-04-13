@@ -2,7 +2,7 @@
 
   <a-modal
     v-model="visible"
-    :title="isEditMode ? '编辑属性组' : '添加属性组'"
+    :title="isEditMode ? '编辑属性' : '添加属性'"
     ok-text="保存"
     :confirmLoading="confirmLoading"
     :destroyOnClose="true"
@@ -20,8 +20,24 @@
       :label-col="labelCol"
       :wrapper-col="wrapperCol">
 
-      <a-form-model-item ref="name" label="属性组名称" prop="name" has-feedback>
-        <a-input placeholder="属性组名称" v-model="formModel.name"/>
+      <a-form-model-item ref="name" label="属性名称" prop="name" has-feedback>
+        <a-input placeholder="属性名称" v-model="formModel.name"/>
+      </a-form-model-item>
+
+      <a-form-model-item ref="attrGroupId" label="属性组" prop="attrGroupId">
+        <Commodity-Attr-Group-Select v-if="attrTemplateId" :attrTemplateId="attrTemplateId" v-model="formModel.attrGroupId"></Commodity-Attr-Group-Select>
+      </a-form-model-item>
+
+      <a-form-model-item ref="inputType" label="录入方式" prop="inputType" has-feedback>
+        <a-input placeholder="录入方式" v-model="formModel.inputType"/>
+      </a-form-model-item>
+
+      <a-form-model-item label="可选值列表" has-feedback>
+        <a-input placeholder="可选值列表"/>
+      </a-form-model-item>
+
+      <a-form-model-item ref="canManualAdd" label="是否支持手动新增" prop="canManualAdd" has-feedback>
+        <a-input placeholder="是否支持手动新增" v-model="formModel.canManualAdd"/>
       </a-form-model-item>
 
     </a-form-model>
@@ -31,22 +47,36 @@
 
 <script>
 
-import {create, update} from '@/api/commodity/attr-group-api'
+import {getPageList as getAttrGroupPageList} from '@/api/commodity/attr-group-api'
+import {create as createAttr, update as updateAttr} from '@/api/commodity/attr-api'
+import CommodityAttrGroupSelect from "../../attrGroup/components/CommodityAttrGroupSelect";
 
 const defaultModel = {
-  id: '',
-  name: '',
+  id: 0,
+  name: "",
+  inputType: 0,
+  type: 0,
+  sort: 0,
+  attrGroupId: undefined,
+  attrTemplateId: 0,
+  canManualAdd: 0,
+  values: [
+    ""
+  ],
 }
 
 const FORM_MODE_EDIT = 'edit';
 const FORM_MODE_ADD = 'add';
 
 export default {
-  name: 'CommodityAttrTemplateForm',
-  components: {},
+  name: 'CommodityAttrForm',
+  components: {
+    CommodityAttrGroupSelect
+  },
   data() {
     return {
       fileList: [],
+      attrTemplateId: undefined,
       confirmLoading: false,
       visible: false,
       labelCol: {span: 6},
@@ -56,6 +86,7 @@ export default {
       form: {},
       rules: {
         name: [{required: true, message: '请输入模板名称', trigger: 'blur'}],
+        inputType: [{required: true, message: '请输入模板名称', trigger: 'blur'}],
       }
     }
   },
@@ -71,10 +102,10 @@ export default {
     onSelectRouteChange(value, selectedOptions) {
       this.formModel.pid = value[value.length - 1]
     },
-    open(formModel, type = FORM_MODE_ADD) {
+    open(formModel, attrTemplateId, type = FORM_MODE_ADD) {
       this.visible = true
+      this.attrTemplateId = attrTemplateId
       if (formModel) {
-        console.log('formModel', formModel)
         this.formModel = Object.assign(this.formModel, formModel)
       }
       this.type = type
@@ -109,13 +140,16 @@ export default {
           return false;
         }
         this.toggleConfirmLoading()
+        console.log(this.formModel)
+        this.closeConfirmLoading()
+        return
         if (this.type === FORM_MODE_ADD) {
-          create(this.formModel)
+          createAttr(this.formModel)
             .then(({data}) => this.afterSuccess())
             .catch(e => e)
             .finally(() => this.closeConfirmLoading())
         } else {
-          update(this.formModel)
+          updateAttr(this.formModel)
             .then(({data}) => this.afterSuccess())
             .catch(e => e)
             .finally(() => this.closeConfirmLoading())
@@ -136,7 +170,7 @@ export default {
         }
       }
       return f;
-    }
+    },
   },
   created() {
   }

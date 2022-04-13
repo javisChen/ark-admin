@@ -57,7 +57,8 @@
                                   @success="handleFormOnSuccess"
                                   @cancel="handleEditFormCancel"/>
 
-    <a-modal :visible="showAttrGroup"
+    <a-modal v-if="selectedAttrTemplate"
+             :visible="showAttrGroup"
              :width="800"
              title="商品属性组"
              :closable="true"
@@ -68,7 +69,8 @@
       <commodity-attr-group :attr-template-id="selectedAttrTemplate.id"/>
     </a-modal>
 
-    <a-modal :visible="showAttrParam"
+    <a-modal v-if="selectedAttrTemplate"
+             :visible="showAttrParam"
              :width="800"
              title="商品参数"
              :closable="true"
@@ -79,7 +81,8 @@
       <commodity-attr :attr-template-id="selectedAttrTemplate.id" :type="attrType"/>
     </a-modal>
 
-    <a-modal :visible="showAttrSpec"
+    <a-modal v-if="selectedAttrTemplate"
+             :visible="showAttrSpec"
              :width="800"
              title="商品规格"
              :closable="true"
@@ -178,17 +181,21 @@ export default {
   methods: {
     toAttrGroup(record) {
       this.selectedAttrTemplate = record
+      // this.$router.push({
+      //   path: '/commodity/attr/group',
+      //   query: {templateId: record.id},
+      // })
       this.showAttrGroup = true;
     },
     toAttrSpec(record) {
       this.selectedAttrTemplate = record
       this.attrType = 1
-      this.showAttrGroup = true;
+      this.showAttrSpec = true;
     },
     toAttrParam(record) {
       this.selectedAttrTemplate = record
       this.attrType = 2
-      this.showAttrGroup = true;
+      this.showAttrParam = true;
     },
     handleTableChange(pagination, filters, sorter) {
       this.queryParam.current = pagination.current

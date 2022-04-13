@@ -4,7 +4,7 @@
       <a-form layout="inline">
         <a-row :gutter="48">
           <a-col :md="8" :sm="24">
-            <a-form-item label="属性组名称">
+            <a-form-item label="属性名称">
               <a-input v-model="queryParam.name" placeholder=""/>
             </a-form-item>
           </a-col>
@@ -19,7 +19,7 @@
     </div>
 
     <div class="table-operator">
-      <a-button type="primary" icon="plus" @click="showForm">添加属性组</a-button>
+      <a-button type="primary" icon="plus" @click="showForm">添加属性</a-button>
     </div>
 
     <a-table
@@ -43,9 +43,11 @@
     <a-empty v-else/>
 
     <!-- 创建路由信息表单-->
-    <commodity-attr-group-form ref="commodityAttrTemplateForm"
-                       @success="handleFormOnSuccess"
-                       @cancel="handleEditFormCancel"/>
+    <commodity-attr-form
+      v-if="attrTemplateId"
+      ref="commodityAttrForm"
+      @success="handleFormOnSuccess"
+      @cancel="handleEditFormCancel"/>
 
   </a-card>
 
@@ -55,7 +57,7 @@
 <script>
 
 import {getInfo, getPageList} from '@/api/commodity/attr-api'
-import CommodityAttrGroupForm from "./components/CommodityAttrGroupForm";
+import CommodityAttrForm from "./components/CommodityAttrForm";
 
 const routeStatusDictionary = {
   1: '已启用',
@@ -84,7 +86,7 @@ const queryParam = {
 export default {
   name: 'CommodityAttr',
   components: {
-    CommodityAttrGroupForm,
+    CommodityAttrForm,
   },
   props: {
     attrTemplateId: {
@@ -97,7 +99,7 @@ export default {
     }
   },
   watch: {
-    attrTemplateId(newV,oldV) {
+    attrTemplateId(newV, oldV) {
       this.queryParam.attrTemplateId = newV;
       this.loadTableData()
     }
@@ -142,6 +144,7 @@ export default {
   created() {
     console.log(this.attrTemplateId)
     this.queryParam.attrTemplateId = this.attrTemplateId;
+    console.log(this.queryParam.attrTemplateId)
     this.loadTableData();
   },
   methods: {
@@ -166,7 +169,7 @@ export default {
     handleEditFormCancel() {
     },
     showForm() {
-      this.$refs['commodityAttrTemplateForm'].open()
+      this.$refs['commodityAttrForm'].open(null, this.attrTemplateId)
     },
     rowKey(record) {
       return record.id
