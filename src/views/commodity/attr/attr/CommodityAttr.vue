@@ -54,7 +54,7 @@
 
 <script>
 
-import {getInfo, getPageList} from '@/api/commodity/attr-group-api'
+import {getInfo, getPageList} from '@/api/commodity/attr-api'
 import CommodityAttrGroupForm from "./components/CommodityAttrGroupForm";
 
 const routeStatusDictionary = {
@@ -76,18 +76,23 @@ const pagination = {
 const queryParam = {
   name: '',
   attrTemplateId: 0,
+  type: 0,
   current: 1,
   size: 15,
 }
 
 export default {
-  name: 'CommodityAttrGroup',
+  name: 'CommodityAttr',
   components: {
     CommodityAttrGroupForm,
   },
   props: {
     attrTemplateId: {
       type: [Number, String],
+      required: true
+    },
+    type: {
+      type: [Number],
       required: true
     }
   },
@@ -108,9 +113,14 @@ export default {
       tableData: [],
       columns: [
         {
-          title: '属性组名称',
+          title: '属性名称',
           align: 'center',
           dataIndex: 'name',
+        },
+        {
+          title: '类型',
+          align: 'center',
+          dataIndex: 'type',
         },
         {
           title: '创建时间',

@@ -38,7 +38,9 @@
       :data-source="tableData">
 
       <template slot="setting" slot-scope="text, record">
-        <a href="#/" @click="toAttrGroup(record.id)">查看属性组</a>
+        <a href="#/" @click="toAttrGroup(record)">查看属性组</a>&nbsp;
+        <a href="#/" @click="toAttrSpec(record)">查看规格</a>&nbsp;
+        <a href="#/" @click="toAttrParam(record)">查看参数</a>
       </template>
 
       <template slot="action" slot-scope="text, record">
@@ -52,11 +54,43 @@
 
     <!-- 创建路由信息表单-->
     <commodity-attr-template-form ref="commodityAttrTemplateForm"
-                       @success="handleFormOnSuccess"
-                       @cancel="handleEditFormCancel"/>
+                                  @success="handleFormOnSuccess"
+                                  @cancel="handleEditFormCancel"/>
+
+    <a-modal :visible="showAttrGroup"
+             :width="800"
+             title="商品属性组"
+             :closable="true"
+             :mask="true"
+             :maskClosable="true"
+             :footer="null"
+             @cancel="() => this.showAttrGroup = !this.showAttrGroup">
+      <commodity-attr-group :attr-template-id="selectedAttrTemplate.id"/>
+    </a-modal>
+
+    <a-modal :visible="showAttrParam"
+             :width="800"
+             title="商品参数"
+             :closable="true"
+             :mask="true"
+             :maskClosable="true"
+             :footer="null"
+             @cancel="() => this.showAttrParam = !this.showAttrParam">
+      <commodity-attr :attr-template-id="selectedAttrTemplate.id" :type="attrType"/>
+    </a-modal>
+
+    <a-modal :visible="showAttrSpec"
+             :width="800"
+             title="商品规格"
+             :closable="true"
+             :mask="true"
+             :maskClosable="true"
+             :footer="null"
+             @cancel="() => this.showAttrSpec = !this.showAttrSpec">
+      <commodity-attr :attr-template-id="selectedAttrTemplate.id" :type="attrType"/>
+    </a-modal>
 
   </a-card>
-
 
 </template>
 
@@ -64,6 +98,8 @@
 
 import {getInfo, getPageList} from '@/api/commodity/attr-template-api'
 import CommodityAttrTemplateForm from "./components/CommodityAttrTemplateForm";
+import CommodityAttrGroup from "../attrGroup/CommodityAttrGroup";
+import CommodityAttr from "../attr/CommodityAttr";
 
 const routeStatusDictionary = {
   1: '已启用',
@@ -91,9 +127,16 @@ export default {
   name: 'CommodityAttrTemplate',
   components: {
     CommodityAttrTemplateForm,
+    CommodityAttrGroup,
+    CommodityAttr
   },
   data() {
     return {
+      selectedAttrTemplate: {},
+      showAttrGroup: false,
+      showAttrSpec: false,
+      showAttrParam: false,
+      attrType: 0,
       scroll: {x: 1300},
       pagination,
       defaultExpandAllRows: false,
@@ -133,11 +176,19 @@ export default {
     this.loadTableData();
   },
   methods: {
-    toAttrGroup(id) {
-      this.$router.push({
-        path: '/commodity/attr/group',
-        query: {templateId: id},
-      })
+    toAttrGroup(record) {
+      this.selectedAttrTemplate = record
+      this.showAttrGroup = true;
+    },
+    toAttrSpec(record) {
+      this.selectedAttrTemplate = record
+      this.attrType = 1
+      this.showAttrGroup = true;
+    },
+    toAttrParam(record) {
+      this.selectedAttrTemplate = record
+      this.attrType = 2
+      this.showAttrGroup = true;
     },
     handleTableChange(pagination, filters, sorter) {
       this.queryParam.current = pagination.current
