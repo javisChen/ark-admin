@@ -37,7 +37,7 @@
       :data-source="tableData">
 
       <template slot="action" slot-scope="text, record">
-        <a href="/#" @click="showForm('edit', record)">编辑</a>
+        <a href="/#" @click="showForm($event, 'edit', record)">编辑</a>
       </template>
 
       <template slot="type" slot-scope="text, record">
@@ -200,8 +200,15 @@ export default {
     },
     handleEditFormCancel() {
     },
-    showForm(event, mode = 'add', record) {
-      console.log(this.queryParam.attrTemplateId)
+    async showForm(event, mode = 'add', record) {
+      if (mode === 'edit') {
+        try {
+          const {data} = await getInfo({id: record.id})
+          record = data
+        } catch (e) {
+
+        }
+      }
       this.$refs['commodityAttrForm'].open(mode, record, this.queryParam.attrTemplateId)
     },
     rowKey(record) {

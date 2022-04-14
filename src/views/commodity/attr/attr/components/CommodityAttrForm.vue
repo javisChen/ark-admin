@@ -139,9 +139,13 @@ export default {
     },
     open(type = FORM_MODE_ADD, formModel, attrTemplateId) {
       this.visible = true
+      console.log(formModel)
       if (formModel) {
         this.formModel = Object.assign(this.formModel, formModel)
         this.formModel = this.$cloneDeep(this.formModel)
+        console.log(123213)
+        this.valueList = this.formModel.values.map(item => ({value: item}))
+        console.log(this.valueList)
       }
       this.formModel.attrTemplateId = attrTemplateId
       this.type = type
