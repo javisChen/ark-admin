@@ -1,6 +1,7 @@
 <template>
 
   <a-modal
+    :width="1000"
     v-model="visible"
     :title="isEditMode ? '编辑属性' : '添加属性'"
     ok-text="保存"
@@ -25,19 +26,37 @@
       </a-form-model-item>
 
       <a-form-model-item ref="attrGroupId" label="属性组" prop="attrGroupId">
-        <Commodity-Attr-Group-Select v-if="attrTemplateId" :attrTemplateId="attrTemplateId" v-model="formModel.attrGroupId"></Commodity-Attr-Group-Select>
+        <commodity-attr-group-select v-if="formModel.attrTemplateId"
+                                     :attrTemplateId="formModel.attrTemplateId"
+                                     v-model="formModel.attrGroupId"></commodity-attr-group-select>
       </a-form-model-item>
 
-      <a-form-model-item ref="inputType" label="录入方式" prop="inputType" has-feedback>
-        <a-input placeholder="录入方式" v-model="formModel.inputType"/>
+      <a-form-model-item ref="inputType" label="录入方式" prop="inputType">
+        <a-radio-group v-model="formModel.inputType" name="inputType">
+          <a-radio v-for="item in inputTypeOptions"
+                          :key="item.value"
+                          :value="item.value">{{ item.desc }}
+          </a-radio>
+        </a-radio-group>
       </a-form-model-item>
 
-      <a-form-model-item label="可选值列表" has-feedback>
-        <a-input placeholder="可选值列表"/>
+      <a-form-model-item v-if="formModel.inputType === 2" label="可选值列表">
+        <template v-for="(item, idx) in valueList">
+          <div>
+            <a-input v-model="item.value" style="width: 80%" placeholder="可选值列表"/>&nbsp;
+            <k-tooltip-button v-if="idx === valueList.length - 1" title="添加" @click="addValueListItem" icon="plus"/>
+            <k-tooltip-button v-if="idx !== valueList.length - 1" title="移除" @click="removeValueListItem(idx)" type="danger" icon="minus"/>
+          </div>
+        </template>
       </a-form-model-item>
 
       <a-form-model-item ref="canManualAdd" label="是否支持手动新增" prop="canManualAdd" has-feedback>
-        <a-input placeholder="是否支持手动新增" v-model="formModel.canManualAdd"/>
+        <a-radio-group v-model="formModel.canManualAdd" name="canManualAdd">
+          <a-radio v-for="item in canManualAddOptions"
+                   :key="item.value"
+                   :value="item.value">{{ item.desc }}
+          </a-radio>
+        </a-radio-group>
       </a-form-model-item>
 
     </a-form-model>
@@ -47,14 +66,13 @@
 
 <script>
 
-import {getPageList as getAttrGroupPageList} from '@/api/commodity/attr-group-api'
 import {create as createAttr, update as updateAttr} from '@/api/commodity/attr-api'
 import CommodityAttrGroupSelect from "../../attrGroup/components/CommodityAttrGroupSelect";
 
 const defaultModel = {
-  id: 0,
+  id: undefined,
   name: "",
-  inputType: 0,
+  inputType: 1,
   type: 0,
   sort: 0,
   attrGroupId: undefined,
@@ -64,6 +82,15 @@ const defaultModel = {
     ""
   ],
 }
+
+const inputTypeOptions = [
+  {value: 1, desc: '手工录入'},
+  {value: 2, desc: '从选项列表选择'}
+]
+const canManualAddOptions = [
+  {value: 0, desc: '否'},
+  {value: 1, desc: '是'}
+]
 
 const FORM_MODE_EDIT = 'edit';
 const FORM_MODE_ADD = 'add';
@@ -75,8 +102,10 @@ export default {
   },
   data() {
     return {
+      valueList: [{value: ''}],
+      canManualAddOptions,
+      inputTypeOptions,
       fileList: [],
-      attrTemplateId: undefined,
       confirmLoading: false,
       visible: false,
       labelCol: {span: 6},
@@ -96,18 +125,25 @@ export default {
     },
   },
   methods: {
+    addValueListItem() {
+      this.valueList.push({value: ''})
+    },
+    removeValueListItem(idx) {
+      this.valueList.splice(idx, 1)
+    },
     handleChange(value) {
       this.$emit('change', value)
     },
     onSelectRouteChange(value, selectedOptions) {
       this.formModel.pid = value[value.length - 1]
     },
-    open(formModel, attrTemplateId, type = FORM_MODE_ADD) {
+    open(type = FORM_MODE_ADD, formModel, attrTemplateId) {
       this.visible = true
-      this.attrTemplateId = attrTemplateId
       if (formModel) {
         this.formModel = Object.assign(this.formModel, formModel)
+        this.formModel = this.$cloneDeep(this.formModel)
       }
+      this.formModel.attrTemplateId = attrTemplateId
       this.type = type
     },
     close() {
@@ -140,9 +176,10 @@ export default {
           return false;
         }
         this.toggleConfirmLoading()
+        this.formModel.values = this.valueList.map(item => item.value)
         console.log(this.formModel)
-        this.closeConfirmLoading()
-        return
+        // this.closeConfirmLoading()
+        // return
         if (this.type === FORM_MODE_ADD) {
           createAttr(this.formModel)
             .then(({data}) => this.afterSuccess())

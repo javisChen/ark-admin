@@ -180,22 +180,36 @@ export default {
   },
   methods: {
     toAttrGroup(record) {
-      this.selectedAttrTemplate = record
-      // this.$router.push({
-      //   path: '/commodity/attr/group',
-      //   query: {templateId: record.id},
-      // })
-      this.showAttrGroup = true;
+      // this.selectedAttrTemplate = record
+      this.$router.push({
+        path: '/commodity/attr/group',
+        query: {templateId: record.id},
+      })
+      // this.showAttrGroup = true;
     },
     toAttrSpec(record) {
-      this.selectedAttrTemplate = record
-      this.attrType = 1
-      this.showAttrSpec = true;
+      this.$router.push({
+        path: '/commodity/attr',
+        query: {
+          templateId: record.id,
+          type: 1
+        },
+      })
+      // this.selectedAttrTemplate = record
+      // this.attrType = 1
+      // this.showAttrSpec = true;
     },
     toAttrParam(record) {
-      this.selectedAttrTemplate = record
-      this.attrType = 2
-      this.showAttrParam = true;
+      this.$router.push({
+        path: '/commodity/attr',
+        query: {
+          templateId: record.id,
+          type: 2
+        },
+      })
+      // this.selectedAttrTemplate = record
+      // this.attrType = 2
+      // this.showAttrParam = true;
     },
     handleTableChange(pagination, filters, sorter) {
       this.queryParam.current = pagination.current

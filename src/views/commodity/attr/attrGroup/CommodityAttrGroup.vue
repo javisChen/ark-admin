@@ -88,7 +88,7 @@ export default {
   props: {
     attrTemplateId: {
       type: [Number, String],
-      required: true
+      required: false
     }
   },
   watch: {

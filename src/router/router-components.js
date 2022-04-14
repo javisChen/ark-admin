@@ -70,12 +70,10 @@ export default {
 
   // commodity
   'CommodityCategory': () => import('@/views/commodity/category/CommodityCategory'),
-  
   'CommodityBrand': () => import('@/views/commodity/brand/CommodityBrand'),
-  
   'CommodityAttrTemplate': () => import('@/views/commodity/attr/attrTemplate/CommodityAttrTemplate'),
-
   'CommodityAttrGroup': () => import('@/views/commodity/attr/attrGroup/CommodityAttrGroup'),
+  'CommodityAttr': () => import('@/views/commodity/attr/attr/CommodityAttr'),
 
 
 }

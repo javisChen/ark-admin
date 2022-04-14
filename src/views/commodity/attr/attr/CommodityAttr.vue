@@ -37,14 +37,24 @@
       :data-source="tableData">
 
       <template slot="action" slot-scope="text, record">
-        <a href="/#">编辑</a>
+        <a href="/#" @click="showForm('edit', record)">编辑</a>
       </template>
+
+      <template slot="type" slot-scope="text, record">
+        {{ getTypeDesc(record.type) }}
+      </template>
+
+
+      <template slot="inputType" slot-scope="text, record">
+        {{ getInputTypeDesc(record.inputType) }}
+      </template>
+
     </a-table>
     <a-empty v-else/>
 
     <!-- 创建路由信息表单-->
     <commodity-attr-form
-      v-if="attrTemplateId"
+      v-if="queryParam.attrTemplateId"
       ref="commodityAttrForm"
       @success="handleFormOnSuccess"
       @cancel="handleEditFormCancel"/>
@@ -59,10 +69,15 @@
 import {getInfo, getPageList} from '@/api/commodity/attr-api'
 import CommodityAttrForm from "./components/CommodityAttrForm";
 
-const routeStatusDictionary = {
-  1: '已启用',
-  2: '已禁用'
+const typeDict = {
+  1: '规格',
+  2: '参数'
 }
+const inputTypeDict = {
+  1: '手工录入',
+  2: '从选项列表选取'
+}
+
 
 const pagination = {
   showSizeChanger: true,
@@ -91,11 +106,11 @@ export default {
   props: {
     attrTemplateId: {
       type: [Number, String],
-      required: true
+      required: false
     },
     type: {
       type: [Number],
-      required: true
+      required: false
     }
   },
   watch: {
@@ -123,11 +138,19 @@ export default {
           title: '类型',
           align: 'center',
           dataIndex: 'type',
+          scopedSlots: {customRender: 'type'},
+        },
+        {
+          title: '录入方式',
+          align: 'center',
+          dataIndex: 'inputType',
+          scopedSlots: {customRender: 'inputType'},
         },
         {
           title: '创建时间',
           align: 'center',
           dataIndex: 'gmtCreate',
+
         },
         {
           title: '操作',
@@ -137,17 +160,26 @@ export default {
         },
       ],
       selectedRoute: {},
-      routeStatusDictionary,
+      typeDict,
       roleFormVisible: false,
     };
   },
   created() {
-    console.log(this.attrTemplateId)
-    this.queryParam.attrTemplateId = this.attrTemplateId;
-    console.log(this.queryParam.attrTemplateId)
+    if (this.$route.query.templateId) {
+      this.queryParam.attrTemplateId = this.$route.query.templateId;
+      this.queryParam.type = this.$route.query.type;
+    } else {
+      this.queryParam.attrTemplateId = this.attrTemplateId;
+    }
     this.loadTableData();
   },
   methods: {
+    getTypeDesc(value) {
+      return typeDict[value]
+    },
+    getInputTypeDesc(value) {
+      return inputTypeDict[value]
+    },
     handleTableChange(pagination, filters, sorter) {
       this.queryParam.current = pagination.current
       this.loadTableData()
@@ -168,8 +200,9 @@ export default {
     },
     handleEditFormCancel() {
     },
-    showForm() {
-      this.$refs['commodityAttrForm'].open(null, this.attrTemplateId)
+    showForm(event, mode = 'add', record) {
+      console.log(this.queryParam.attrTemplateId)
+      this.$refs['commodityAttrForm'].open(mode, record, this.queryParam.attrTemplateId)
     },
     rowKey(record) {
       return record.id

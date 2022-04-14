@@ -33,7 +33,7 @@
         <a-col :span="12">
           <a-form-model-item label="路由编码" prop="code" has-feedback>
             <span v-if="isViewMode">{{ formModel.code }}</span>
-            <a-input v-else placeholder="路由编码（格式 一级路由:二级路由:三级路由:...）" v-model="formModel.code"/>
+            <a-input v-else placeholder="路由编码（格式 一级路由:二级路由:三级路由:...）" v-model="formModel.code"  @change="test"/>
           </a-form-model-item>
         </a-col>
       </a-row>
@@ -48,7 +48,7 @@
         <a-col :span="12">
           <a-form-model-item label="路由地址" prop="path" has-feedback>
             <span v-if="isViewMode">{{ formModel.path }}</span>
-            <a-input v-else v-model="formModel.path"/>
+            <a-input v-else v-model="formModel.path" @change="test"/>
           </a-form-model-item>
         </a-col>
       </a-row>
@@ -151,6 +151,7 @@ import {parseLevelPath} from "@/utils/util";
 
 const ROUTE_TYPE_MENU = 1
 const ROUTE_TYPE_PAGE = 2
+const ROUTE_TYPE_PAGE_HIDDEN = 3
 
 const ROUTE_STATUS_ENABLE = 1
 const ROUTE_STATUS_DISABLE = 2
@@ -177,7 +178,8 @@ let defaultModel = {
 
 const routeTypeOptions = [
   {value: ROUTE_TYPE_MENU, desc: '菜单路由'},
-  {value: ROUTE_TYPE_PAGE, desc: '页面路由'}
+  {value: ROUTE_TYPE_PAGE, desc: '页面路由'},
+  {value: ROUTE_TYPE_PAGE_HIDDEN, desc: '页面隐藏路由'},
 ]
 
 const routeStatusOptions = [
@@ -206,7 +208,7 @@ export default {
       visible: false,
       labelCol: {span: 6},
       wrapperCol: {span: 10},
-      formModel: {...defaultModel},
+      formModel: Object.assign({}, defaultModel),
       mode: FORM_MODE_EDIT,
       form: {},
       routesOptionsDefaultValue: [],
@@ -249,6 +251,10 @@ export default {
     },
   },
   methods: {
+    test(t) {
+      console.log(this.formModel.code)
+      console.log(this.formModel.path)
+    },
     getRouteTypeDesc(value) {
       return this.routeTypeOptions.find(item => item.value === value).desc
     },
@@ -262,14 +268,18 @@ export default {
       return this.mode === FORM_MODE_EDIT
     },
     onSelectRouteChange(value, selectedOptions) {
+      console.log(value)
       this.formModel.pid = value[value.length - 1]
     },
     open(formModel, mode = FORM_MODE_ADD) {
       this.visible = true
       if (formModel) {
         this.formModel = Object.assign(this.formModel, formModel)
+        this.formModel = this.$cloneDeep(this.formModel)
+        console.log(this.formModel)
         if (this.formModel.levelPath) {
           this.routesOptionsDefaultValue = parseLevelPath(this.formModel.levelPath)
+          console.log(this.routesOptionsDefaultValue)
         }
       }
       this.mode = mode
