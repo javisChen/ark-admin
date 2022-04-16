@@ -4,22 +4,10 @@
       <a-form layout="inline">
         <a-row :gutter="48">
           <a-col :md="8" :sm="24">
-            <a-form-item label="工程名称">
-              <a-input v-model="queryParam.projectName" placeholder=""/>
+            <a-form-item label="模板名称">
+              <a-input v-model="queryParam.name" placeholder=""/>
             </a-form-item>
           </a-col>
-          <!--                <a-col :md="8" :sm="24">-->
-          <!--                  <a-form-item label="使用状态">-->
-          <!--                    <a-select v-model="queryParam.status" placeholder="请选择" :default-value="0"-->
-          <!--                              @change="handleQueryStatusChange">-->
-          <!--                      <a-select-option v-for="(value, key) in routeStatusDictionary"-->
-          <!--                                       :key="key"-->
-          <!--                                       :value="key">-->
-          <!--                        {{ value }}-->
-          <!--                      </a-select-option>-->
-          <!--                    </a-select>-->
-          <!--                  </a-form-item>-->
-          <!--                </a-col>-->
           <a-col :md="!advanced && 8 || 24" :sm="24">
                               <span class="table-page-search-submitButtons"
                                     :style="advanced && { float: 'right', overflow: 'hidden' } || {} ">
@@ -32,13 +20,12 @@
     </div>
 
     <div class="table-operator">
-      <a-button type="primary" icon="plus" @click="showForm">创建工程</a-button>
+      <a-button type="primary" icon="plus" @click="showForm">添加模板</a-button>
     </div>
 
     <a-table
       v-if="tableData && tableData.length > 0"
       bordered
-      :scroll="scroll"
       @change="handleTableChange"
       :pagination="pagination"
       :loading="tableLoading"
@@ -50,8 +37,10 @@
       :columns="columns"
       :data-source="tableData">
 
-      <template slot="gitReposUrl" slot-scope="text, record">
-        <a @click="goToGit(text);" :href="text">{{ text }}</a>
+      <template slot="setting" slot-scope="text, record">
+        <a href="#" @click="toAttrGroup(record)">查看属性组</a>&nbsp;
+        <a href="#" @click="toAttrSpec(record)">查看规格</a>&nbsp;
+        <a href="#" @click="toAttrParam(record)">查看参数</a>
       </template>
 
       <template slot="action" slot-scope="text, record">
@@ -64,23 +53,56 @@
 
 
     <!-- 创建路由信息表单-->
-    <code-project-form ref="codeProjectForm"
-                       @success="handleFormOnSuccess"
-                       @cancel="handleEditFormCancel"/>
+    <commodity-attr-template-form ref="commodityAttrTemplateForm"
+                                  @success="handleFormOnSuccess"
+                                  @cancel="handleEditFormCancel"/>
 
-    <!-- 获取工程代码 -->
-    <get-project-modal ref="getProjectModal"/>
+    <a-modal v-if="selectedAttrTemplate"
+             :visible="showAttrGroup"
+             :width="800"
+             title="商品属性组"
+             :closable="true"
+             :mask="true"
+             :maskClosable="true"
+             :footer="null"
+             @cancel="() => this.showAttrGroup = !this.showAttrGroup">
+      <commodity-attr-group :attr-template-id="selectedAttrTemplate.id"/>
+    </a-modal>
+
+    <a-modal v-if="selectedAttrTemplate"
+             :visible="showAttrParam"
+             :width="800"
+             title="商品参数"
+             :closable="true"
+             :mask="true"
+             :maskClosable="true"
+             :footer="null"
+             @cancel="() => this.showAttrParam = !this.showAttrParam">
+      <commodity-attr :attr-template-id="selectedAttrTemplate.id" :type="attrType"/>
+    </a-modal>
+
+    <a-modal v-if="selectedAttrTemplate"
+             :visible="showAttrSpec"
+             :width="800"
+             title="商品规格"
+             :closable="true"
+             :mask="true"
+             :maskClosable="true"
+             :footer="null"
+             @cancel="() => this.showAttrSpec = !this.showAttrSpec">
+      <commodity-attr :attr-template-id="selectedAttrTemplate.id" :type="attrType"/>
+    </a-modal>
 
   </a-card>
-
 
 </template>
 
 <script>
 
-import {getCodeProjectInfo, pageListCodeProject} from '@/api/eop/code-project-api'
-import CodeProjectForm from "@/views/eop/codeproject/components/CodeProjectForm";
-import GetProjectModal from "@/views/eop/codeproject/components/GetProjectModal";
+import {getInfo, getPageList} from '@/api/commodity/attr-template-api'
+import CommodityAttrTemplateForm from "./components/CommodityAttrTemplateForm";
+import CommodityAttrGroup from "../attrGroup/CommodityAttrGroup";
+import CommodityAttr from "../attr/CommodityAttr";
 
 const routeStatusDictionary = {
   1: '已启用',
@@ -99,19 +121,25 @@ const pagination = {
 }
 
 const queryParam = {
-  projectName: '',
+  name: '',
   current: 1,
   size: 15,
 }
 
 export default {
-  name: 'CodeProject',
+  name: 'CommodityAttrTemplate',
   components: {
-    GetProjectModal,
-    CodeProjectForm,
+    CommodityAttrTemplateForm,
+    CommodityAttrGroup,
+    CommodityAttr
   },
   data() {
     return {
+      selectedAttrTemplate: {},
+      showAttrGroup: false,
+      showAttrSpec: false,
+      showAttrParam: false,
+      attrType: 0,
       scroll: {x: 1300},
       pagination,
       defaultExpandAllRows: false,
@@ -121,61 +149,24 @@ export default {
       tableData: [],
       columns: [
         {
-          title: '工程名称',
+          title: '模板名称',
           align: 'center',
           dataIndex: 'name',
-          fixed: 'left',
-          width: 150
-        },
-        {
-          title: '工程代码',
-          align: 'center',
-          dataIndex: 'code',
-          // width: 150
-        },
-        {
-          title: '工程类型',
-          align: 'center',
-          dataIndex: 'type',
-          // width: 100
-        },
-        {
-          title: '脚手架',
-          align: 'center',
-          dataIndex: 'scaffold',
-          // width: 100
-        },
-        {
-          title: '仓库地址',
-          align: 'center',
-          dataIndex: 'gitHtmlUrl',
-          scopedSlots: {customRender: 'gitReposUrl'},
-          ellipsis: true
-          // width: 150
-        },
-        {
-          title: '仓库状态',
-          align: 'center',
-          dataIndex: 'reposStatus',
-          // width: 100
-        },
-        {
-          title: '推送状态',
-          align: 'center',
-          dataIndex: 'pushStatus',
-          // width: 100
         },
         {
           title: '创建时间',
           align: 'center',
-          dataIndex: 'createTime',
-          // width: 180
+          dataIndex: 'gmtCreate',
+        },
+        {
+          title: '设置',
+          align: 'center',
+          scopedSlots: {customRender: 'setting'},
         },
         {
           title: '操作',
           align: 'center',
           scopedSlots: {customRender: 'action'},
-          fixed: 'right',
           width: 100
         },
       ],
@@ -188,12 +179,37 @@ export default {
     this.loadTableData();
   },
   methods: {
-    async handleView(record) {
-      const {data} = await getCodeProjectInfo({codeProjectId: record.id})
-      this.$refs['codeProjectForm'].open(data, 'view')
+    toAttrGroup(record) {
+      // this.selectedAttrTemplate = record
+      this.$router.push({
+        path: '/commodity/attr/group',
+        query: {templateId: record.id},
+      })
+      // this.showAttrGroup = true;
     },
-    async openDownloadView(record) {
-      this.$refs['getProjectModal'].open(record)
+    toAttrSpec(record) {
+      this.$router.push({
+        path: '/commodity/attr',
+        query: {
+          templateId: record.id,
+          type: 1
+        },
+      })
+      // this.selectedAttrTemplate = record
+      // this.attrType = 1
+      // this.showAttrSpec = true;
+    },
+    toAttrParam(record) {
+      this.$router.push({
+        path: '/commodity/attr',
+        query: {
+          templateId: record.id,
+          type: 2
+        },
+      })
+      // this.selectedAttrTemplate = record
+      // this.attrType = 2
+      // this.showAttrParam = true;
     },
     handleTableChange(pagination, filters, sorter) {
       this.queryParam.current = pagination.current
@@ -216,7 +232,7 @@ export default {
     handleEditFormCancel() {
     },
     showForm() {
-      this.$refs['codeProjectForm'].open()
+      this.$refs['commodityAttrTemplateForm'].open()
     },
     rowKey(record) {
       return record.id
@@ -229,7 +245,7 @@ export default {
     },
     async loadTableData() {
       this.toggleLoading()
-      const {data} = await pageListCodeProject(this.queryParam)
+      const {data} = await getPageList(this.queryParam)
       this.tableData = data.records;
       this.pagination.total = data.total
       this.toggleLoading()
