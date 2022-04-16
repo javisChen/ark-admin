@@ -52,7 +52,7 @@
       </template>
 
       <template slot="setting" slot-scope="text, record">
-        <a href="#/" @click="toChildren(record)">查看下级</a>&nbsp;
+        <a v-if="record.level < 3" @click.prevent="toChildren(record)">查看下级</a>&nbsp;
       </template>
 
       <template slot="action" slot-scope="text, record">
@@ -107,7 +107,6 @@ export default {
   },
   data() {
     return {
-      scroll: {x: 1300},
       pagination,
       tableLoading: false,
       advanced: false,

@@ -38,9 +38,9 @@
       :data-source="tableData">
 
       <template slot="setting" slot-scope="text, record">
-        <a href="#/" @click="toAttrGroup(record)">查看属性组</a>&nbsp;
-        <a href="#/" @click="toAttrSpec(record)">查看规格</a>&nbsp;
-        <a href="#/" @click="toAttrParam(record)">查看参数</a>
+        <a href="#" @click="toAttrGroup(record)">查看属性组</a>&nbsp;
+        <a href="#" @click="toAttrSpec(record)">查看规格</a>&nbsp;
+        <a href="#" @click="toAttrParam(record)">查看参数</a>
       </template>
 
       <template slot="action" slot-scope="text, record">
