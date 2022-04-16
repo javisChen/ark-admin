@@ -3,7 +3,7 @@
   <a-modal
     :width="1000"
     v-model="visible"
-    :title="isEditMode ? '编辑属性' : '添加属性'"
+    :title="isEditMode ? '编辑分类' : '添加分类'"
     ok-text="保存"
     :confirmLoading="confirmLoading"
     :destroyOnClose="true"
@@ -21,42 +21,34 @@
       :label-col="labelCol"
       :wrapper-col="wrapperCol">
 
-      <a-form-model-item ref="name" label="属性名称" prop="name" has-feedback>
-        <a-input placeholder="属性名称" v-model="formModel.name"/>
+      <a-form-model-item ref="name" label="分类名称" prop="name" has-feedback>
+        <a-input placeholder="分类名称" v-model="formModel.name"/>
       </a-form-model-item>
 
-      <a-form-model-item ref="attrGroupId" label="属性组" prop="attrGroupId">
-        <commodity-attr-group-select v-if="formModel.attrTemplateId"
-                                     :attrTemplateId="formModel.attrTemplateId"
-                                     v-model="formModel.attrGroupId"></commodity-attr-group-select>
+      <a-form-model-item label="上级分类" v-if="parent">
+        <span>{{parent.name}}</span>
       </a-form-model-item>
 
-      <a-form-model-item ref="inputType" label="录入方式" prop="inputType">
-        <a-radio-group v-model="formModel.inputType" name="inputType">
-          <a-radio v-for="item in inputTypeOptions"
-                          :key="item.value"
-                          :value="item.value">{{ item.desc }}
-          </a-radio>
-        </a-radio-group>
-      </a-form-model-item>
-
-      <a-form-model-item v-if="formModel.inputType === 2" label="可选值列表">
-        <template v-for="(item, idx) in valueList">
-          <div>
-            <a-input v-model="item.value" style="width: 80%" placeholder="可选值列表"/>&nbsp;
-            <k-tooltip-button v-if="idx === valueList.length - 1" title="添加" @click="addValueListItem" icon="plus"/>
-            <k-tooltip-button v-if="idx !== valueList.length - 1" title="移除" @click="removeValueListItem(idx)" type="danger" icon="minus"/>
-          </div>
-        </template>
-      </a-form-model-item>
-
-      <a-form-model-item ref="canManualAdd" label="是否支持手动新增" prop="canManualAdd" has-feedback>
-        <a-radio-group v-model="formModel.canManualAdd" name="canManualAdd">
-          <a-radio v-for="item in canManualAddOptions"
+      <a-form-model-item ref="isShow" label="是否显示" prop="isShow">
+        <a-radio-group v-model="formModel.isShow" name="isShow">
+          <a-radio v-for="item in isShowOptions"
                    :key="item.value"
                    :value="item.value">{{ item.desc }}
           </a-radio>
         </a-radio-group>
+      </a-form-model-item>
+
+      <a-form-model-item ref="isNav" label="是否显示" prop="isNav">
+        <a-radio-group v-model="formModel.isNav" name="isNav">
+          <a-radio v-for="item in isNavOptions"
+                   :key="item.value"
+                   :value="item.value">{{ item.desc }}
+          </a-radio>
+        </a-radio-group>
+      </a-form-model-item>
+
+      <a-form-model-item ref="attrTemplateId" label="商品属性模板" prop="isNav">
+        <commodity-attr-template-select v-model="formModel.attrTemplateId"/>
       </a-form-model-item>
 
     </a-form-model>
@@ -66,30 +58,34 @@
 
 <script>
 
-import {create as createAttr, update as updateAttr} from '@/api/commodity/attr-api'
-import CommodityAttrGroupSelect from "../../attrGroup/components/CommodityAttrGroupSelect";
+import {create, update, getInfo} from '@/api/commodity/category-api';
+import CommodityAttrTemplateSelect from "@/views/commodity/attr/attrTemplate/components/CommodityAttrTemplateSelect";
+
 
 const defaultModel = {
-  id: undefined,
+  id: 0,
   name: "",
-  inputType: 1,
-  type: 0,
+  isShow: 0,
+  isNav: 0,
   sort: 0,
-  attrGroupId: undefined,
-  attrTemplateId: 0,
-  canManualAdd: 0,
-  values: [
-    ""
-  ],
+  pid: 0,
+  attrTemplateId: undefined
 }
 
-const inputTypeOptions = [
-  {value: 1, desc: '手工录入'},
-  {value: 2, desc: '从选项列表选择'}
+const isShowOptions = [
+  {value: 1, desc: '是'},
+  {value: 0, desc: '否'}
 ]
-const canManualAddOptions = [
-  {value: 0, desc: '否'},
-  {value: 1, desc: '是'}
+
+const isNavOptions = [
+  {value: 1, desc: '是'},
+  {value: 0, desc: '否'}
+]
+
+const levelList = [
+  {value: 0, desc: '一级分类'},
+  {value: 1, desc: '二级分类'},
+  {value: 2, desc: '三级分类'},
 ]
 
 const FORM_MODE_EDIT = 'edit';
@@ -98,13 +94,15 @@ const FORM_MODE_ADD = 'add';
 export default {
   name: 'CommodityAttrForm',
   components: {
-    CommodityAttrGroupSelect
+    CommodityAttrTemplateSelect
   },
   data() {
     return {
+      parent: undefined,
+      levelList,
       valueList: [{value: ''}],
-      canManualAddOptions,
-      inputTypeOptions,
+      isNavOptions,
+      isShowOptions,
       fileList: [],
       confirmLoading: false,
       visible: false,
@@ -114,8 +112,8 @@ export default {
       type: FORM_MODE_EDIT,
       form: {},
       rules: {
-        name: [{required: true, message: '请输入模板名称', trigger: 'blur'}],
-        inputType: [{required: true, message: '请输入模板名称', trigger: 'blur'}],
+        name: [{required: true, message: '请输入分类名称', trigger: 'blur'}],
+        inputType: [{required: true, message: '请输入分类名称', trigger: 'blur'}],
       }
     }
   },
@@ -137,15 +135,20 @@ export default {
     onSelectRouteChange(value, selectedOptions) {
       this.formModel.pid = value[value.length - 1]
     },
-    open(type = FORM_MODE_ADD, formModel, attrTemplateId, attrType) {
+    getParentInfo: async function (formModel) {
+      if (formModel.pid && formModel.pid > 0) {
+        const {data} = await getInfo({id: formModel.pid})
+        this.parent = data
+      }
+    },
+    open(type = FORM_MODE_ADD, formModel) {
       this.visible = true
+      console.log(type)
       if (formModel) {
+        this.getParentInfo(formModel);
         this.formModel = Object.assign(this.formModel, formModel)
         this.formModel = this.$cloneDeep(this.formModel)
-        this.valueList = this.formModel.values.map(item => ({value: item}))
       }
-      this.formModel.attrTemplateId = attrTemplateId
-      this.formModel.type = attrType
       this.type = type
     },
     close() {
@@ -179,17 +182,13 @@ export default {
           return false;
         }
         this.toggleConfirmLoading()
-        this.formModel.values = this.valueList.map(item => item.value)
-        console.log(this.formModel)
-        // this.closeConfirmLoading()
-        // return
         if (this.type === FORM_MODE_ADD) {
-          createAttr(this.formModel)
+          create(this.formModel)
             .then(({data}) => this.afterSuccess())
             .catch(e => e)
             .finally(() => this.closeConfirmLoading())
         } else {
-          updateAttr(this.formModel)
+          update(this.formModel)
             .then(({data}) => this.afterSuccess())
             .catch(e => e)
             .finally(() => this.closeConfirmLoading())

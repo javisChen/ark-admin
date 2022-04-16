@@ -4,7 +4,7 @@
       <a-form layout="inline">
         <a-row :gutter="48">
           <a-col :md="8" :sm="24">
-            <a-form-item label="属性名称">
+            <a-form-item :label="title + '名称'">
               <a-input v-model="queryParam.name" placeholder=""/>
             </a-form-item>
           </a-col>
@@ -19,7 +19,7 @@
     </div>
 
     <div class="table-operator">
-      <a-button type="primary" icon="plus" @click="showForm">添加属性</a-button>
+      <a-button type="primary" icon="plus" @click="showForm">添加{{ title }}</a-button>
     </div>
 
     <a-table
@@ -130,7 +130,7 @@ export default {
       tableData: [],
       columns: [
         {
-          title: '属性名称',
+          title: '名称',
           align: 'center',
           dataIndex: 'name',
         },
@@ -163,6 +163,19 @@ export default {
       typeDict,
       roleFormVisible: false,
     };
+  },
+  computed: {
+    title() {
+      console.log(this.queryParam)
+      if (this.queryParam) {
+        if (this.queryParam.type == 1) {
+          return '规格'
+        } else if (this.queryParam.type == 2) {
+          return '参数'
+        }
+      }
+      return ''
+    },
   },
   created() {
     if (this.$route.query.templateId) {
@@ -209,7 +222,7 @@ export default {
 
         }
       }
-      this.$refs['commodityAttrForm'].open(mode, record, this.queryParam.attrTemplateId)
+      this.$refs['commodityAttrForm'].open(mode, record, this.queryParam.attrTemplateId, this.queryParam.type)
     },
     rowKey(record) {
       return record.id

@@ -4,7 +4,7 @@
       <a-form layout="inline">
         <a-row :gutter="48">
           <a-col :md="8" :sm="24">
-            <a-form-item label="工程名称">
+            <a-form-item label="分类名称">
               <a-input v-model="queryParam.projectName" placeholder=""/>
             </a-form-item>
           </a-col>
@@ -32,44 +32,38 @@
     </div>
 
     <div class="table-operator">
-      <a-button type="primary" icon="plus" @click="showForm">创建工程</a-button>
+      <a-button type="primary" icon="plus" @click="showForm">添加分类</a-button>
     </div>
 
     <a-table
       v-if="tableData && tableData.length > 0"
       bordered
-      :scroll="scroll"
       @change="handleTableChange"
       :pagination="pagination"
       :loading="tableLoading"
-      :defaultExpandAllRows="defaultExpandAllRows"
-      :expandRowByClick="true"
       :size="'small'"
       :indent-size="15"
       :row-key="rowKey"
       :columns="columns"
       :data-source="tableData">
 
-      <template slot="gitReposUrl" slot-scope="text, record">
-        <a @click="goToGit(text);" :href="text">{{ text }}</a>
+      <template slot="level" slot-scope="text, record">
+        {{ getLevelDesc(record.level) }}
+      </template>
+
+      <template slot="setting" slot-scope="text, record">
+        <a href="#/" @click="toChildren(record)">查看下级</a>&nbsp;
       </template>
 
       <template slot="action" slot-scope="text, record">
         <k-tooltip-button title="查看" @click="handleView(record)" icon="search"/>
-        &nbsp
-        <k-tooltip-button title="下载" @click="openDownloadView(record)" icon="download"/>&nbsp;
       </template>
     </a-table>
     <a-empty v-else/>
 
-
-    <!-- 创建路由信息表单-->
-    <code-project-form ref="codeProjectForm"
-                       @success="handleFormOnSuccess"
-                       @cancel="handleEditFormCancel"/>
-
-    <!-- 获取工程代码 -->
-    <get-project-modal ref="getProjectModal"/>
+    <commodity-category-form ref="commodityCategoryForm"
+                             @success="handleFormOnSuccess"
+                             @cancel="handleEditFormCancel"/>
 
   </a-card>
 
@@ -78,13 +72,13 @@
 
 <script>
 
-import {getCodeProjectInfo, pageListCodeProject} from '@/api/eop/code-project-api'
-import CodeProjectForm from "@/views/eop/codeproject/components/CodeProjectForm";
-import GetProjectModal from "@/views/eop/codeproject/components/GetProjectModal";
+import {getInfo, getPageList} from '@/api/commodity/category-api'
+import CommodityCategoryForm from "./components/CommodityCategoryForm";
 
-const routeStatusDictionary = {
-  1: '已启用',
-  2: '已禁用'
+const levelDict = {
+  1: '一级菜单',
+  2: '二级菜单',
+  3: '三级菜单'
 }
 
 const pagination = {
@@ -99,101 +93,93 @@ const pagination = {
 }
 
 const queryParam = {
-  projectName: '',
+  name: '',
+  pid: undefined,
+  level: undefined,
   current: 1,
   size: 15,
 }
 
 export default {
-  name: 'CodeProject',
+  name: 'CommodityCategory',
   components: {
-    GetProjectModal,
-    CodeProjectForm,
+    CommodityCategoryForm
   },
   data() {
     return {
       scroll: {x: 1300},
       pagination,
-      defaultExpandAllRows: false,
       tableLoading: false,
       advanced: false,
       queryParam: Object.assign({}, queryParam),
       tableData: [],
       columns: [
         {
-          title: '工程名称',
+          title: '分类名称',
           align: 'center',
           dataIndex: 'name',
-          fixed: 'left',
-          width: 150
         },
         {
-          title: '工程代码',
+          title: '级别',
           align: 'center',
-          dataIndex: 'code',
-          // width: 150
-        },
-        {
-          title: '工程类型',
-          align: 'center',
-          dataIndex: 'type',
-          // width: 100
-        },
-        {
-          title: '脚手架',
-          align: 'center',
-          dataIndex: 'scaffold',
-          // width: 100
-        },
-        {
-          title: '仓库地址',
-          align: 'center',
-          dataIndex: 'gitHtmlUrl',
-          scopedSlots: {customRender: 'gitReposUrl'},
-          ellipsis: true
-          // width: 150
-        },
-        {
-          title: '仓库状态',
-          align: 'center',
-          dataIndex: 'reposStatus',
-          // width: 100
-        },
-        {
-          title: '推送状态',
-          align: 'center',
-          dataIndex: 'pushStatus',
-          // width: 100
+          dataIndex: 'level',
+          scopedSlots: {customRender: 'level'},
         },
         {
           title: '创建时间',
           align: 'center',
-          dataIndex: 'createTime',
-          // width: 180
+          dataIndex: 'gmtCreate',
+        },
+        {
+          title: '设置',
+          align: 'center',
+          scopedSlots: {customRender: 'setting'},
         },
         {
           title: '操作',
           align: 'center',
           scopedSlots: {customRender: 'action'},
-          fixed: 'right',
-          width: 100
-        },
+        }
       ],
       selectedRoute: {},
-      routeStatusDictionary,
       roleFormVisible: false,
     };
+  },
+  watch: {
+    $route: {
+      immediate: true,
+      handler(newValue, oldValue) {
+        this.initQueryParams()
+        this.loadTableData();
+      }
+    },
   },
   created() {
     this.loadTableData();
   },
   methods: {
-    async handleView(record) {
-      const {data} = await getCodeProjectInfo({codeProjectId: record.id})
-      this.$refs['codeProjectForm'].open(data, 'view')
+    initQueryParams(query) {
+      if (this.$route.query) {
+        const {pid , level} = this.$route.query;
+        this.queryParam.pid = pid
+        this.queryParam.level = level
+      }
     },
-    async openDownloadView(record) {
-      this.$refs['getProjectModal'].open(record)
+    toChildren(record) {
+      this.$router.push({
+        path: '/commodity/category',
+        query: {
+          pid: record.id,
+          level: record.level + 1
+        },
+      })
+    },
+    getLevelDesc(value) {
+      return levelDict[value]
+    },
+    async handleView(record) {
+      const {data} = await getInfo({id: record.id})
+      this.$refs['commodityCategoryForm'].open(data, 'view')
     },
     handleTableChange(pagination, filters, sorter) {
       this.queryParam.current = pagination.current
@@ -215,21 +201,25 @@ export default {
     },
     handleEditFormCancel() {
     },
-    showForm() {
-      this.$refs['codeProjectForm'].open()
+    showForm(e, mode = 'add', record) {
+      console.log(e)
+      console.log(mode)
+      if (!record) {
+        record = {
+          pid: this.queryParam.pid
+        }
+      }
+      this.$refs['commodityCategoryForm'].open(mode, record)
     },
     rowKey(record) {
       return record.id
-    },
-    goToGit(text) {
-      window.open(text)
     },
     toggleLoading() {
       this.tableLoading = !this.tableLoading
     },
     async loadTableData() {
       this.toggleLoading()
-      const {data} = await pageListCodeProject(this.queryParam)
+      const {data} = await getPageList(this.queryParam)
       this.tableData = data.records;
       this.pagination.total = data.total
       this.toggleLoading()
