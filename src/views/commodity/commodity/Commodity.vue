@@ -100,9 +100,6 @@
 <script>
 
 import {getInfo, getPageList} from '@/api/commodity/attr-template-api'
-import CommodityAttrTemplateForm from "./components/CommodityAttrTemplateForm";
-import CommodityAttrGroup from "../attrGroup/CommodityAttrGroup";
-import CommodityAttr from "../attr/CommodityAttr";
 
 const routeStatusDictionary = {
   1: '已启用',
@@ -127,11 +124,8 @@ const queryParam = {
 }
 
 export default {
-  name: 'CommodityAttrTemplate',
+  name: 'Commodity',
   components: {
-    CommodityAttrTemplateForm,
-    CommodityAttrGroup,
-    CommodityAttr
   },
   data() {
     return {
