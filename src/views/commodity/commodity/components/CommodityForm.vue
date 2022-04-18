@@ -2,15 +2,10 @@
 
   <div>
     <a-card class="card" title="商品信息" :bordered="false">
-      <commodity-base-info />
-    </a-card>
-    <a-card class="card" title="商品相册" :bordered="false">
-      <k-upload v-model="fileList"
-                :limit="20"
-                @change="(fileList) => formModel.imageUrl = fileList[0].url"/>
+      <commodity-base-info @onCategoryChange="onCategoryChange"/>
     </a-card>
     <a-card class="card" title="商品规格" :bordered="false">
-      <commodity-sku/>
+      <commodity-sku :category-id="formModel.categoryId"/>
     </a-card>
   </div>
 
@@ -97,6 +92,9 @@ export default {
     },
   },
   methods: {
+    onCategoryChange(value) {
+      this.formModel.categoryId = value
+    },
     addValueListItem() {
       this.valueList.push({value: ''})
     },

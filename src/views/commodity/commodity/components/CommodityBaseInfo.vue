@@ -6,7 +6,7 @@
     :label-col="labelCol"
     :wrapper-col="wrapperCol">
     <a-form-model-item ref="categoryId" label="商品分类" prop="categoryId">
-      <commodity-category-cascader v-model="formModel.categoryId"/>
+      <commodity-category-cascader v-model="formModel.categoryId" @change="onCategoryChange"/>
     </a-form-model-item>
 
     <a-form-model-item ref="brandId" label="商品品牌" prop="brandId">
@@ -65,7 +65,12 @@ export default {
     }
   },
   created() {
-    console.log('created')
+
+  },
+  methods: {
+    onCategoryChange(value) {
+      this.$emit("onCategoryChange", value)
+    }
   }
 }
 </script>

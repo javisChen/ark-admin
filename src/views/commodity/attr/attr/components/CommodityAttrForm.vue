@@ -155,7 +155,7 @@ export default {
     },
     resetForm() {
       this.formModel = Object.assign({}, defaultModel)
-      this.valueList = []
+      this.valueList = [{value: ''}]
     },
     handleClose() {
       this.close()
