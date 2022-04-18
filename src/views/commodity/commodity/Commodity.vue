@@ -4,7 +4,7 @@
       <a-form layout="inline">
         <a-row :gutter="48">
           <a-col :md="8" :sm="24">
-            <a-form-item label="模板名称">
+            <a-form-item label="商品名称">
               <a-input v-model="queryParam.name" placeholder=""/>
             </a-form-item>
           </a-col>
@@ -20,7 +20,7 @@
     </div>
 
     <div class="table-operator">
-      <a-button type="primary" icon="plus" @click="showForm">添加模板</a-button>
+      <a-button type="primary" icon="plus" @click="showForm">添加商品</a-button>
     </div>
 
     <a-table
@@ -43,6 +43,11 @@
         <a href="#" @click="toAttrParam(record)">查看参数</a>
       </template>
 
+
+      <template slot="getShelfStatus" slot-scope="text, record">
+        <span>getShelfStatus(record.shelfStatus)</span>
+      </template>
+
       <template slot="action" slot-scope="text, record">
         <k-tooltip-button title="查看" @click="handleView(record)" icon="search"/>
         &nbsp
@@ -51,59 +56,17 @@
     </a-table>
     <a-empty v-else/>
 
-
-    <!-- 创建路由信息表单-->
-    <commodity-attr-template-form ref="commodityAttrTemplateForm"
-                                  @success="handleFormOnSuccess"
-                                  @cancel="handleEditFormCancel"/>
-
-    <a-modal v-if="selectedAttrTemplate"
-             :visible="showAttrGroup"
-             :width="800"
-             title="商品属性组"
-             :closable="true"
-             :mask="true"
-             :maskClosable="true"
-             :footer="null"
-             @cancel="() => this.showAttrGroup = !this.showAttrGroup">
-      <commodity-attr-group :attr-template-id="selectedAttrTemplate.id"/>
-    </a-modal>
-
-    <a-modal v-if="selectedAttrTemplate"
-             :visible="showAttrParam"
-             :width="800"
-             title="商品参数"
-             :closable="true"
-             :mask="true"
-             :maskClosable="true"
-             :footer="null"
-             @cancel="() => this.showAttrParam = !this.showAttrParam">
-      <commodity-attr :attr-template-id="selectedAttrTemplate.id" :type="attrType"/>
-    </a-modal>
-
-    <a-modal v-if="selectedAttrTemplate"
-             :visible="showAttrSpec"
-             :width="800"
-             title="商品规格"
-             :closable="true"
-             :mask="true"
-             :maskClosable="true"
-             :footer="null"
-             @cancel="() => this.showAttrSpec = !this.showAttrSpec">
-      <commodity-attr :attr-template-id="selectedAttrTemplate.id" :type="attrType"/>
-    </a-modal>
-
   </a-card>
 
 </template>
 
 <script>
 
-import {getInfo, getPageList} from '@/api/commodity/attr-template-api'
+import {getInfo, getPageList} from '@/api/commodity/commodity-api'
 
-const routeStatusDictionary = {
-  1: '已启用',
-  2: '已禁用'
+const shelfStatusDict = {
+  0: '已上架',
+  1: '已下架'
 }
 
 const pagination = {
@@ -143,9 +106,25 @@ export default {
       tableData: [],
       columns: [
         {
-          title: '模板名称',
+          title: '商品名称',
           align: 'center',
           dataIndex: 'name',
+        },
+        {
+          title: '品牌名称',
+          align: 'center',
+          dataIndex: 'brandName',
+        },
+        {
+          title: '分类名称',
+          align: 'center',
+          dataIndex: 'categoryName',
+        },
+        {
+          title: '上下架状态',
+          align: 'center',
+          dataIndex: 'shelfStatus',
+          scopedSlots: {customRender: 'shelfStatus'},
         },
         {
           title: '创建时间',
@@ -165,7 +144,7 @@ export default {
         },
       ],
       selectedRoute: {},
-      routeStatusDictionary,
+      shelfStatusDict,
       roleFormVisible: false,
     };
   },
@@ -173,6 +152,9 @@ export default {
     this.loadTableData();
   },
   methods: {
+    getShelfStatus(value) {
+      return shelfStatusDict[value]
+    },
     toAttrGroup(record) {
       // this.selectedAttrTemplate = record
       this.$router.push({
@@ -226,7 +208,9 @@ export default {
     handleEditFormCancel() {
     },
     showForm() {
-      this.$refs['commodityAttrTemplateForm'].open()
+      this.$router.push({
+        path: '/commodity/form',
+      })
     },
     rowKey(record) {
       return record.id
@@ -239,8 +223,11 @@ export default {
     },
     async loadTableData() {
       this.toggleLoading()
+      console.log(123)
       const {data} = await getPageList(this.queryParam)
-      this.tableData = data.records;
+      if (data) {
+        this.tableData = data.records;
+      }
       this.pagination.total = data.total
       this.toggleLoading()
     }

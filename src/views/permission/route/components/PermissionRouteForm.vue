@@ -268,7 +268,6 @@ export default {
       return this.mode === FORM_MODE_EDIT
     },
     onSelectRouteChange(value, selectedOptions) {
-      console.log(value)
       this.formModel.pid = value[value.length - 1]
     },
     open(formModel, mode = FORM_MODE_ADD) {

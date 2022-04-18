@@ -38,7 +38,6 @@
     <a-table
       v-if="tableData && tableData.length > 0"
       bordered
-      :scroll="scroll"
       @change="handleTableChange"
       :pagination="pagination"
       :loading="tableLoading"
@@ -103,7 +102,6 @@ export default {
   },
   data() {
     return {
-      scroll: {x: 1300},
       pagination,
       defaultExpandAllRows: false,
       tableLoading: false,
@@ -115,27 +113,23 @@ export default {
           title: '品牌名称',
           align: 'center',
           dataIndex: 'name',
-          fixed: 'left',
           width: 150
         },
         {
           title: '品牌首字母',
           align: 'center',
           dataIndex: 'letter',
-          // width: 150
         },
         {
           title: 'LOGO',
           align: 'center',
           dataIndex: 'imageUrl',
           scopedSlots: {customRender: 'logo'},
-          // width: 100
         },
         {
           title: '创建时间',
           align: 'center',
           dataIndex: 'gmtCreate',
-          // width: 180
         },
         {
           title: '操作',

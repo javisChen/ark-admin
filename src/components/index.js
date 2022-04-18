@@ -25,6 +25,7 @@ import TagSelect from '@/components/TagSelect'
 import StandardFormRow from '@/components/StandardFormRow'
 import ArticleListContent from '@/components/ArticleListContent'
 import TooltipButton from '@/components/KTooltipButton'
+import KUpload from '@/components/KUpload'
 import Dialog from '@/components/Dialog'
 
 export {
@@ -52,5 +53,6 @@ export {
   StandardFormRow,
   ArticleListContent,
   TooltipButton,
-  Dialog
+  Dialog,
+  KUpload,
 }

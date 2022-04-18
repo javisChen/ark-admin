@@ -29,21 +29,9 @@
       </a-form-model-item>
 
       <a-form-model-item label="LOGO" prop="imageUrl" required>
-        <a-upload
-          list-type="picture-card"
-          :file-list="fileList"
-          :customRequest="customRequest"
-          @preview="handlePreview"
-          :remove="handleRemove"
-        >
-          <div v-if="fileList.length === 0">
-            <a-icon type="plus"/>
-            <div class="ant-upload-text">
-              LOGO
-            </div>
-          </div>
-        </a-upload>
-
+        <k-upload v-model="fileList"
+                   :limit="1"
+                   @change="(fileList) => formModel.imageUrl = fileList[0].url"/>
       </a-form-model-item>
     </a-form-model>
 
@@ -53,7 +41,7 @@
 <script>
 
 import {create, update} from '@/api/commodity/brand-api'
-import {upload} from '@/api/file/file-api'
+import KTUpload from "@/components/KUpload/KUpload";
 
 const defaultModel = {
   id: '',
@@ -76,7 +64,7 @@ function getBase64(file) {
 
 export default {
   name: 'CommodityBrandForm',
-  components: {},
+  components: {KTUpload},
   data() {
     return {
       fileList: [],
@@ -100,35 +88,6 @@ export default {
     },
   },
   methods: {
-    async handlePreview(file) {
-      if (!file.url && !file.preview) {
-        file.preview = await getBase64(file.originFileObj);
-      }
-      this.previewImage = file.url || file.preview;
-      this.previewVisible = true;
-    },
-    async handleRemove() {
-      this.fileList = []
-    },
-    async customRequest(f) {
-      const {file} = f
-      const formData = new FormData();
-      formData.append('file', file);
-      try {
-        const {data} = await upload(formData);
-        this.formModel.imageUrl = data.url
-        this.fileList.push({
-          uid: file.uid,
-          name: file.name,
-          status: 'done',
-          url: this.formModel.imageUrl,
-        })
-        this.$message.success('上传成功')
-      } catch (e) {
-        this.$message.error('上传失败')
-      }
-
-    },
     handleChange(value) {
       this.$emit('change', value)
     },
@@ -140,13 +99,9 @@ export default {
     onSelectRouteChange(value, selectedOptions) {
       this.formModel.pid = value[value.length - 1]
     },
-    stringArrConvertToNumberArr: function () {
-      return this.formModel.levelPath.split('.').map(item => +item);
-    },
     open(formModel, type = FORM_MODE_ADD) {
       this.visible = true
       if (formModel) {
-        console.log('formModel', formModel)
         this.formModel = Object.assign(this.formModel, formModel)
       }
       this.type = type

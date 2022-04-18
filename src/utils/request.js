@@ -111,6 +111,10 @@ request.interceptors.response.use((response) => {
   if (serverResponse.code === SUCCESS_CODE) {
     return Promise.resolve({data: serverResponse.data, resp: serverResponse})
   }
+  message.error({
+    content: serverResponse.msg,
+    duration: 4
+  })
   return Promise.reject(serverResponse)
 }, errorHandler)
 

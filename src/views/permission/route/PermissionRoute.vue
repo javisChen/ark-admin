@@ -92,7 +92,8 @@ const routeStatusDictionary = {
 
 const routeTypeDictionary = {
   1: '菜单路由',
-  2: '页面路由'
+  2: '页面路由',
+  3: '页面隐藏路由'
 }
 
 const pagination = {
