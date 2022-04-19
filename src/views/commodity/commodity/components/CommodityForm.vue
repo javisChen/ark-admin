@@ -1,6 +1,8 @@
 <template>
 
   <div>
+    <input type="checkbox" value="play game" id="bb">
+
     <a-card class="card" title="商品信息" :bordered="false">
       <commodity-base-info @onCategoryChange="onCategoryChange"/>
     </a-card>
@@ -70,6 +72,7 @@ export default {
   },
   data() {
     return {
+      hobbies:[],
       fileList: [],
       canManualAddOptions,
       inputTypeOptions,
