@@ -26,18 +26,25 @@
       </a-form-model-item>
     </a-form-model>
 
-    <a-button @click="flushSKu">刷新SKU</a-button>
     <div style="width: 80%" v-if="showSkuTable">
-      <a-table
-        bordered
-        :width="500"
-        :size="'small'"
-        :indent-size="15"
-        :row-key="rowKey"
-        :columns="columns"/>
+      <div style="margin-bottom: 10px">
+        <a-button type="primary" @click="flushSKu">刷新SKU</a-button>
+      </div>
+      <div>
+        <a-table
+          bordered
+          :loading="skuTableLoading"
+          :width="500"
+          :size="'small'"
+          :pagination="false"
+          :data-source="skuTableData"
+          :row-key="rowKey"
+          :columns="columns"/>
+      </div>
     </div>
   </div>
 </template>
+
 <script>
 import CommodityBrandSelect from "@/views/commodity/brand/components/CommodityBrandSelect";
 import CommodityCategoryCascader from "@/views/commodity/category/components/CommodityCategoryCascader";
@@ -73,7 +80,8 @@ const defaultColumns = [
   },
   {
     title: 'SKU编号',
-    align: 'code',
+    align: 'center',
+    dataIndex: 'code',
     scopedSlots: {customRender: 'setting'},
     width: columnWidth
   },
@@ -84,6 +92,29 @@ const defaultColumns = [
     width: columnWidth
   },
 ]
+
+/**
+ * 笛卡尔积实现，计算SKU
+ * @param array
+ * @returns {*|*[]}
+ */
+function calcDescartes(array) {
+  if (array.length < 2) {
+    return array[0] || [];
+  }
+  return array.reduce((total, currentValue) => {
+    let res = [];
+    total.forEach(t => {
+      currentValue.forEach(cv => {
+        if (t instanceof Array)
+          res.push([...t, cv]);
+        else
+          res.push([t, cv]);
+      })
+    })
+    return res;
+  })
+}
 
 export default {
   name: 'CommoditySku',
@@ -112,8 +143,10 @@ export default {
   },
   data() {
     return {
+      skuTableLoading: false,
+      skuTableData: [],
       checkedMap: new Map(),
-      showSkuTable: true,
+      showSkuTable: false,
       columns: defaultColumns,
       manualAttrValue: '',
       labelCol: {span: 2},
@@ -132,10 +165,42 @@ export default {
   },
   methods: {
     flushSKu() {
-      this.checkedMap.forEach((key, value) => {
-
-      })
-      console.log(this.checkedMap);
+      this.skuTableLoading = true
+      try {
+        console.log(this.checkedMap);
+        /*
+            [{
+              code: '',
+              stock: 0,
+              warnStock : 0,
+              costPrice: 0,
+              salesPrice: 0
+            }]
+           */
+        this.skuTableData = []
+        const attrTable = []
+        this.checkedMap.forEach((value, key) => {
+          attrTable.push(value)
+        })
+        const combineTable = calcDescartes(attrTable)
+        console.log('所有SKU组合', combineTable)
+        combineTable.forEach(item => {
+          const obj = {
+            code: '',
+            stock: 0,
+            warnStock: 0,
+            costPrice: 0,
+            salesPrice: 0,
+          };
+          item.forEach(item => {
+            obj[item.attrName] = item.attrValueName
+          })
+          this.skuTableData.push(obj)
+        })
+        console.log(this.skuTableData)
+      } finally {
+        this.skuTableLoading = false
+      }
     },
     rowKey(record) {
       return record.id
@@ -155,50 +220,78 @@ export default {
           categoryId: this.formModel.categoryId,
           queryValues: true
         })
+        if (!data.records || data.records.length === 0) {
+          return
+        }
+        this.showSkuTable = true
         this.list = data.records
         const [...cols] = defaultColumns
-        this.list.forEach(item => {
+        this.list.forEach(attrItem => {
           cols.unshift({
-            title: item.name,
+            title: attrItem.name,
             align: 'center',
-            width: columnWidth
+            width: columnWidth,
+            dataIndex: attrItem.name
           })
-          if (item.inputType == 2) {
-            item.values.forEach(item => {
-              item.label = item.value
-              item.value = `${item.id}-${item.label}`
+          if (attrItem.inputType == 2) {
+            attrItem.values.forEach(attrValueItem => {
+              attrValueItem.label = attrValueItem.value
+              attrValueItem.value = `${attrItem.id}-${attrItem.name}-${attrValueItem.id}-${attrValueItem.value}`
             })
           } else {
-            this.$set(item, 'values', [])
+            this.$set(attrItem, 'values', [])
           }
-          this.$set(item, 'checked', false)
+          this.$set(attrItem, 'checked', false)
         })
         this.columns = cols
       } catch (e) {
         console.log('获取属性异常', e)
       }
     },
-    setCheckedMap: function (attr, attrValue) {
-      console.log(`[${attr.name}]选项变更了, ${attrValue}`)
-      if (this.checkedMap.size < 1) {
-        this.checkedMap.set(attr.id, [attrValue])
+    /**
+     * 设置已选属性值的Map
+     * @param attr 属性
+     * @param value 属性值
+     * @param action add、delete
+     */
+    setCheckedMap: function (attr, value, action) {
+      console.log(`${attr.name} ${action}`, value)
+      if (action === 'add') {
+        if (this.checkedMap.size < 1 || !this.checkedMap.has(attr.id)) {
+          this.checkedMap.set(attr.id, [value])
+        } else {
+          this.checkedMap.get(attr.id).push(value)
+        }
       } else {
         if (this.checkedMap.has(attr.id)) {
-          this.checkedMap.get(attr.id).push(attrValue.id);
-        } else {
-          this.checkedMap.set(attr.id, [attrValue])
+          const valueList = this.checkedMap.get(attr.id)
+          valueList.splice(valueList.indexOf(value), 1)
         }
       }
+      console.log(`checkMap change`, this.checkedMap)
     },
     onValueChange(attrValue, attr) {
-      this.setCheckedMap(attr, attrValue);
+      const checkedMap = this.checkedMap
+      if (checkedMap.has(attr.id)) {
+        checkedMap.delete(attr.id)
+      }
+      attrValue.forEach(item => {
+        const s = item.split('-')
+        this.setCheckedMap(attr, this.assembleSku(s[0], s[1], s[2], s[3]), 'add');
+      })
+    },
+    assembleSku(attrId, attrName, attrValueId, attrValueName) {
+      return {
+        attrId,
+        attrName,
+        attrValueId,
+        attrValueName
+      };
     },
     checkedValue(e, attrValue, attr) {
-      this.setCheckedMap(attr, `${attrValue.value}-${attrValue.label}`);
+      const action = e.target.checked ? 'add' : 'delete';
+      this.setCheckedMap(attr, this.assembleSku(attr.id, attr.name, attrValue.value, attrValue.label), action);
     },
-    onCategoryChange(value) {
-      this.$emit("onCategoryChange", value)
-    }
   }
 }
 </script>
