@@ -49,7 +49,7 @@
               style="margin: -5px 0"
             />
             <template v-else>
-              {{ record.key }}
+              {{ record[col] }}
             </template>
           </template>
 
@@ -72,7 +72,7 @@
 </template>
 
 <script>
-import { v4 as uuidv4 } from 'uuid';
+import {v4 as uuidv4} from 'uuid';
 import CommodityBrandSelect from "@/views/commodity/brand/components/CommodityBrandSelect";
 import CommodityCategoryCascader from "@/views/commodity/category/components/CommodityCategoryCascader";
 import KUpload from "@/components/KUpload/KUpload";
@@ -180,7 +180,7 @@ export default {
   data() {
     return {
       editableColumns,
-      editableData: {},
+      editableData: [],
       skuTableLoading: false,
       skuTableData: [],
       checkedMap: new Map(),
@@ -199,17 +199,23 @@ export default {
     }
   },
   created() {
-
+    if (this.formModel.categoryId) {
+      this.loadAttrList()
+    }
   },
   methods: {
     saveSkuColumn(idx) {
 
     },
     cancelSkuColumn(idx) {
-      delete this.editableData[id]
+      console.log(idx)
+      this.editableData.splice(idx, 1)
+      this.$forceUpdate()
+      console.log(this.editableData)
     },
     editSkuColumn(idx, record) {
-      this.editableData[idx] = this.$cloneDeep(this.skuTableData[idx]);
+      this.$set(this.editableData, idx, this.$cloneDeep(this.skuTableData[idx]))
+      console.log(this.editableData)
     },
     flushSKu() {
       this.skuTableLoading = true
