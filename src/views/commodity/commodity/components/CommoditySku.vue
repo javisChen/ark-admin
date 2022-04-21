@@ -41,20 +41,28 @@
           :row-key="rowKey"
           :columns="columns">
 
-          <template slot="code" slot-scope="text, record, idx">
+          <template v-for="col in editableColumns"
+                    :slot="col" slot-scope="text, record, idx">
             <a-input
               v-if="editableData[idx]"
+              v-model="editableData[idx][col]"
               style="margin: -5px 0"
             />
             <template v-else>
-              {{ text }}
+              {{ record.key }}
             </template>
           </template>
 
-          <template slot="action" slot-scope="text, record">
-            <k-tooltip-button title="查看" @click="handleView(record)" icon="search"/>
-            &nbsp
-            <k-tooltip-button title="下载" @click="openDownloadView(record)" icon="download"/>&nbsp;
+          <template slot="action" slot-scope="text, record, idx">
+            <div class="editable-row-operations">
+              <span v-if="editableData[idx]">
+                <a @click="saveSkuColumn(idx)">保存</a>
+                <a @click="cancelSkuColumn(idx)">取消</a>
+              </span>
+              <span v-else>
+                <a @click="editSkuColumn(idx)">编辑</a>
+              </span>
+            </div>
           </template>
 
         </a-table>
@@ -71,31 +79,38 @@ import KUpload from "@/components/KUpload/KUpload";
 import {getInfo, getPageList as getAttrList} from '@/api/commodity/attr-api'
 
 const columnWidth = 10;
+// 可编辑列
+const editableColumns = ['code', 'salesPrice', 'costPrice', 'stock', 'warnStock']
 const defaultColumns = [
   {
     title: '销售价格',
     align: 'center',
     dataIndex: 'salesPrice',
+    scopedSlots: {customRender: 'salesPrice'},
     width: columnWidth
   },
   {
     title: '成本价格',
     align: 'center',
     dataIndex: 'costPrice',
+    scopedSlots: {customRender: 'costPrice'},
     width: columnWidth
   },
   {
     title: '库存',
     align: 'center',
     dataIndex: 'stock',
-    scopedSlots: {customRender: 'shelfStatus'},
+    scopedSlots: {customRender: 'stock'},
     width: columnWidth
   },
   {
     title: '库存预警值',
     align: 'center',
     dataIndex: 'warnStock',
-    width: columnWidth
+    width: columnWidth,
+    scopedSlots: {
+      customRender: 'warnStock'
+    },
   },
   {
     title: 'SKU编号',
@@ -164,6 +179,7 @@ export default {
   },
   data() {
     return {
+      editableColumns,
       editableData: {},
       skuTableLoading: false,
       skuTableData: [],
@@ -186,6 +202,15 @@ export default {
 
   },
   methods: {
+    saveSkuColumn(idx) {
+
+    },
+    cancelSkuColumn(idx) {
+      delete this.editableData[id]
+    },
+    editSkuColumn(idx, record) {
+      this.editableData[idx] = this.$cloneDeep(this.dataSource.value.filter(item => key === item.key)[0]);
+    },
     flushSKu() {
       this.skuTableLoading = true
       try {
@@ -319,3 +344,10 @@ export default {
   }
 }
 </script>
+<style scoped>
+
+.editable-row-operations a {
+  margin-right: 8px;
+}
+
+</style>
