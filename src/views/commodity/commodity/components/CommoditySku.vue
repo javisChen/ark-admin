@@ -39,13 +39,32 @@
           :pagination="false"
           :data-source="skuTableData"
           :row-key="rowKey"
-          :columns="columns"/>
+          :columns="columns">
+
+          <template slot="code" slot-scope="text, record, idx">
+            <a-input
+              v-if="editableData[idx]"
+              style="margin: -5px 0"
+            />
+            <template v-else>
+              {{ text }}
+            </template>
+          </template>
+
+          <template slot="action" slot-scope="text, record">
+            <k-tooltip-button title="查看" @click="handleView(record)" icon="search"/>
+            &nbsp
+            <k-tooltip-button title="下载" @click="openDownloadView(record)" icon="download"/>&nbsp;
+          </template>
+
+        </a-table>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import { v4 as uuidv4 } from 'uuid';
 import CommodityBrandSelect from "@/views/commodity/brand/components/CommodityBrandSelect";
 import CommodityCategoryCascader from "@/views/commodity/category/components/CommodityCategoryCascader";
 import KUpload from "@/components/KUpload/KUpload";
@@ -82,7 +101,9 @@ const defaultColumns = [
     title: 'SKU编号',
     align: 'center',
     dataIndex: 'code',
-    scopedSlots: {customRender: 'setting'},
+    scopedSlots: {
+      customRender: 'code'
+    },
     width: columnWidth
   },
   {
@@ -143,6 +164,7 @@ export default {
   },
   data() {
     return {
+      editableData: {},
       skuTableLoading: false,
       skuTableData: [],
       checkedMap: new Map(),
@@ -178,6 +200,7 @@ export default {
             }]
            */
         this.skuTableData = []
+        console.log('clear')
         const attrTable = []
         this.checkedMap.forEach((value, key) => {
           attrTable.push(value)
@@ -195,6 +218,7 @@ export default {
           item.forEach(item => {
             obj[item.attrName] = item.attrValueName
           })
+          console.log('push')
           this.skuTableData.push(obj)
         })
         console.log(this.skuTableData)
@@ -202,8 +226,8 @@ export default {
         this.skuTableLoading = false
       }
     },
-    rowKey(record) {
-      return record.id
+    rowKey(record, index) {
+      return index
     },
     addValueListItem(item) {
       item.values.push({label: this.manualAttrValue, value: Math.ceil(Math.random() * 100)});
