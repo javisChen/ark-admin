@@ -209,7 +209,7 @@ export default {
       delete this.editableData[id]
     },
     editSkuColumn(idx, record) {
-      this.editableData[idx] = this.$cloneDeep(this.dataSource.value.filter(item => key === item.key)[0]);
+      this.editableData[idx] = this.$cloneDeep(this.skuTableData[idx]);
     },
     flushSKu() {
       this.skuTableLoading = true
