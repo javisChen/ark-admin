@@ -130,8 +130,8 @@ export default {
     };
   },
   created() {
-    if (this.$route.query.templateId) {
-      this.queryParam.attrTemplateId = this.$route.query.templateId;
+    if (this.$route.query.attrTemplateId) {
+      this.queryParam.attrTemplateId = this.$route.query.attrTemplateId;
     } else {
       this.queryParam.attrTemplateId = this.attrTemplateId;
     }
@@ -159,7 +159,7 @@ export default {
     handleEditFormCancel() {
     },
     showForm() {
-      this.$refs['commodityAttrTemplateForm'].open()
+      this.$refs['commodityAttrTemplateForm'].open({attrTemplateId: this.queryParam.attrTemplateId}, 'add')
     },
     rowKey(record) {
       return record.id

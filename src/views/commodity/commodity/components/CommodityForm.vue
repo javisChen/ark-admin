@@ -7,7 +7,10 @@
       <commodity-base-info @onCategoryChange="onCategoryChange"/>
     </a-card>
     <a-card class="card" title="商品规格" :bordered="false">
-      <commodity-sku :category-id="formModel.categoryId"/>
+      <commodity-attr-spec :category-id="formModel.categoryId"/>
+    </a-card>
+    <a-card class="card" title="商品参数" :bordered="false">
+      <commodity-attr-param :category-id="formModel.categoryId"/>
     </a-card>
   </div>
 
@@ -16,8 +19,9 @@
 <script>
 
 import CommodityBaseInfo from "@/views/commodity/commodity/components/CommodityBaseInfo";
-import CommoditySku from "@/views/commodity/commodity/components/CommoditySku";
+import CommodityAttrSpec from "@/views/commodity/commodity/components/CommodityAttrSpec";
 import KUpload from "@/components/KUpload/KUpload";
+import CommodityAttrParam from "@/views/commodity/commodity/components/CommodityAttrParam";
 
 const defaultModel = {
   name: "",
@@ -67,7 +71,8 @@ export default {
   name: 'CommodityForm',
   components: {
     KUpload,
-    CommoditySku,
+    CommodityAttrSpec,
+    CommodityAttrParam,
     CommodityBaseInfo
   },
   data() {

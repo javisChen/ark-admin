@@ -178,8 +178,8 @@ export default {
     },
   },
   created() {
-    if (this.$route.query.templateId) {
-      this.queryParam.attrTemplateId = this.$route.query.templateId;
+    if (this.$route.query.attrTemplateId) {
+      this.queryParam.attrTemplateId = this.$route.query.attrTemplateId;
       this.queryParam.type = this.$route.query.type;
     } else {
       this.queryParam.attrTemplateId = this.attrTemplateId;

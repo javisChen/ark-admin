@@ -36,6 +36,7 @@ import {create, update} from '@/api/commodity/attr-group-api'
 const defaultModel = {
   id: '',
   name: '',
+  attrTemplateId: '',
 }
 
 const FORM_MODE_EDIT = 'edit';

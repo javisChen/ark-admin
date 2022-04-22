@@ -183,7 +183,7 @@ export default {
       // this.selectedAttrTemplate = record
       this.$router.push({
         path: '/commodity/attr/group',
-        query: {templateId: record.id},
+        query: {attrTemplateId: record.id},
       })
       // this.showAttrGroup = true;
     },
@@ -191,7 +191,7 @@ export default {
       this.$router.push({
         path: '/commodity/attr',
         query: {
-          templateId: record.id,
+          attrTemplateId: record.id,
           type: 1
         },
       })
@@ -203,7 +203,7 @@ export default {
       this.$router.push({
         path: '/commodity/attr',
         query: {
-          templateId: record.id,
+          attrTemplateId: record.id,
           type: 2
         },
       })

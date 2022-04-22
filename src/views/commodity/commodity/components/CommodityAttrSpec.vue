@@ -7,7 +7,7 @@
       :model="formModel"
       :label-col="labelCol"
       :wrapper-col="wrapperCol">
-      <a-form-model-item style="margin-bottom: 10px" v-for="(attrItem, attrListIdx) in list" :label="attrItem.name">
+      <a-form-model-item style="margin-bottom: 10px" v-for="(attrItem, attrListIdx) in attrList" :label="attrItem.name">
         <div v-if="attrItem.inputType == 1">
           <div v-if="attrItem.values.length > 0" class="ant-checkbox-group">
             <label v-for="(attrValueItem, attrValueListIdx) in attrItem.values">
@@ -17,7 +17,7 @@
           </div>
           <div>
             <a-input style="width: 20%" :placeholder="attrItem.name" v-model="manualAttrValue"/>&nbsp;
-            <k-tooltip-button title="添加" @click="addValueListItem(attrItem)" icon="plus"/>
+            <k-tooltip-button title="添加" @click="addAttrValueListItem(attrItem)" icon="plus"/>
           </div>
         </div>
         <div v-else-if="attrItem.inputType == 2">
@@ -43,24 +43,30 @@
 
           <template v-for="col in editableColumns"
                     :slot="col" slot-scope="text, record, idx">
-            <a-input
-              v-if="editableData[idx]"
-              v-model="editableData[idx][col]"
-              style="margin: -5px 0"
-            />
+            <template v-if="editSkuTableData[idx]">
+              <a-input
+                v-model="editSkuTableData[idx][col]"
+                style="margin: -5px 0"
+              />
+            </template>
             <template v-else>
-              {{ record[col] }}
+              <span v-if="['costPrice', 'salesPrice'].includes(col)">
+                {{ record[col] | SumFormat }}
+              </span>
+              <span v-else>
+                {{ record[col]}}
+              </span>
             </template>
           </template>
 
           <template slot="action" slot-scope="text, record, idx">
             <div class="editable-row-operations">
-              <span v-if="editableData[idx]">
-                <a @click="saveSkuColumn(idx)">保存</a>
-                <a @click="cancelSkuColumn(idx)">取消</a>
+              <span v-if="editSkuTableData[idx]">
+                <a @click="saveSkuColumn(idx, record)">保存</a>
+                <a @click="cancelSkuColumn(idx, record)">取消</a>
               </span>
               <span v-else>
-                <a @click="editSkuColumn(idx)">编辑</a>
+                <a @click="editSkuColumn(idx, record)">编辑</a>
               </span>
             </div>
           </template>
@@ -73,10 +79,7 @@
 
 <script>
 import {v4 as uuidv4} from 'uuid';
-import CommodityBrandSelect from "@/views/commodity/brand/components/CommodityBrandSelect";
-import CommodityCategoryCascader from "@/views/commodity/category/components/CommodityCategoryCascader";
-import KUpload from "@/components/KUpload/KUpload";
-import {getInfo, getPageList as getAttrList} from '@/api/commodity/attr-api'
+import {getPageList as getAttrList} from '@/api/commodity/attr-api'
 
 const columnWidth = 10;
 // 可编辑列
@@ -153,11 +156,8 @@ function calcDescartes(array) {
 }
 
 export default {
-  name: 'CommoditySku',
+  name: 'CommodityAttrSpec',
   components: {
-    KUpload,
-    CommodityCategoryCascader,
-    CommodityBrandSelect
   },
   props: {
     formModel: {
@@ -179,17 +179,17 @@ export default {
   },
   data() {
     return {
-      editableColumns,
-      editableData: [],
+      editableColumns, // 可编辑的列
+      editSkuTableData: [], // 处于编辑模式的sku数据
+      skuTableData: [], // 可提交的sku数据
+      checkedAttrValueMap: new Map(), // 已选中的属性值
       skuTableLoading: false,
-      skuTableData: [],
-      checkedMap: new Map(),
       showSkuTable: false,
       columns: defaultColumns,
       manualAttrValue: '',
       labelCol: {span: 2},
       wrapperCol: {span: 20},
-      list: [],
+      attrList: [],
       rules: {
         name: [{required: true, message: '请输入商品名称', trigger: 'blur'}],
         code: [{required: true, message: '请输入商品编码', trigger: 'blur'}],
@@ -204,38 +204,33 @@ export default {
     }
   },
   methods: {
-    saveSkuColumn(idx) {
-
+    onSkuColumnChange(e, col, idx, record) {
+      // console.log(`SKU[${col}] change `, e.target.value)
     },
-    cancelSkuColumn(idx) {
-      console.log(idx)
-      this.editableData.splice(idx, 1)
-      this.$forceUpdate()
-      console.log(this.editableData)
+    saveSkuColumn(idx) {
+      this.$set(this.skuTableData, idx, this.editSkuTableData[idx])
+      this.$set(this.editSkuTableData, idx, undefined)
+      console.log(`保存列`, this.skuTableData)
+    },
+    cancelSkuColumn(idx, record) {
+      this.$set(this.editSkuTableData, idx, undefined)
     },
     editSkuColumn(idx, record) {
-      this.$set(this.editableData, idx, this.$cloneDeep(this.skuTableData[idx]))
-      console.log(this.editableData)
+      this.$set(this.editSkuTableData, idx, this.$cloneDeep(this.skuTableData[idx]))
+    },
+    initTableData() {
+      this.skuTableData = []
+      this.editSkuTableData = []
     },
     flushSKu() {
       this.skuTableLoading = true
       try {
-        console.log(this.checkedMap);
-        /*
-            [{
-              code: '',
-              stock: 0,
-              warnStock : 0,
-              costPrice: 0,
-              salesPrice: 0
-            }]
-           */
-        this.skuTableData = []
-        console.log('clear')
+        this.initTableData();
+
+        // 把所有
         const attrTable = []
-        this.checkedMap.forEach((value, key) => {
-          attrTable.push(value)
-        })
+        this.checkedAttrValueMap.forEach((value, key) => attrTable.push(value))
+
         const combineTable = calcDescartes(attrTable)
         console.log('所有SKU组合', combineTable)
         combineTable.forEach(item => {
@@ -245,14 +240,15 @@ export default {
             warnStock: 0,
             costPrice: 0,
             salesPrice: 0,
+            _key: uuidv4()
           };
           item.forEach(item => {
             obj[item.attrName] = item.attrValueName
           })
-          console.log('push')
           this.skuTableData.push(obj)
+          this.editSkuTableData.push(obj)
         })
-        console.log(this.skuTableData)
+        console.log('SKU TABLE刷新完成', this.skuTableData)
       } finally {
         this.skuTableLoading = false
       }
@@ -260,8 +256,8 @@ export default {
     rowKey(record, index) {
       return index
     },
-    addValueListItem(item) {
-      item.values.push({label: this.manualAttrValue, value: Math.ceil(Math.random() * 100)});
+    addAttrValueListItem(item) {
+      item.values.push({label: this.manualAttrValue, value: uuidv4()});
       this.manualAttrValue = ''
     },
     removeValueListItem(item, idx) {
@@ -273,15 +269,16 @@ export default {
           current: 1,
           size: 30,
           categoryId: this.formModel.categoryId,
+          type: 1,
           queryValues: true
         })
         if (!data.records || data.records.length === 0) {
           return
         }
         this.showSkuTable = true
-        this.list = data.records
+        this.attrList = data.records
         const [...cols] = defaultColumns
-        this.list.forEach(attrItem => {
+        this.attrList.forEach(attrItem => {
           cols.unshift({
             title: attrItem.name,
             align: 'center',
@@ -309,30 +306,29 @@ export default {
      * @param value 属性值
      * @param action add、delete
      */
-    setCheckedMap: function (attr, value, action) {
+    attrValueOnCheck: function (attr, value, action) {
       console.log(`${attr.name} ${action}`, value)
       if (action === 'add') {
-        if (this.checkedMap.size < 1 || !this.checkedMap.has(attr.id)) {
-          this.checkedMap.set(attr.id, [value])
+        if (this.checkedAttrValueMap.size < 1 || !this.checkedAttrValueMap.has(attr.id)) {
+          this.checkedAttrValueMap.set(attr.id, [value])
         } else {
-          this.checkedMap.get(attr.id).push(value)
+          this.checkedAttrValueMap.get(attr.id).push(value)
         }
       } else {
-        if (this.checkedMap.has(attr.id)) {
-          const valueList = this.checkedMap.get(attr.id)
+        if (this.checkedAttrValueMap.has(attr.id)) {
+          const valueList = this.checkedAttrValueMap.get(attr.id)
           valueList.splice(valueList.indexOf(value), 1)
         }
       }
-      console.log(`checkMap change`, this.checkedMap)
     },
     onValueChange(attrValue, attr) {
-      const checkedMap = this.checkedMap
-      if (checkedMap.has(attr.id)) {
-        checkedMap.delete(attr.id)
+      const checkedAttrValueMap = this.checkedAttrValueMap
+      if (checkedAttrValueMap.has(attr.id)) {
+        checkedAttrValueMap.delete(attr.id)
       }
       attrValue.forEach(item => {
         const s = item.split('-')
-        this.setCheckedMap(attr, this.assembleSku(s[0], s[1], s[2], s[3]), 'add');
+        this.attrValueOnCheck(attr, this.assembleSku(s[0], s[1], s[2], s[3]), 'add');
       })
     },
     assembleSku(attrId, attrName, attrValueId, attrValueName) {
@@ -345,7 +341,7 @@ export default {
     },
     checkedValue(e, attrValue, attr) {
       const action = e.target.checked ? 'add' : 'delete';
-      this.setCheckedMap(attr, this.assembleSku(attr.id, attr.name, attrValue.value, attrValue.label), action);
+      this.attrValueOnCheck(attr, this.assembleSku(attr.id, attr.name, attrValue.value, attrValue.label), action);
     },
   }
 }
