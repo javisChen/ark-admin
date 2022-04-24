@@ -41,7 +41,7 @@ export default {
       default: () => 1
     },
     value: {
-      required: true,
+      required: false,
     },
   },
   data() {
@@ -62,8 +62,8 @@ export default {
       this.previewImage = file.url || file.preview;
       this.previewVisible = true;
     },
-    async handleRemove() {
-      this.fileList = []
+    async handleRemove(v1) {
+      this.fileList = this.fileList.filter(item => item.uid !== v1.uid)
     },
     handleChange(value) {
       this.$emit('change', value)
@@ -80,7 +80,6 @@ export default {
           status: 'done',
           url: data.url
         })
-        console.log(this.fileList)
         this.handleChange(this.fileList)
         this.$message.success('上传成功')
       } catch (e) {

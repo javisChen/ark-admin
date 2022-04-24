@@ -1,46 +1,47 @@
 <template>
 
   <div>
-    <input type="checkbox" value="play game" id="bb">
-
     <a-card class="card" title="商品信息" :bordered="false">
-      <commodity-base-info @onCategoryChange="onCategoryChange"/>
+      <commodity-base-info ref="baseInfo" @onCategoryChange="onCategoryChange" :form-model="formModel"/>
     </a-card>
     <a-card class="card" title="商品规格" :bordered="false">
-      <commodity-attr-spec :category-id="formModel.categoryId"/>
+      <commodity-attr-spec ref="attrSpec" :category-id="formModel.categoryId" :form-model="formModel"/>
     </a-card>
     <a-card class="card" title="商品参数" :bordered="false">
-      <commodity-attr-param :category-id="formModel.categoryId"/>
+      <commodity-attr-param ref="attrParam" :category-id="formModel.categoryId" :form-model="formModel"/>
+    </a-card>
+    <a-card class="card" title="商品详情" :bordered="false">
+      <commodity-detail-info ref="detailInfo" :form-model="formModel"/>
+    </a-card>
+    <a-card class="card" title="" :bordered="false">
+      <a-button type="primary" @click="submitForm">保存</a-button>
     </a-card>
   </div>
-
 </template>
 
 <script>
 
 import CommodityBaseInfo from "@/views/commodity/commodity/components/CommodityBaseInfo";
 import CommodityAttrSpec from "@/views/commodity/commodity/components/CommodityAttrSpec";
-import KUpload from "@/components/KUpload/KUpload";
 import CommodityAttrParam from "@/views/commodity/commodity/components/CommodityAttrParam";
+import CommodityDetailInfo from "@/views/commodity/commodity/components/CommodityDetailInfo";
+import {create, update} from "@/api/commodity/commodity-api";
 
 const defaultModel = {
   name: "",
   code: "",
   description: "",
-  brandId: 0,
-  categoryId: 0,
-  mainPicture: "",
-  shelfStatus: 0,
-  verifyStatus: 0,
+  brandId: undefined,
+  categoryId: undefined,
   showPrice: 0,
   unit: "",
   weight: 0,
-  freightTemplateId: 0,
+  freightTemplateId: undefined,
   pcDetailHtml: "",
   mobileDetailHtml: "",
   skuList: [
     {
-      skuAttrList: [
+      specList: [
         {
           attrId: 0,
           attrValue: ""
@@ -55,71 +56,38 @@ const defaultModel = {
   ]
 }
 
-const inputTypeOptions = [
-  {value: 1, desc: '手工录入'},
-  {value: 2, desc: '从选项列表选择'}
-]
-const canManualAddOptions = [
-  {value: 0, desc: '否'},
-  {value: 1, desc: '是'}
-]
-
 const FORM_MODE_EDIT = 'edit';
 const FORM_MODE_ADD = 'add';
 
 export default {
   name: 'CommodityForm',
   components: {
-    KUpload,
+    CommodityDetailInfo,
     CommodityAttrSpec,
     CommodityAttrParam,
     CommodityBaseInfo
   },
-  data() {
-    return {
-      hobbies:[],
-      fileList: [],
-      canManualAddOptions,
-      inputTypeOptions,
-      confirmLoading: false,
-      visible: false,
-      labelCol: {span: 6},
-      wrapperCol: {span: 10},
-      formModel: Object.assign({}, defaultModel),
-      type: FORM_MODE_EDIT,
-      form: {},
-      rules: {
-        name: [{required: true, message: '请输入模板名称', trigger: 'blur'}],
-        inputType: [{required: true, message: '请输入模板名称', trigger: 'blur'}],
-      }
+  watch: {
+    mode(newVal, OldVal) {
+      this.mode = newVal
     }
   },
-  computed: {
-    isEditMode() {
-      return this.type === FORM_MODE_EDIT
+  props: {
+    mode: {
+      type: String,
+      default: 'add'
     },
+  },
+  data() {
+    return {
+      confirmLoading: false,
+      formModel: Object.assign({}, defaultModel),
+      type: FORM_MODE_EDIT,
+    }
   },
   methods: {
     onCategoryChange(value) {
       this.formModel.categoryId = value
-    },
-    addValueListItem() {
-      this.valueList.push({value: ''})
-    },
-    removeValueListItem(idx) {
-      this.valueList.splice(idx, 1)
-    },
-    handleChange(value) {
-      this.$emit('change', value)
-    },
-    close() {
-      this.closeConfirmLoading()
-      this.visible = false
-      this.resetForm()
-    },
-    resetForm() {
-      this.formModel = Object.assign({}, defaultModel)
-      this.valueList = []
     },
     handleClose() {
       this.close()
@@ -137,49 +105,50 @@ export default {
       this.confirmLoading = false
     },
     submitForm() {
-      const $form = this.$refs['form'];
-      $form.validate(async valid => {
-        if (!valid) {
-          return false;
-        }
-        this.toggleConfirmLoading()
-        this.formModel.values = this.valueList.map(item => item.value)
-        console.log(this.formModel)
-        // this.closeConfirmLoading()
-        // return
-        if (this.type === FORM_MODE_ADD) {
-          createAttr(this.formModel)
-            .then(({data}) => this.afterSuccess())
-            .catch(e => e)
-            .finally(() => this.closeConfirmLoading())
-        } else {
-          updateAttr(this.formModel)
-            .then(({data}) => this.afterSuccess())
-            .catch(e => e)
-            .finally(() => this.closeConfirmLoading())
-        }
-      });
-    },
-    checkElementsIsValid() {
-      if (!this.formModel.elements || this.formModel.elements.length === 0) {
-        return true
+      // 获取商品基础数据
+      const baseInfo = this.$refs['baseInfo'].getData();
+      console.log('baseInfo', baseInfo)
+      const attrSpec = this.$refs['attrSpec'].getData();
+      console.log('attrSpec', attrSpec)
+      const attrParam = this.$refs['attrParam'].getData();
+      console.log('attrParam', attrParam)
+      const detailInfo = this.$refs['detailInfo'].getData();
+      console.log('detailInfo', detailInfo)
+
+      const form = {
+        name: baseInfo.name,
+        code: baseInfo.code,
+        description: baseInfo.description,
+        brandId: baseInfo.brandId,
+        categoryId: baseInfo.categoryId,
+        picList: baseInfo.picList,
+        showPrice: 0,
+        unit: baseInfo.unit,
+        weight: baseInfo.weight,
+        freightTemplateId: 0,
+        pcDetailHtml: detailInfo.pcDetailHtml,
+        mobileDetailHtml: "",
+        skuList: attrSpec,
+        paramList: attrParam
       }
-      let f = true;
-      const els = this.formModel.elements
-      for (let i = 0; i < els.length; i++) {
-        const item = els[i]
-        if (!item.name || item.editable) {
-          item.showError = true
-          f = false
-        }
+      console.log('商品表单', form)
+      return
+      if (this.type === FORM_MODE_ADD) {
+        create(form)
+          .then(({data}) => this.afterSuccess())
+          .catch(e => e)
+          .finally(() => this.closeConfirmLoading())
+      } else {
+        update(form)
+          .then(({data}) => this.afterSuccess())
+          .catch(e => e)
+          .finally(() => this.closeConfirmLoading())
       }
-      return f;
     },
   },
   created() {
   },
   beforeDestroy() {
-    console.log('destroy')
   }
 }
 </script>

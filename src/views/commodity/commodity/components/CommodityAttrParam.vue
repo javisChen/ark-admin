@@ -9,7 +9,7 @@
           {{ attrItem.name }}
         </div>
         <div class="item-right">
-          <a-input/>
+          <a-input @change="onValueChange($event, attrItem)"/>
         </div>
       </div>
     </div>
@@ -18,13 +18,13 @@
 
 <script>
 import {getPageList as getAttrGroupList} from '@/api/commodity/attr-group-api'
+import cloneDeep from "lodash.clonedeep";
 
 const columnWidth = 10;
 
 export default {
   name: 'CommodityAttrParam',
-  components: {
-  },
+  components: {},
   props: {
     formModel: {
       type: Object,
@@ -39,12 +39,17 @@ export default {
   },
   watch: {
     categoryId(newV, oldV) {
-      this.formModel.categoryId = newV
+      this.internalModel.categoryId = newV
       this.loadAttrGroupList()
-    }
+    },
+    formModel(newV, oldV) {
+      console.log('formmodel', newV)
+      this.internalModel = newV
+    },
   },
   data() {
     return {
+      internalModel: cloneDeep(this.formModel),
       paramTable: [],
       attrGroupList: [],
       labelCol: {span: 2},
@@ -58,27 +63,31 @@ export default {
     }
   },
   created() {
-    if (this.formModel.categoryId) {
-      this.loadAttrGroupList()
-    }
+
   },
   methods: {
+    onValueChange($event, attrItem) {
+      const value = $event.target.value;
+      this.paramTable.forEach(item => {
+        if (item.id === attrItem.attrId) {
+          item.attrValue = value
+        }
+      })
+    },
     rowKey(record, index) {
       return index
     },
     async loadAttrGroupList() {
-      this.paramTable = []
       const {data} = await getAttrGroupList({
         current: 1,
         size: 30,
-        categoryId: this.formModel.categoryId,
+        categoryId: this.internalModel.categoryId,
         withAttr: true
       })
       if (!data.records || data.records.length === 0) {
         return
       }
       this.attrGroupList = data.records
-      console.log(this.attrGroupList)
       this.attrGroupList.forEach(item => {
         const obj = {
           columns: [{
@@ -89,15 +98,20 @@ export default {
           }],
           attrList: []
         };
+        this.paramTable = []
         item.attrList.forEach(attrItem => {
-          obj.attrList.push({[item.id]: attrItem.name })
+          obj.attrList.push({[item.id]: attrItem.name})
+          this.paramTable.push({attrId: attrItem.id, attrValue: attrItem.value, attrName: attrItem.name})
         });
-        this.paramTable.push(obj)
       })
       console.log(this.paramTable)
     },
     onSkuColumnChange(e, col, idx, record) {
     },
+    getData() {
+      const paramList = []
+      return this.paramTable
+    }
   }
 }
 </script>
@@ -119,7 +133,7 @@ export default {
 .item {
   flex-direction: row;
   display: flex;
-  font-size: 12px;
+  font-size: 13px;
   border: 1px solid #ddd;
   border-bottom: none;
   border-left: none;

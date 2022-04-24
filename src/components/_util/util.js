@@ -44,3 +44,24 @@ export const cutStrByFullLength = (str = '', maxLength) => {
     return pre
   }, '')
 }
+
+/**
+ * 元转分
+ */
+export const yuanToFen = (value) => {
+  if (!value) {
+    return 0
+  }
+  return (value - 0) * 100
+}
+
+
+/**
+ * 元转分
+ */
+export const fenToYuan = (value) => {
+  if (!value) {
+    return 0
+  }
+  return (value - 0) / 100
+}

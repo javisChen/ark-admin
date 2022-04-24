@@ -3,16 +3,15 @@
     <a-form-model
       ref="form"
       layout="horizontal"
-      :rules="rules"
-      :model="formModel"
+      :model="internalModel"
       :label-col="labelCol"
       :wrapper-col="wrapperCol">
       <a-form-model-item style="margin-bottom: 10px" v-for="(attrItem, attrListIdx) in attrList" :label="attrItem.name">
         <div v-if="attrItem.inputType == 1">
-          <div v-if="attrItem.values.length > 0" class="ant-checkbox-group">
-            <label v-for="(attrValueItem, attrValueListIdx) in attrItem.values">
-              <a-checkbox @change="checkedValue($event, attrValueItem, attrItem)">{{ attrValueItem.label }}</a-checkbox>
-              <a title="删除" @click.prevent="removeValueListItem(attrItem, attrValueListIdx)">删除</a>&nbsp;
+          <div v-if="attrItem.optionList.length > 0" class="ant-checkbox-group">
+            <label v-for="(attrOption, attrOptionLisIdx) in attrItem.optionList">
+              <a-checkbox @change="checkedValue($event, attrOption, attrItem)">{{ attrOption.label }}</a-checkbox>
+              <a title="删除" @click.prevent="removeValueListItem(attrItem, attrOptionLisIdx)">删除</a>&nbsp;
             </label>
           </div>
           <div>
@@ -21,7 +20,7 @@
           </div>
         </div>
         <div v-else-if="attrItem.inputType == 2">
-          <a-checkbox-group :options="attrItem.values" @change="onValueChange($event, attrItem)"/>
+          <a-checkbox-group :options="attrItem.optionList" @change="onValueChange($event, attrItem)"/>
         </div>
       </a-form-model-item>
     </a-form-model>
@@ -54,7 +53,7 @@
                 {{ record[col] | SumFormat }}
               </span>
               <span v-else>
-                {{ record[col]}}
+                {{ record[col] }}
               </span>
             </template>
           </template>
@@ -79,7 +78,9 @@
 
 <script>
 import {v4 as uuidv4} from 'uuid';
+import {yuanToFen, fenToYuan} from '@/components/_util/util';
 import {getPageList as getAttrList} from '@/api/commodity/attr-api'
+import cloneDeep from "lodash.clonedeep";
 
 const columnWidth = 10;
 // 可编辑列
@@ -157,8 +158,7 @@ function calcDescartes(array) {
 
 export default {
   name: 'CommodityAttrSpec',
-  components: {
-  },
+  components: {},
   props: {
     formModel: {
       type: Object,
@@ -173,12 +173,17 @@ export default {
   },
   watch: {
     categoryId(newV, oldV) {
-      this.formModel.categoryId = newV
+      this.internalModel.categoryId = newV
       this.loadAttrList()
-    }
+    },
+    formModel(newV, oldV) {
+      console.log('formmodel', newV)
+      this.internalModel = newV
+    },
   },
   data() {
     return {
+      internalModel: cloneDeep(this.formModel),
       editableColumns, // 可编辑的列
       editSkuTableData: [], // 处于编辑模式的sku数据
       skuTableData: [], // 可提交的sku数据
@@ -190,16 +195,10 @@ export default {
       labelCol: {span: 2},
       wrapperCol: {span: 20},
       attrList: [],
-      rules: {
-        name: [{required: true, message: '请输入商品名称', trigger: 'blur'}],
-        code: [{required: true, message: '请输入商品编码', trigger: 'blur'}],
-        brandId: [{required: true, message: '请选择品牌', trigger: 'blur'}],
-        categoryId: [{required: true, message: '请选择类目', trigger: 'blur'}],
-      }
     }
   },
   created() {
-    if (this.formModel.categoryId) {
+    if (this.internalModel.categoryId) {
       this.loadAttrList()
     }
   },
@@ -243,7 +242,13 @@ export default {
             _key: uuidv4()
           };
           item.forEach(item => {
-            obj[item.attrName] = item.attrValueName
+            obj[item.attrName] = item.attrValue
+            obj[item.attrId] = item.attrValue
+            if (!obj.specList) {
+              obj.specList = [{...item}]
+            } else {
+              obj.specList.push({...item})
+            }
           })
           this.skuTableData.push(obj)
           this.editSkuTableData.push(obj)
@@ -257,20 +262,20 @@ export default {
       return index
     },
     addAttrValueListItem(item) {
-      item.values.push({label: this.manualAttrValue, value: uuidv4()});
+      item.optionList.push({label: this.manualAttrValue, value: uuidv4()});
       this.manualAttrValue = ''
     },
     removeValueListItem(item, idx) {
-      item.values.splice(idx, 1)
+      item.optionList.splice(idx, 1)
     },
     async loadAttrList() {
       try {
         const {data} = await getAttrList({
           current: 1,
           size: 30,
-          categoryId: this.formModel.categoryId,
+          categoryId: this.internalModel.categoryId,
           type: 1,
-          queryValues: true
+          withOptions: true
         })
         if (!data.records || data.records.length === 0) {
           return
@@ -283,15 +288,16 @@ export default {
             title: attrItem.name,
             align: 'center',
             width: columnWidth,
-            dataIndex: attrItem.name
+            dataIndex: attrItem.id
           })
           if (attrItem.inputType == 2) {
-            attrItem.values.forEach(attrValueItem => {
-              attrValueItem.label = attrValueItem.value
-              attrValueItem.value = `${attrItem.id}-${attrItem.name}-${attrValueItem.id}-${attrValueItem.value}`
+            attrItem.optionList.forEach(attrOption => {
+              console.log(attrOption)
+              attrOption.label = attrOption.value
+              attrOption.value = `${attrItem.id}-${attrItem.name}-${attrOption.value}`
             })
           } else {
-            this.$set(attrItem, 'values', [])
+            this.$set(attrItem, 'optionList', [])
           }
           this.$set(attrItem, 'checked', false)
         })
@@ -328,21 +334,36 @@ export default {
       }
       attrValue.forEach(item => {
         const s = item.split('-')
-        this.attrValueOnCheck(attr, this.assembleSku(s[0], s[1], s[2], s[3]), 'add');
+        this.attrValueOnCheck(attr, this.assembleSku(s[0], s[1], s[2]), 'add');
       })
     },
-    assembleSku(attrId, attrName, attrValueId, attrValueName) {
+    assembleSku(attrId, attrName, attrValue) {
       return {
         attrId,
         attrName,
-        attrValueId,
-        attrValueName
+        attrValue
       };
     },
-    checkedValue(e, attrValue, attr) {
+    checkedValue(e, attrOption, attr) {
       const action = e.target.checked ? 'add' : 'delete';
-      this.attrValueOnCheck(attr, this.assembleSku(attr.id, attr.name, attrValue.value, attrValue.label), action);
+      this.attrValueOnCheck(attr, this.assembleSku(attr.id, attr.name, attrOption.label), action);
     },
+    getData() {
+      const skuList = []
+      this.skuTableData.forEach(item => {
+        const skuObj = {
+          id: item.id,
+          code: item.code,
+          salesPrice: yuanToFen(item.salesPrice),
+          costPrice: yuanToFen(item.costPrice),
+          stock: item.stock,
+          warnStock: item.warnStock,
+          specList: [...item.specList]
+        };
+        skuList.push(skuObj)
+      })
+      return skuList
+    }
   }
 }
 </script>
