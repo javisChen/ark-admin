@@ -15,7 +15,7 @@
             </label>
           </div>
           <div>
-            <a-input style="width: 20%" :placeholder="attrItem.name" v-model="manualAttrValue"/>&nbsp;
+            <a-input style="width: 20%" :placeholder="attrItem.name" v-model="attrItem.manualAttrValue"/>&nbsp;
             <k-tooltip-button title="添加" @click="addAttrValueListItem(attrItem)" icon="plus"/>
           </div>
         </div>
@@ -191,7 +191,6 @@ export default {
       skuTableLoading: false,
       showSkuTable: false,
       columns: defaultColumns,
-      manualAttrValue: '',
       labelCol: {span: 2},
       wrapperCol: {span: 20},
       attrList: [],
@@ -225,11 +224,9 @@ export default {
       this.skuTableLoading = true
       try {
         this.initTableData();
-
         // 把所有
         const attrTable = []
         this.checkedAttrValueMap.forEach((value, key) => attrTable.push(value))
-
         const combineTable = calcDescartes(attrTable)
         console.log('所有SKU组合', combineTable)
         combineTable.forEach(item => {
@@ -242,7 +239,6 @@ export default {
             _key: uuidv4()
           };
           item.forEach(item => {
-            obj[item.attrName] = item.attrValue
             obj[item.attrId] = item.attrValue
             if (!obj.specList) {
               obj.specList = [{...item}]
@@ -262,8 +258,8 @@ export default {
       return index
     },
     addAttrValueListItem(item) {
-      item.optionList.push({label: this.manualAttrValue, value: uuidv4()});
-      this.manualAttrValue = ''
+      item.optionList.push({label: item.manualAttrValue, value: uuidv4()});
+      item.manualAttrValue = ''
     },
     removeValueListItem(item, idx) {
       item.optionList.splice(idx, 1)
@@ -284,6 +280,7 @@ export default {
         this.attrList = data.records
         const [...cols] = defaultColumns
         this.attrList.forEach(attrItem => {
+          // 根据属性push一个column对象出来，dataIndex用属性ID表示
           cols.unshift({
             title: attrItem.name,
             align: 'center',
@@ -292,7 +289,6 @@ export default {
           })
           if (attrItem.inputType == 2) {
             attrItem.optionList.forEach(attrOption => {
-              console.log(attrOption)
               attrOption.label = attrOption.value
               attrOption.value = `${attrItem.id}-${attrItem.name}-${attrOption.value}`
             })
