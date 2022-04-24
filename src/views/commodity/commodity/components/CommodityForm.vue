@@ -25,7 +25,7 @@ import CommodityBaseInfo from "@/views/commodity/commodity/components/CommodityB
 import CommodityAttrSpec from "@/views/commodity/commodity/components/CommodityAttrSpec";
 import CommodityAttrParam from "@/views/commodity/commodity/components/CommodityAttrParam";
 import CommodityDetailInfo from "@/views/commodity/commodity/components/CommodityDetailInfo";
-import {create, update} from "@/api/commodity/commodity-api";
+import {create, update, getInfo} from "@/api/commodity/commodity-api";
 
 const defaultModel = {
   name: "",
@@ -73,16 +73,16 @@ export default {
     }
   },
   props: {
-    mode: {
-      type: String,
-      default: 'add'
-    },
+    // mode: {
+    //   type: String,
+    //   default: 'add'
+    // },
   },
   data() {
     return {
       confirmLoading: false,
       formModel: Object.assign({}, defaultModel),
-      type: FORM_MODE_EDIT,
+      mode: FORM_MODE_ADD,
     }
   },
   methods: {
@@ -105,6 +105,7 @@ export default {
       this.confirmLoading = false
     },
     submitForm() {
+      this.toggleConfirmLoading()
       // 获取商品基础数据
       const baseInfo = this.$refs['baseInfo'].getData();
       console.log('baseInfo', baseInfo)
@@ -132,8 +133,7 @@ export default {
         paramList: attrParam
       }
       console.log('商品表单', form)
-      return
-      if (this.type === FORM_MODE_ADD) {
+      if (this.mode === FORM_MODE_ADD) {
         create(form)
           .then(({data}) => this.afterSuccess())
           .catch(e => e)
@@ -145,8 +145,20 @@ export default {
           .finally(() => this.closeConfirmLoading())
       }
     },
+    async loadInfo(spuId) {
+      try {
+        const {data} = await getInfo({id: spuId});
+        this.formModel = data
+        console.log(data)
+      } catch (e) {
+      }
+    }
   },
   created() {
+    if (this.$route.query.spuId) {
+      const spuId = this.$route.query.spuId;
+      this.loadInfo(spuId);
+    }
   },
   beforeDestroy() {
   }

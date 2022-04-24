@@ -4,18 +4,23 @@
               :options="options"
               :fieldNames="{ label: 'name', value: 'id', children: 'nodes' }"
               placeholder="请选择商品类目"
-              :default-value="[]"
+              :value="defaultValue"
               @change="onChange"/>
 </template>
 
 <script>
 import {getTree} from '@/api/commodity/category-api'
+import {parseLevelPathFull} from "@/utils/util";
 
 export default {
   name: "CommodityCategoryCascader",
   props: {
     value: {
       type: [Number, String],
+    },
+    path: {
+      type: [String],
+      default: () => ''
     },
   },
   model: {
@@ -25,8 +30,14 @@ export default {
   data() {
     return {
       list: [],
-      options: []
+      options: [],
+      defaultValue: undefined
     }
+  },
+  watch: {
+    path(val) {
+      this.defaultValue = parseLevelPathFull(val)
+    },
   },
   methods: {
     onChange(value, selectedOptions) {

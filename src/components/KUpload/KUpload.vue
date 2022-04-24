@@ -2,16 +2,13 @@
   <div>
     <a-upload
       list-type="picture-card"
-      :file-list="fileList"
+      :file-list="internalValue"
       :customRequest="customRequest"
       @preview="handlePreview"
       :remove="handleRemove"
     >
-      <div v-if="fileList.length < limit">
+      <div v-if="internalValue.length < limit">
         <a-icon type="plus"/>
-        <!--      <div class="ant-upload-text">-->
-        <!--        LOGO-->
-        <!--      </div>-->
       </div>
     </a-upload>
     <a-modal :visible="previewVisible" :footer="null" @cancel="handleCancel">
@@ -22,6 +19,7 @@
 </template>
 <script>
 import {upload} from "@/api/file/file-api";
+import cloneDeep from "lodash.clonedeep";
 
 function getBase64(file) {
   return new Promise((resolve, reject) => {
@@ -42,13 +40,25 @@ export default {
     },
     value: {
       required: false,
+      default: () => []
     },
+  },
+  watch: {
+    value(val) {
+      console.log('val', val)
+      this.internalValue = val.map(item => {
+        return {
+          url: item
+        }
+      })
+      console.log('internalValue', this.internalValue)
+    }
   },
   data() {
     return {
-      fileList: [],
       previewImage: '',
-      previewVisible: false
+      previewVisible: false,
+      internalValue: []
     }
   },
   methods: {
@@ -63,9 +73,10 @@ export default {
       this.previewVisible = true;
     },
     async handleRemove(v1) {
-      this.fileList = this.fileList.filter(item => item.uid !== v1.uid)
+      this.internalValue = this.internalValue.filter(item => item.uid !== v1.uid)
     },
     handleChange(value) {
+      console.log('value', value)
       this.$emit('change', value)
     },
     async customRequest(f) {
@@ -74,13 +85,13 @@ export default {
       formData.append('file', file);
       try {
         const {data} = await upload(formData);
-        this.fileList.push({
+        this.internalValue.push({
           uid: file.uid,
           name: file.name,
           status: 'done',
           url: data.url
         })
-        this.handleChange(this.fileList)
+        this.handleChange(this.internalValue)
         this.$message.success('上传成功')
       } catch (e) {
         this.$message.error('上传失败')

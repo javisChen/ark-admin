@@ -177,7 +177,6 @@ export default {
       this.loadAttrList()
     },
     formModel(newV, oldV) {
-      console.log('formmodel', newV)
       this.internalModel = newV
     },
   },

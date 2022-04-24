@@ -7,7 +7,9 @@
     :label-col="labelCol"
     :wrapper-col="wrapperCol">
     <a-form-model-item class="model-item" ref="categoryId" label="商品分类" prop="categoryId">
-      <commodity-category-cascader v-model="internalModel.categoryId" @change="onCategoryChange"/>
+      <commodity-category-cascader v-model="internalModel.categoryId"
+                                   :path="internalModel.categoryLevelPath"
+                                   @change="onCategoryChange"/>
     </a-form-model-item>
 
     <a-form-model-item class="model-item" ref="brandId" label="商品品牌" prop="brandId">
@@ -38,7 +40,7 @@
     </a-form-model-item>
 
     <a-form-model-item class="model-item" ref="description" label="商品相册" has-feedback>
-      <k-upload :limit="20" @change="onUploadSuccess"/>
+      <k-upload :limit="20" v-model="internalModel.picList" @change="onUploadSuccess"/>
     </a-form-model-item>
   </a-form-model>
 </template>
@@ -68,7 +70,6 @@ export default {
   },
   watch: {
     formModel(newV, oldV) {
-      console.log('formmodel', newV)
       this.internalModel = newV
     },
   },

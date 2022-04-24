@@ -49,9 +49,7 @@
       </template>
 
       <template slot="action" slot-scope="text, record">
-        <k-tooltip-button title="查看" @click="handleView(record)" icon="search"/>
-        &nbsp
-        <k-tooltip-button title="下载" @click="openDownloadView(record)" icon="download"/>&nbsp;
+        <k-tooltip-button title="查看" @click="toDetail(record)" icon="search"/>
       </template>
     </a-table>
     <a-empty v-else/>
@@ -152,16 +150,20 @@ export default {
     this.loadTableData();
   },
   methods: {
+    toDetail(record) {
+      this.$router.push({
+        path: '/commodity/form',
+        query: {spuId: record.id},
+      })
+    },
     getShelfStatus(value) {
       return shelfStatusDict[value]
     },
     toAttrGroup(record) {
-      // this.selectedAttrTemplate = record
       this.$router.push({
         path: '/commodity/attr/group',
         query: {templateId: record.id},
       })
-      // this.showAttrGroup = true;
     },
     toAttrSpec(record) {
       this.$router.push({
@@ -171,9 +173,6 @@ export default {
           type: 1
         },
       })
-      // this.selectedAttrTemplate = record
-      // this.attrType = 1
-      // this.showAttrSpec = true;
     },
     toAttrParam(record) {
       this.$router.push({
@@ -183,9 +182,6 @@ export default {
           type: 2
         },
       })
-      // this.selectedAttrTemplate = record
-      // this.attrType = 2
-      // this.showAttrParam = true;
     },
     handleTableChange(pagination, filters, sorter) {
       this.queryParam.current = pagination.current

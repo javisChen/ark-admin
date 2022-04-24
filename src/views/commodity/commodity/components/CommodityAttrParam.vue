@@ -43,7 +43,6 @@ export default {
       this.loadAttrGroupList()
     },
     formModel(newV, oldV) {
-      console.log('formmodel', newV)
       this.internalModel = newV
     },
   },
