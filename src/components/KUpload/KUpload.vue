@@ -48,6 +48,9 @@ export default {
       console.log('val', val)
       this.internalValue = val.map(item => {
         return {
+          uid: Math.random() * 10,
+          name: 'item',
+          status: 'done',
           url: item
         }
       })

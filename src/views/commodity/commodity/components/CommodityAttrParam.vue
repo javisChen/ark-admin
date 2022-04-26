@@ -44,6 +44,7 @@ export default {
     },
     formModel(newV, oldV) {
       this.internalModel = newV
+      console.log('ffff', newV)
     },
   },
   data() {
@@ -62,7 +63,19 @@ export default {
     }
   },
   created() {
-
+    const s = '[\n' +
+      '    {\n' +
+      '        "attrId": "1517406218771795969",\n' +
+      '        "attrName": "屏幕尺寸",\n' +
+      '        "attrValue": "1231"\n' +
+      '    },\n' +
+      '    {\n' +
+      '        "attrId": "1517406262228979714",\n' +
+      '        "attrName": "屏幕分辨率",\n' +
+      '        "attrValue": "1231"\n' +
+      '    }\n' +
+      ']'
+    // console.log(s)
   },
   methods: {
     onValueChange($event, attrItem) {

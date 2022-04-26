@@ -196,11 +196,157 @@ export default {
     }
   },
   created() {
-    if (this.internalModel.categoryId) {
-      this.loadAttrList()
-    }
+    const s = '[\n' +
+      '    {\n' +
+      '        "code": "A11",\n' +
+      '        "costPrice": 9900,\n' +
+      '        "id": "1518224430886092801",\n' +
+      '        "salesPrice": 9900,\n' +
+      '        "specList": [\n' +
+      '            {\n' +
+      '                "attrId": "1514490832313208833",\n' +
+      '                "attrName": "颜色",\n' +
+      '                "attrValue": "红"\n' +
+      '            },\n' +
+      '            {\n' +
+      '                "attrId": "1516071737543454722",\n' +
+      '                "attrName": "版本",\n' +
+      '                "attrValue": "128"\n' +
+      '            },\n' +
+      '            {\n' +
+      '                "attrId": "1516072118503698433",\n' +
+      '                "attrName": "套装",\n' +
+      '                "attrValue": "带耳机"\n' +
+      '            },\n' +
+      '            {\n' +
+      '                "attrId": "1518156103137734657",\n' +
+      '                "attrName": "售后服务",\n' +
+      '                "attrValue": "免费维修"\n' +
+      '            }\n' +
+      '        ],\n' +
+      '        "stock": 99,\n' +
+      '        "warnStock": 1\n' +
+      '    },\n' +
+      '    {\n' +
+      '        "code": "A12",\n' +
+      '        "costPrice": 9900,\n' +
+      '        "id": "1518224431141945346",\n' +
+      '        "salesPrice": 9900,\n' +
+      '        "specList": [\n' +
+      '            {\n' +
+      '                "attrId": "1514490832313208833",\n' +
+      '                "attrName": "颜色",\n' +
+      '                "attrValue": "红"\n' +
+      '            },\n' +
+      '            {\n' +
+      '                "attrId": "1516071737543454722",\n' +
+      '                "attrName": "版本",\n' +
+      '                "attrValue": "256"\n' +
+      '            },\n' +
+      '            {\n' +
+      '                "attrId": "1516072118503698433",\n' +
+      '                "attrName": "套装",\n' +
+      '                "attrValue": "带耳机"\n' +
+      '            },\n' +
+      '            {\n' +
+      '                "attrId": "1518156103137734657",\n' +
+      '                "attrName": "售后服务",\n' +
+      '                "attrValue": "免费维修"\n' +
+      '            }\n' +
+      '        ],\n' +
+      '        "stock": 99,\n' +
+      '        "warnStock": 2\n' +
+      '    },\n' +
+      '    {\n' +
+      '        "code": "A13",\n' +
+      '        "costPrice": 9900,\n' +
+      '        "id": "1518224431339077633",\n' +
+      '        "salesPrice": 9900,\n' +
+      '        "specList": [\n' +
+      '            {\n' +
+      '                "attrId": "1514490832313208833",\n' +
+      '                "attrName": "颜色",\n' +
+      '                "attrValue": "紫"\n' +
+      '            },\n' +
+      '            {\n' +
+      '                "attrId": "1516071737543454722",\n' +
+      '                "attrName": "版本",\n' +
+      '                "attrValue": "128"\n' +
+      '            },\n' +
+      '            {\n' +
+      '                "attrId": "1516072118503698433",\n' +
+      '                "attrName": "套装",\n' +
+      '                "attrValue": "带耳机"\n' +
+      '            },\n' +
+      '            {\n' +
+      '                "attrId": "1518156103137734657",\n' +
+      '                "attrName": "售后服务",\n' +
+      '                "attrValue": "免费维修"\n' +
+      '            }\n' +
+      '        ],\n' +
+      '        "stock": 99,\n' +
+      '        "warnStock": 3\n' +
+      '    },\n' +
+      '    {\n' +
+      '        "code": "A14",\n' +
+      '        "costPrice": 9900,\n' +
+      '        "id": "1518224431536209921",\n' +
+      '        "salesPrice": 9900,\n' +
+      '        "specList": [\n' +
+      '            {\n' +
+      '                "attrId": "1514490832313208833",\n' +
+      '                "attrName": "颜色",\n' +
+      '                "attrValue": "紫"\n' +
+      '            },\n' +
+      '            {\n' +
+      '                "attrId": "1516071737543454722",\n' +
+      '                "attrName": "版本",\n' +
+      '                "attrValue": "256"\n' +
+      '            },\n' +
+      '            {\n' +
+      '                "attrId": "1516072118503698433",\n' +
+      '                "attrName": "套装",\n' +
+      '                "attrValue": "带耳机"\n' +
+      '            },\n' +
+      '            {\n' +
+      '                "attrId": "1518156103137734657",\n' +
+      '                "attrName": "售后服务",\n' +
+      '                "attrValue": "免费维修"\n' +
+      '            }\n' +
+      '        ],\n' +
+      '        "stock": 99,\n' +
+      '        "warnStock": 4\n' +
+      '    }\n' +
+      ']'
+    const json = JSON.parse(s)
+    this.dynamicBuildSkuTableColumns(json[0].specList);
+    this.skuTableData = json
+    console.log(this.skuTableData)
+    this.skuTableData.forEach(item => {
+      item.specList.forEach(s => {
+        item[s.attrId] = [s.attrValue]
+      })
+    })
+    console.log(this.skuTableData)
+    this.showSkuTable = true
   },
   methods: {
+    /**
+     * 动态构建SKU表格的表头
+     * @param attrList
+     */
+    dynamicBuildSkuTableColumns(attrList) {
+      const [...cols] = defaultColumns
+      attrList.forEach(attrItem => {
+        cols.unshift({
+          title: attrItem.attrName,
+          align: 'center',
+          width: columnWidth,
+          dataIndex: attrItem.attrId
+        })
+      })
+      this.columns = cols
+    },
     onSkuColumnChange(e, col, idx, record) {
       // console.log(`SKU[${col}] change `, e.target.value)
     },
@@ -277,15 +423,7 @@ export default {
         }
         this.showSkuTable = true
         this.attrList = data.records
-        const [...cols] = defaultColumns
         this.attrList.forEach(attrItem => {
-          // 根据属性push一个column对象出来，dataIndex用属性ID表示
-          cols.unshift({
-            title: attrItem.name,
-            align: 'center',
-            width: columnWidth,
-            dataIndex: attrItem.id
-          })
           if (attrItem.inputType == 2) {
             attrItem.optionList.forEach(attrOption => {
               attrOption.label = attrOption.value
@@ -296,7 +434,7 @@ export default {
           }
           this.$set(attrItem, 'checked', false)
         })
-        this.columns = cols
+        this.dynamicBuildSkuTableColumns(this.attrList)
       } catch (e) {
         console.log('获取属性异常', e)
       }
