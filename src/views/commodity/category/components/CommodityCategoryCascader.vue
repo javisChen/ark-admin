@@ -4,7 +4,7 @@
               :options="options"
               :fieldNames="{ label: 'name', value: 'id', children: 'nodes' }"
               placeholder="请选择商品类目"
-              :value="defaultValue"
+              v-model="defaultValue"
               @change="onChange"/>
 </template>
 
@@ -41,6 +41,7 @@ export default {
   },
   methods: {
     onChange(value, selectedOptions) {
+      // this.defaultValue = value
       this.$emit('change', value[value.length - 1])
     },
     async loadList() {

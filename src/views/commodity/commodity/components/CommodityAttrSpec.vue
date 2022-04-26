@@ -178,6 +178,11 @@ export default {
     },
     formModel(newV, oldV) {
       this.internalModel = newV
+      this.internalModel.skuList[0].specList.forEach(item => {
+        const {attrId, attrName, attrValue } = item
+        this.attrValueOnChange(this.assembleSku(attrId, attrName, attrValue), 'add');
+      })
+      console.log(this.checkedAttrValueMap)
     },
   },
   data() {
@@ -327,7 +332,6 @@ export default {
         item[s.attrId] = [s.attrValue]
       })
     })
-    console.log(this.skuTableData)
     this.showSkuTable = true
   },
   methods: {
@@ -369,7 +373,6 @@ export default {
       this.skuTableLoading = true
       try {
         this.initTableData();
-        // 把所有
         const attrTable = []
         this.checkedAttrValueMap.forEach((value, key) => attrTable.push(value))
         const combineTable = calcDescartes(attrTable)
@@ -403,7 +406,7 @@ export default {
       return index
     },
     addAttrValueListItem(item) {
-      item.optionList.push({label: item.manualAttrValue, value: uuidv4()});
+      item.optionList.push({label: item.manualAttrValue, value: item.manualAttrValue});
       item.manualAttrValue = ''
     },
     removeValueListItem(item, idx) {
@@ -445,17 +448,18 @@ export default {
      * @param value 属性值
      * @param action add、delete
      */
-    attrValueOnCheck: function (attr, value, action) {
-      console.log(`${attr.name} ${action}`, value)
+    attrValueOnChange(value, action) {
+      const {attrId, attrName} = value;
+      console.log(`${attrName} ${action}`, value)
       if (action === 'add') {
-        if (this.checkedAttrValueMap.size < 1 || !this.checkedAttrValueMap.has(attr.id)) {
-          this.checkedAttrValueMap.set(attr.id, [value])
+        if (this.checkedAttrValueMap.size < 1 || !this.checkedAttrValueMap.has(attrId)) {
+          this.checkedAttrValueMap.set(attrId, [value])
         } else {
-          this.checkedAttrValueMap.get(attr.id).push(value)
+          this.checkedAttrValueMap.get(attrId).push(value)
         }
       } else {
-        if (this.checkedAttrValueMap.has(attr.id)) {
-          const valueList = this.checkedAttrValueMap.get(attr.id)
+        if (this.checkedAttrValueMap.has(attrId)) {
+          const valueList = this.checkedAttrValueMap.get(attrId)
           valueList.splice(valueList.indexOf(value), 1)
         }
       }
@@ -467,7 +471,7 @@ export default {
       }
       attrValue.forEach(item => {
         const s = item.split('-')
-        this.attrValueOnCheck(attr, this.assembleSku(s[0], s[1], s[2]), 'add');
+        this.attrValueOnChange(this.assembleSku(s[0], s[1], s[2]), 'add');
       })
     },
     assembleSku(attrId, attrName, attrValue) {
@@ -479,7 +483,7 @@ export default {
     },
     checkedValue(e, attrOption, attr) {
       const action = e.target.checked ? 'add' : 'delete';
-      this.attrValueOnCheck(attr, this.assembleSku(attr.id, attr.name, attrOption.label), action);
+      this.attrValueOnChange(this.assembleSku(attr.id, attr.name, attrOption.label), action);
     },
     getData() {
       const skuList = []

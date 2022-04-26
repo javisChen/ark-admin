@@ -44,7 +44,6 @@ export default {
     },
     formModel(newV, oldV) {
       this.internalModel = newV
-      console.log('ffff', newV)
     },
   },
   data() {
@@ -116,7 +115,6 @@ export default {
           this.paramTable.push({attrId: attrItem.id, attrValue: attrItem.value, attrName: attrItem.name})
         });
       })
-      console.log(this.paramTable)
     },
     onSkuColumnChange(e, col, idx, record) {
     },
