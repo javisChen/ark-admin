@@ -179,7 +179,7 @@ export default {
     formModel(newV, oldV) {
       this.internalModel = newV
       this.internalModel.skuList[0].specList.forEach(item => {
-        const {attrId, attrName, attrValue } = item
+        const {attrId, attrName, attrValue} = item
         this.attrValueOnChange(this.assembleSku(attrId, attrName, attrValue), 'add');
       })
       console.log(this.checkedAttrValueMap)
@@ -187,6 +187,7 @@ export default {
   },
   data() {
     return {
+      newAttrOptions: new Map(),
       internalModel: cloneDeep(this.formModel),
       editableColumns, // 可编辑的列
       editSkuTableData: [], // 处于编辑模式的sku数据
@@ -342,14 +343,18 @@ export default {
     dynamicBuildSkuTableColumns(attrList) {
       const [...cols] = defaultColumns
       attrList.forEach(attrItem => {
+        console.log('attrItem', attrItem)
         cols.unshift({
-          title: attrItem.attrName,
+          title: attrItem.name,
+          // title: attrItem.attrName,
           align: 'center',
           width: columnWidth,
-          dataIndex: attrItem.attrId
+          // dataIndex: attrItem.attrId
+          dataIndex: attrItem.id
         })
       })
       this.columns = cols
+      console.log('sku 表头', this.columns)
     },
     onSkuColumnChange(e, col, idx, record) {
       // console.log(`SKU[${col}] change `, e.target.value)
@@ -405,9 +410,16 @@ export default {
     rowKey(record, index) {
       return index
     },
-    addAttrValueListItem(item) {
-      item.optionList.push({label: item.manualAttrValue, value: item.manualAttrValue});
-      item.manualAttrValue = ''
+    addAttrValueListItem(attrItem) {
+      const manualAttrValue = attrItem.manualAttrValue;
+      const attrId = attrItem.id;
+      attrItem.optionList.push({label: manualAttrValue, value: manualAttrValue});
+      if (this.newAttrOptions.size < 1 || !this.newAttrOptions.has(attrId)) {
+        this.newAttrOptions.set(attrId, [manualAttrValue])
+      } else {
+        this.newAttrOptions.get(attrId).push(manualAttrValue)
+      }
+      attrItem.manualAttrValue = ''
     },
     removeValueListItem(item, idx) {
       item.optionList.splice(idx, 1)
@@ -419,7 +431,8 @@ export default {
           size: 30,
           categoryId: this.internalModel.categoryId,
           type: 1,
-          withOptions: true
+          withOptions: true,
+          spuId: this.formModel.id
         })
         if (!data.records || data.records.length === 0) {
           return
@@ -427,13 +440,13 @@ export default {
         this.showSkuTable = true
         this.attrList = data.records
         this.attrList.forEach(attrItem => {
-          if (attrItem.inputType == 2) {
+          if (!attrItem.optionList) {
+            this.$set(attrItem, 'optionList', [])
+          } else {
             attrItem.optionList.forEach(attrOption => {
               attrOption.label = attrOption.value
               attrOption.value = `${attrItem.id}-${attrItem.name}-${attrOption.value}`
             })
-          } else {
-            this.$set(attrItem, 'optionList', [])
           }
           this.$set(attrItem, 'checked', false)
         })
@@ -485,6 +498,13 @@ export default {
       const action = e.target.checked ? 'add' : 'delete';
       this.attrValueOnChange(this.assembleSku(attr.id, attr.name, attrOption.label), action);
     },
+    getNewAttrOptions() {
+      const list = []
+      this.newAttrOptions.forEach((value, key) => {
+        list.push({attrId: key, valueList: value})
+      })
+      return list;
+    },
     getData() {
       const skuList = []
       this.skuTableData.forEach(item => {
@@ -495,11 +515,14 @@ export default {
           costPrice: yuanToFen(item.costPrice),
           stock: item.stock,
           warnStock: item.warnStock,
-          specList: [...item.specList]
+          specList: [...item.specList],
         };
         skuList.push(skuObj)
       })
-      return skuList
+      return {
+        newAttrOptions: this.getNewAttrOptions(),
+        skuList
+      }
     }
   }
 }

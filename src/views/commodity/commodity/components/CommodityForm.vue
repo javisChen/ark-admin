@@ -95,7 +95,7 @@ export default {
     },
     afterSuccess: function ($form) {
       this.toggleConfirmLoading()
-      this.$emit('success', '')
+      this.$message.success('保存成功')
       this.close()
     },
     toggleConfirmLoading() {
@@ -129,7 +129,8 @@ export default {
         freightTemplateId: 0,
         pcDetailHtml: detailInfo.pcDetailHtml,
         mobileDetailHtml: "",
-        skuList: attrSpec,
+        skuList: attrSpec.skuList,
+        newAttrOptionList: attrSpec.newAttrOptions,
         paramList: attrParam
       }
       console.log('商品表单', form)
