@@ -188,7 +188,7 @@ export default {
   },
   data() {
     return {
-      newAttrOptions: new Map(),
+      newAttrOptions: new Map(), // 新增的属性项选
       internalModel: cloneDeep(this.formModel),
       editableColumns, // 可编辑的列
       editSkuTableData: [], // 处于编辑模式的sku数据
@@ -289,9 +289,9 @@ export default {
       return index
     },
     addAttrValueListItem(attrItem) {
-      const manualAttrValue = attrItem.manualAttrValue;
+      const manualAttrValue = attrItem.manualAttrValue
       const attrId = attrItem.id;
-      attrItem.optionList.push({label: manualAttrValue, value: manualAttrValue});
+      attrItem.optionList.push({label: manualAttrValue, value: manualAttrValue})
       if (this.newAttrOptions.size < 1 || !this.newAttrOptions.has(attrId)) {
         this.newAttrOptions.set(attrId, [manualAttrValue])
       } else {

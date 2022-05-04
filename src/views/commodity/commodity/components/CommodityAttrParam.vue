@@ -9,7 +9,7 @@
           {{ attrItem.name }}
         </div>
         <div class="item-right">
-          <a-input @change="onValueChange($event, attrItem)"/>
+          <a-input v-model="paramMap[attrItem.id]" @change="onValueChange($event, attrItem)"/>
         </div>
       </div>
     </div>
@@ -44,12 +44,14 @@ export default {
     },
     formModel(newV, oldV) {
       this.internalModel = newV
-      console.log(this.internalModel)
+      // 回显初始化
+      this.internalModel.paramList.forEach(item => this.paramMap[item.attrId] = item.attrValue)
     },
   },
   data() {
     return {
       internalModel: cloneDeep(this.formModel),
+      paramMap: {},
       paramTable: [],
       attrGroupList: [],
       labelCol: {span: 2},
@@ -85,6 +87,9 @@ export default {
           item.attrValue = value
         }
       })
+      console.log(attrItem.id)
+      console.log(this.paramMap);
+      console.log(this.paramMap[attrItem.id]);
     },
     rowKey(record, index) {
       return index
@@ -113,10 +118,8 @@ export default {
         item.attrList.forEach(attrItem => {
           obj.attrList.push({[item.id]: attrItem.name})
           this.paramTable.push({attrId: attrItem.id, attrValue: attrItem.value, attrName: attrItem.name})
-          console.log(this.paramTable)
         });
       })
-      console.log(this.paramTable)
     },
     onSkuColumnChange(e, col, idx, record) {
     },
