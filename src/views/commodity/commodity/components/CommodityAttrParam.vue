@@ -9,7 +9,7 @@
           {{ attrItem.name }}
         </div>
         <div class="item-right">
-          <a-input v-model="paramMap[attrItem.id]" @change="onValueChange($event, attrItem)"/>
+          <a-input v-model="paramMap[attrItem.id]"/>
         </div>
       </div>
     </div>
@@ -43,9 +43,11 @@ export default {
       this.loadAttrGroupList()
     },
     formModel(newV, oldV) {
-      this.internalModel = newV
+      this.internalModel = cloneDeep(newV)
       // 回显初始化
-      this.internalModel.paramList.forEach(item => this.paramMap[item.attrId] = item.attrValue)
+      this.internalModel.paramList.forEach(item => {
+        this.$set(this.paramMap, item.attrId, item.attrValue)
+      })
     },
   },
   data() {
@@ -65,32 +67,8 @@ export default {
     }
   },
   created() {
-    const s = '[\n' +
-      '    {\n' +
-      '        "attrId": "1517406218771795969",\n' +
-      '        "attrName": "屏幕尺寸",\n' +
-      '        "attrValue": "1231"\n' +
-      '    },\n' +
-      '    {\n' +
-      '        "attrId": "1517406262228979714",\n' +
-      '        "attrName": "屏幕分辨率",\n' +
-      '        "attrValue": "1231"\n' +
-      '    }\n' +
-      ']'
-    // console.log(s)
   },
   methods: {
-    onValueChange($event, attrItem) {
-      const value = $event.target.value;
-      this.paramTable.forEach(item => {
-        if (item.id === attrItem.attrId) {
-          item.attrValue = value
-        }
-      })
-      console.log(attrItem.id)
-      console.log(this.paramMap);
-      console.log(this.paramMap[attrItem.id]);
-    },
     rowKey(record, index) {
       return index
     },
@@ -124,8 +102,11 @@ export default {
     onSkuColumnChange(e, col, idx, record) {
     },
     getData() {
-      const paramList = []
-      return this.paramTable
+      let arr = []
+      for (let paramMapKey in this.paramMap) {
+        arr.push({attrId: paramMapKey, attrValue: this.paramMap[paramMapKey]})
+      }
+      return arr
     }
   }
 }

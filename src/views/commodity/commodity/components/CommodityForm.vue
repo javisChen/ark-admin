@@ -117,6 +117,7 @@ export default {
       console.log('detailInfo', detailInfo)
 
       const form = {
+        id: baseInfo.id,
         name: baseInfo.name,
         code: baseInfo.code,
         description: baseInfo.description,
@@ -130,6 +131,7 @@ export default {
         pcDetailHtml: detailInfo.pcDetailHtml,
         mobileDetailHtml: "",
         skuList: attrSpec.skuList,
+        flushSku: attrSpec.flushSku,
         newAttrOptionList: attrSpec.newAttrOptions,
         paramList: attrParam
       }
@@ -150,7 +152,7 @@ export default {
       try {
         const {data} = await getInfo({id: spuId});
         this.formModel = data
-        console.log(data)
+        this.mode = FORM_MODE_EDIT
       } catch (e) {
       }
     }

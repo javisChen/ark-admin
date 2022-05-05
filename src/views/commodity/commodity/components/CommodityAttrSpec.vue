@@ -188,6 +188,7 @@ export default {
   },
   data() {
     return {
+      flushSku: false,
       newAttrOptions: new Map(), // 新增的属性项选
       internalModel: cloneDeep(this.formModel),
       editableColumns, // 可编辑的列
@@ -280,6 +281,7 @@ export default {
           this.skuTableData.push(obj)
           this.editSkuTableData.push(obj)
         })
+        this.flushSku = true
         console.log('SKU TABLE刷新完成', this.skuTableData)
       } finally {
         this.skuTableLoading = false
@@ -397,9 +399,11 @@ export default {
         };
         skuList.push(skuObj)
       })
+      console.log(skuList)
       return {
         newAttrOptions: this.getNewAttrOptions(),
-        skuList
+        skuList,
+        flushSku: this.flushSku
       }
     }
   }
