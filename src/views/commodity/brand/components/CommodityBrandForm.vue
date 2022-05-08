@@ -41,7 +41,7 @@
 <script>
 
 import {create, update} from '@/api/commodity/brand-api'
-import KTUpload from "@/components/KUpload/KUpload";
+import KUpload from "@/components/KUpload/KUpload";
 
 const defaultModel = {
   id: '',
@@ -64,7 +64,7 @@ function getBase64(file) {
 
 export default {
   name: 'CommodityBrandForm',
-  components: {KTUpload},
+  components: {KUpload},
   data() {
     return {
       fileList: [],
