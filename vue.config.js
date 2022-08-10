@@ -110,7 +110,7 @@ const vueConfig = {
         ws: false,
         changeOrigin: true,
         pathRewrite: {
-          '^/ ': ''
+          '^/': ''
         }
       }
     }

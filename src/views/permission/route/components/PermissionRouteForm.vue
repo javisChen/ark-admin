@@ -146,7 +146,7 @@ import {updateRoute, addRoute} from '@/api/iam/route-api'
 import RouteComponentSelect from "./RouteComponentSelect";
 import ApplicationSelect from "../../application/components/ApplicationSelect";
 import PermissionPageElementTable from "./PermissionPageElementTable";
-import {parseLevelPath} from "@/utils/util";
+import {parseLevelPath, parseLevelPathFull} from "@/utils/util";
 
 
 const ROUTE_TYPE_MENU = 1
@@ -276,10 +276,12 @@ export default {
         this.formModel = Object.assign(this.formModel, formModel)
         this.formModel = this.$cloneDeep(this.formModel)
         console.log(this.formModel)
-        if (this.formModel.levelPath) {
+        if (mode == FORM_MODE_ADD_CHILDREN) {
+          this.routesOptionsDefaultValue = parseLevelPathFull(this.formModel.levelPath)
+        } else if (this.formModel.levelPath) {
           this.routesOptionsDefaultValue = parseLevelPath(this.formModel.levelPath)
-          console.log(this.routesOptionsDefaultValue)
         }
+        console.log(this.routesOptionsDefaultValue)
       }
       this.mode = mode
     },

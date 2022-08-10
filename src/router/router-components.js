@@ -65,7 +65,7 @@ export default {
   'PermissionApplication': () => import('@/views/permission/application/PermissionApplication'),
   'PermissionApi': () => import('@/views/permission/api/PermissionApi'),
 
-  // cop
+  // eop
   'CodeProject': () => import('@/views/eop/codeproject/CodeProject'),
 
   // commodity
@@ -77,5 +77,7 @@ export default {
   'Commodity': () => import('@/views/commodity/commodity/Commodity'),
   'CommodityForm': () => import('@/views/commodity/commodity/components/CommodityForm'),
 
+  // order
+  'Order': () => import('@/views/order/orderManage/OrderManage'),
 
 }
