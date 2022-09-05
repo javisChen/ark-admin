@@ -7,6 +7,7 @@ const api = {
   create: Base.serviceName + '/v1/category/create',
   update: Base.serviceName + '/v1/category/update',
   info: Base.serviceName + '/v1/category/info',
+  remove: Base.serviceName + '/v1/category',
 }
 
 export default api
@@ -20,3 +21,5 @@ export const update = (data) => post({url: api.update, data})
 export const getInfo = (params) => get({url: api.info, params})
 
 export const getTree = (data) => post({url: api.tree, data})
+
+export const remove = (params) => del({url: api.remove, params})

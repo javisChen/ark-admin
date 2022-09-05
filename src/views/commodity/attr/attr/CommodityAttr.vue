@@ -37,7 +37,8 @@
       :data-source="tableData">
 
       <template slot="action" slot-scope="text, record">
-        <a href="/#" @click="showForm($event, 'edit', record)">编辑</a>
+        <a href="/#" @click="showForm($event, 'edit', record)">编辑</a>&nbsp;
+        <a href="/#" @click="removeAttr(record)">删除</a>
       </template>
 
       <template slot="type" slot-scope="text, record">
@@ -66,8 +67,9 @@
 
 <script>
 
-import {getInfo, getPageList} from '@/api/commodity/attr-api'
+import {getInfo, getPageList, remove} from '@/api/commodity/attr-api'
 import CommodityAttrForm from "./components/CommodityAttrForm";
+import {deleteApi} from "@/api/iam/api-api";
 
 const typeDict = {
   1: '规格',
@@ -212,6 +214,16 @@ export default {
       this.loadTableData()
     },
     handleEditFormCancel() {
+    },
+    async removeAttr(record) {
+      this.$confirm({
+        title: `提示`,
+        content: `确认要删除[${record.name}]？`,
+        onOk: async () => {
+          const {data} = await remove({id: record.id})
+          await this.loadTableData();
+        }
+      })
     },
     async showForm(event, mode = 'add', record) {
       if (mode === 'edit') {

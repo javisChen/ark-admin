@@ -38,7 +38,7 @@
         </a-radio-group>
       </a-form-model-item>
 
-      <a-form-model-item ref="isNav" label="是否显示" prop="isNav">
+      <a-form-model-item ref="isNav" label="是否导航" prop="isNav">
         <a-radio-group v-model="formModel.isNav" name="isNav">
           <a-radio v-for="item in isNavOptions"
                    :key="item.value"
@@ -65,8 +65,8 @@ import CommodityAttrTemplateSelect from "@/views/commodity/attr/attrTemplate/com
 const defaultModel = {
   id: 0,
   name: "",
-  isShow: 0,
-  isNav: 0,
+  isShow: 1,
+  isNav: 1,
   sort: 0,
   pid: 0,
   attrTemplateId: undefined

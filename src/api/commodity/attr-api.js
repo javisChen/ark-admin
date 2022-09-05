@@ -6,6 +6,7 @@ const api = {
   create: Base.serviceName + '/v1/attr/create',
   update: Base.serviceName + '/v1/attr/update',
   info: Base.serviceName + '/v1/attr/info',
+  remove: Base.serviceName + '/v1/attr',
 }
 
 export default api
@@ -17,3 +18,5 @@ export const create = (data) => post({url: api.create, data})
 export const update = (data) => post({url: api.update, data})
 
 export const getInfo = (params) => get({url: api.info, params})
+
+export const remove = (params) => del({url: api.remove, params})

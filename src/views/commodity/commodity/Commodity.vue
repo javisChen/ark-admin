@@ -129,11 +129,11 @@ export default {
           align: 'center',
           dataIndex: 'gmtCreate',
         },
-        {
-          title: '设置',
-          align: 'center',
-          scopedSlots: {customRender: 'setting'},
-        },
+        // {
+        //   title: '设置',
+        //   align: 'center',
+        //   scopedSlots: {customRender: 'setting'},
+        // },
         {
           title: '操作',
           align: 'center',

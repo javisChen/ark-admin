@@ -53,6 +53,7 @@ export default {
     },
   },
   created() {
+    console.log('12312312312312')
     this.loadList()
   }
 }

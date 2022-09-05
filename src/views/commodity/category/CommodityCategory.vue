@@ -56,7 +56,8 @@
       </template>
 
       <template slot="action" slot-scope="text, record">
-        <k-tooltip-button title="查看" @click="handleView(record)" icon="search"/>
+        <k-tooltip-button title="查看" @click="handleView(record)" icon="search"/>&nbsp;
+        <k-tooltip-button title="删除" @click="deleteCategory(record)" icon="delete"/>
       </template>
     </a-table>
     <a-empty v-else/>
@@ -72,13 +73,14 @@
 
 <script>
 
-import {getInfo, getPageList} from '@/api/commodity/category-api'
+import {getInfo, getPageList, remove} from '@/api/commodity/category-api'
 import CommodityCategoryForm from "./components/CommodityCategoryForm";
+import {deleteApi} from "@/api/iam/api-api";
 
 const levelDict = {
-  1: '一级菜单',
-  2: '二级菜单',
-  3: '三级菜单'
+  1: '一级分类',
+  2: '二级分类',
+  3: '三级分类'
 }
 
 const pagination = {
@@ -179,6 +181,20 @@ export default {
     async handleView(record) {
       const {data} = await getInfo({id: record.id})
       this.$refs['commodityCategoryForm'].open(data, 'view')
+    },
+    async deleteCategory(record) {
+      this.$confirm({
+        title: `提示`,
+        content: `确认要删除[${record.name}]？`,
+        onOk: async () => {
+          try {
+            const {data} = await remove({id: record.id})
+            this.$message.success('删除成功')
+            await this.loadTableData();
+          } catch (e) {
+          }
+        }
+      })
     },
     handleTableChange(pagination, filters, sorter) {
       this.queryParam.current = pagination.current

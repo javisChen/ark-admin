@@ -142,7 +142,8 @@ export default {
       if (formModel) {
         this.formModel = Object.assign(this.formModel, formModel)
         this.formModel = this.$cloneDeep(this.formModel)
-        this.valueList = this.formModel.values.map(item => ({value: item}))
+        console.log(this.formModel.optionList)
+        this.valueList = this.formModel.optionList.map(item => ({value: item.value}))
       }
       this.formModel.attrTemplateId = attrTemplateId
       this.formModel.type = attrType
