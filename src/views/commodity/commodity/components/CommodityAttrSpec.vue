@@ -25,7 +25,7 @@
       </a-form-model-item>
     </a-form-model>
 
-    <div style="width: 80%" v-if="showSkuTable">
+    <div v-if="showSkuTable">
       <div style="margin-bottom: 10px">
         <a-button type="primary" @click="flushSKu">刷新SKU</a-button>
       </div>
@@ -63,6 +63,7 @@
               <span v-if="editSkuTableData[idx]">
                 <a @click="saveSkuColumn(idx, record)">保存</a>
                 <a @click="cancelSkuColumn(idx, record)">取消</a>
+                <a @click="syncSkuColumn(idx, record)">同步到其他项</a>
               </span>
               <span v-else>
                 <a @click="editSkuColumn(idx, record)">编辑</a>
@@ -245,6 +246,11 @@ export default {
     },
     cancelSkuColumn(idx, record) {
       this.$set(this.editSkuTableData, idx, undefined)
+    },
+    syncSkuColumn(idx, record) {
+      for (let i = 0; i < this.editSkuTableData.length; i++) {
+        this.$set(this.editSkuTableData, i, this.$cloneDeep(record))
+      }
     },
     editSkuColumn(idx, record) {
       this.$set(this.editSkuTableData, idx, this.$cloneDeep(this.skuTableData[idx]))

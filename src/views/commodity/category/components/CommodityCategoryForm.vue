@@ -143,11 +143,9 @@ export default {
     },
     open(type = FORM_MODE_ADD, formModel) {
       this.visible = true
-      console.log(type)
       if (formModel) {
         this.getParentInfo(formModel);
-        this.formModel = Object.assign(this.formModel, formModel)
-        this.formModel = this.$cloneDeep(this.formModel)
+        this.formModel = this.$cloneDeep(formModel)
       }
       this.type = type
     },

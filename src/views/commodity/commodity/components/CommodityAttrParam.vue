@@ -114,7 +114,6 @@ export default {
 <style scoped>
 .group {
   border: 1px solid #ddd;
-  width: 1000px;
   margin-bottom: 15px;
 }
 
@@ -148,5 +147,6 @@ export default {
 .item-right {
   padding: 5px;
   line-height: 15px;
+  width: 100%;
 }
 </style>

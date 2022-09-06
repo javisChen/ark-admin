@@ -50,7 +50,7 @@
         </template>
       </a-form-model-item>
 
-      <a-form-model-item ref="canManualAdd" label="是否支持手动新增" prop="canManualAdd" has-feedback>
+      <a-form-model-item v-if="formModel.inputType === 2" ref="canManualAdd" label="是否支持手动新增" prop="canManualAdd" has-feedback>
         <a-radio-group v-model="formModel.canManualAdd" name="canManualAdd">
           <a-radio v-for="item in canManualAddOptions"
                    :key="item.value"

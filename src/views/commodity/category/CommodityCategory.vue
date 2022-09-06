@@ -56,7 +56,7 @@
       </template>
 
       <template slot="action" slot-scope="text, record">
-        <k-tooltip-button title="查看" @click="handleView(record)" icon="search"/>&nbsp;
+        <k-tooltip-button title="查看" @click="handleView(record)" icon="edit"/>&nbsp;
         <k-tooltip-button title="删除" @click="deleteCategory(record)" icon="delete"/>
       </template>
     </a-table>
@@ -180,7 +180,7 @@ export default {
     },
     async handleView(record) {
       const {data} = await getInfo({id: record.id})
-      this.$refs['commodityCategoryForm'].open(data, 'view')
+      this.$refs['commodityCategoryForm'].open('edit', data)
     },
     async deleteCategory(record) {
       this.$confirm({
