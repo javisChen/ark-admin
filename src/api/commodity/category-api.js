@@ -2,12 +2,12 @@ import {post, get, del, put} from '@/utils/request'
 import Base  from './commodity-base-api'
 
 const api = {
-  pageList: Base.serviceName + '/v1/category/page',
-  tree: Base.serviceName + '/v1/category/tree',
-  create: Base.serviceName + '/v1/category/create',
-  update: Base.serviceName + '/v1/category/update',
-  info: Base.serviceName + '/v1/category/info',
-  remove: Base.serviceName + '/v1/category',
+  pageList: Base.serviceName + '/v1/admin/category/page',
+  tree: Base.serviceName + '/v1/admin/category/tree',
+  create: Base.serviceName + '/v1/admin/category/create',
+  update: Base.serviceName + '/v1/admin/category/update',
+  info: Base.serviceName + '/v1/admin/category/info',
+  remove: Base.serviceName + '/v1/admin/category',
 }
 
 export default api
