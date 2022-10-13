@@ -27,7 +27,7 @@
 <!--            <a href="_self">条款</a>-->
 <!--          </div>-->
           <div class="copyright">
-            Copyright &copy; 2021 kt-iam
+            Copyright &copy; 2021 ark-iam
           </div>
         </div>
       </div>
