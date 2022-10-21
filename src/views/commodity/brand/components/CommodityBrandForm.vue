@@ -28,7 +28,7 @@
         <a-input placeholder="letter" v-model="formModel.letter"/>
       </a-form-model-item>
 
-      <a-form-model-item label="LOGO" prop="imageUrl" required>
+      <a-form-model-item label="LOGO" prop="imageUrl">
         <k-upload v-model="fileList"
                    :limit="1"
                    @change="(fileList) => formModel.imageUrl = fileList[0].url"/>
@@ -78,7 +78,7 @@ export default {
       rules: {
         name: [{required: true, message: '请输入品牌名称', trigger: 'blur'}],
         letter: [{required: true, message: '请输入品牌首字母', trigger: 'blur'}],
-        imageUrl: [{required: true, message: '请上传品牌LOGO', trigger: 'blur'}]
+        imageUrl: [{required: false, message: '请上传品牌LOGO', trigger: 'blur'}]
       }
     }
   },

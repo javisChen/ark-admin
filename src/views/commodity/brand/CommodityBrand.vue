@@ -149,7 +149,7 @@ export default {
   },
   methods: {
     async handleView(record) {
-      const {data} = await getInfo({codeProjectId: record.id})
+      const {data} = await getInfo({id: record.id})
       this.$refs['codeProjectForm'].open(data, 'view')
     },
     handleTableChange(pagination, filters, sorter) {
