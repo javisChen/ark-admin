@@ -43,9 +43,8 @@
         <a href="#" @click="toAttrParam(record)">查看参数</a>
       </template>
 
-
-      <template slot="getShelfStatus" slot-scope="text, record">
-        <span>getShelfStatus(record.shelfStatus)</span>
+      <template slot="shelfStatus" slot-scope="text, record">
+        {{ getShelfStatus(record.shelfStatus) }}
       </template>
 
       <template slot="action" slot-scope="text, record">
@@ -63,8 +62,8 @@
 import {getInfo, getPageList} from '@/api/commodity/commodity-api'
 
 const shelfStatusDict = {
-  0: '已上架',
-  1: '已下架'
+  1: '已上架',
+  0: '已下架'
 }
 
 const pagination = {
@@ -157,6 +156,7 @@ export default {
       })
     },
     getShelfStatus(value) {
+      console.log(value)
       return shelfStatusDict[value]
     },
     toAttrGroup(record) {
