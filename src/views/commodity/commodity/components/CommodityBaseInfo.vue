@@ -97,8 +97,6 @@ export default {
       this.internalModel.picList = fileList.map(item => item.url)
     },
     onCategoryChange(value) {
-      console.log('onCategoryChange', value)
-      console.log('onCategoryChange', this.internalModel)
       this.$emit("onCategoryChange", value)
     },
     getData() {

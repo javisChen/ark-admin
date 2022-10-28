@@ -63,7 +63,7 @@
               <span v-if="editSkuTableData[idx]">
                 <a @click="saveSkuColumn(idx, record)">保存</a>
                 <a @click="cancelSkuColumn(idx, record)">取消</a>
-                <a @click="syncSkuColumn(idx, record)">同步到其他项</a>
+                <a @click="syncSkuColumn(idx, record)">‘同步到其他项</a>
               </span>
               <span v-else>
                 <a @click="editSkuColumn(idx, record)">编辑</a>
@@ -248,9 +248,11 @@ export default {
       this.$set(this.editSkuTableData, idx, undefined)
     },
     syncSkuColumn(idx, record) {
+      console.log('sync record', record)
       for (let i = 0; i < this.editSkuTableData.length; i++) {
         this.$set(this.editSkuTableData, i, this.$cloneDeep(record))
       }
+      console.log(this.editSkuTableData)
     },
     editSkuColumn(idx, record) {
       this.$set(this.editSkuTableData, idx, this.$cloneDeep(this.skuTableData[idx]))
