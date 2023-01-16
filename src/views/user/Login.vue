@@ -187,7 +187,7 @@ export default {
         if (!err) {
           const loginParams = { ...values }
           delete loginParams.username
-          loginParams[!state.loginType ? 'email' : 'username'] = values.username
+          loginParams[!state.loginType ? 'email' : 'userName'] = values.username
           loginParams.password = md5(values.password)
           Login(loginParams)
             .then((res) => this.loginSuccess(res))
