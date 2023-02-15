@@ -60,7 +60,7 @@
 
 <script>
 
-import {getInfo, getPageList} from '@/api/order/order-api'
+import {getInfo, getPageList} from '@/api/trade/order-api'
 
 const shelfStatusDict = {
   0: '已上架',
@@ -106,28 +106,40 @@ export default {
         {
           title: '订单编号',
           align: 'center',
-          dataIndex: 'code',
+          dataIndex: 'tradeNo',
         },
         {
-          title: '下单时间',
+          title: '提交时间',
           align: 'center',
           dataIndex: 'gmtCreate',
         },
         {
           title: '订单金额',
           align: 'center',
-          dataIndex: 'amount',
+          dataIndex: 'actualAmount',
         },
         {
-          title: '订单状态',
+          title: '支付方式',
           align: 'center',
-          dataIndex: 'orderStatus',
+          dataIndex: 'payType',
           scopedSlots: {customRender: 'shelfStatus'},
+        },
+        {
+          title: '订单来源',
+          align: 'center',
+          dataIndex: 'orderChannel',
+          // scopedSlots: {customRender: 'shelfStatus'},
         },
         {
           title: '支付状态',
           align: 'center',
           dataIndex: 'payStatus',
+        },
+        {
+          title: '订单状态',
+          align: 'center',
+          dataIndex: 'orderStatus',
+          // scopedSlots: {customRender: 'shelfStatus'},
         },
         {
           title: '操作',
