@@ -43,9 +43,12 @@
         <a href="#" @click="toAttrParam(record)">查看参数</a>
       </template>
 
+      <template slot="orderStatus" slot-scope="text, record">
+        <span>{{ translateOrderStatus(record.orderStatus) }}</span>
+      </template>
 
-      <template slot="getShelfStatus" slot-scope="text, record">
-        <span>getShelfStatus(record.shelfStatus)</span>
+      <template slot="orderChannel" slot-scope="text, record">
+        <span>{{ translateOrderChannel(record.orderChannel) }}</span>
       </template>
 
       <template slot="action" slot-scope="text, record">
@@ -61,11 +64,7 @@
 <script>
 
 import {getInfo, getPageList} from '@/api/trade/order-api'
-
-const shelfStatusDict = {
-  0: '已上架',
-  1: '已下架'
-}
+import {DICT_ORDER_STATUS, DICT_ORDER_CHANNEL} from '@/utils/biz-const'
 
 const pagination = {
   showSizeChanger: true,
@@ -85,7 +84,7 @@ const queryParam = {
 }
 
 export default {
-  name: 'Commodity',
+  name: 'OrderManage',
   components: {
   },
   data() {
@@ -128,7 +127,7 @@ export default {
           title: '订单来源',
           align: 'center',
           dataIndex: 'orderChannel',
-          // scopedSlots: {customRender: 'shelfStatus'},
+          scopedSlots: {customRender: 'orderChannel'},
         },
         {
           title: '支付状态',
@@ -139,7 +138,7 @@ export default {
           title: '订单状态',
           align: 'center',
           dataIndex: 'orderStatus',
-          // scopedSlots: {customRender: 'shelfStatus'},
+          scopedSlots: {customRender: 'orderStatus'},
         },
         {
           title: '操作',
@@ -149,7 +148,6 @@ export default {
         },
       ],
       selectedRoute: {},
-      shelfStatusDict,
       roleFormVisible: false,
     };
   },
@@ -157,14 +155,17 @@ export default {
     this.loadTableData();
   },
   methods: {
+    translateOrderStatus(value) {
+      return DICT_ORDER_STATUS[value]
+    },
+    translateOrderChannel(value) {
+      return DICT_ORDER_CHANNEL[value]
+    },
     toDetail(record) {
       this.$router.push({
         path: '/commodity/form',
         query: {spuId: record.id},
       })
-    },
-    getShelfStatus(value) {
-      return shelfStatusDict[value]
     },
     toAttrGroup(record) {
       this.$router.push({
@@ -226,7 +227,7 @@ export default {
     },
     async loadTableData() {
       this.toggleLoading()
-      console.log(123)
+      console.log(this.queryParam)
       const {data} = await getPageList(this.queryParam)
       if (data) {
         this.tableData = data.records;
