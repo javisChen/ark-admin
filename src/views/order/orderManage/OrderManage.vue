@@ -37,18 +37,25 @@
       :columns="columns"
       :data-source="tableData">
 
-      <template slot="setting" slot-scope="text, record">
-        <a href="#" @click="toAttrGroup(record)">查看属性组</a>&nbsp;
-        <a href="#" @click="toAttrSpec(record)">查看规格</a>&nbsp;
-        <a href="#" @click="toAttrParam(record)">查看参数</a>
-      </template>
-
       <template slot="orderStatus" slot-scope="text, record">
         <span>{{ translateOrderStatus(record.orderStatus) }}</span>
       </template>
 
       <template slot="orderChannel" slot-scope="text, record">
         <span>{{ translateOrderChannel(record.orderChannel) }}</span>
+      </template>
+
+      <template slot="payStatus" slot-scope="text, record">
+        <span>{{ translatePayStatus(record.payStatus) }}</span>
+      </template>
+
+      <template slot="payType" slot-scope="text, record">
+        <span>{{ translatePayType(record.payType) }}</span>
+      </template>
+
+
+      <template slot="actualAmount" slot-scope="text, record">
+        <span>{{ record.actualAmount | fenToYuan }}</span>
       </template>
 
       <template slot="action" slot-scope="text, record">
@@ -64,7 +71,7 @@
 <script>
 
 import {getInfo, getPageList} from '@/api/trade/order-api'
-import {DICT_ORDER_STATUS, DICT_ORDER_CHANNEL} from '@/utils/biz-const'
+import {DICT_ORDER_STATUS, DICT_ORDER_CHANNEL, DICT_PAY_STATUS, DICT_PAY_TYPE} from '@/utils/biz-const'
 
 const pagination = {
   showSizeChanger: true,
@@ -116,12 +123,13 @@ export default {
           title: '订单金额',
           align: 'center',
           dataIndex: 'actualAmount',
+          scopedSlots: {customRender: 'actualAmount'},
         },
         {
           title: '支付方式',
           align: 'center',
           dataIndex: 'payType',
-          scopedSlots: {customRender: 'shelfStatus'},
+          scopedSlots: {customRender: 'payType'},
         },
         {
           title: '订单来源',
@@ -133,6 +141,7 @@ export default {
           title: '支付状态',
           align: 'center',
           dataIndex: 'payStatus',
+          scopedSlots: {customRender: 'payStatus'},
         },
         {
           title: '订单状态',
@@ -160,6 +169,12 @@ export default {
     },
     translateOrderChannel(value) {
       return DICT_ORDER_CHANNEL[value]
+    },
+    translatePayType(value) {
+      return DICT_PAY_TYPE[value]
+    },
+    translatePayStatus(value) {
+      return DICT_PAY_STATUS[value]
     },
     toDetail(record) {
       this.$router.push({

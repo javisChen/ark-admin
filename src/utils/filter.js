@@ -40,6 +40,22 @@ Vue.filter('NumberFormat', function (value) {
   return parseFloat(value).toFixed(2)
 })
 
+Vue.filter('YuanToFen', function (value) {
+  if (!value) {
+    return '0.00'
+  }
+  let number = (value - 0) * 100;
+  return parseFloat('' + number).toFixed(2)
+})
+
+Vue.filter('FenToYuan', function (value) {
+  if (!value) {
+    return '0.00'
+  }
+  let number = (value - 0) / 100;
+  return parseFloat('' + number).toFixed(2)
+})
+
 Vue.filter('dayjs', function (dataStr, pattern = 'YYYY-MM-DD HH:mm:ss') {
   return moment(dataStr).format(pattern)
 })
