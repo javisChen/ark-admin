@@ -53,7 +53,6 @@
         <span>{{ translatePayType(record.payType) }}</span>
       </template>
 
-
       <template slot="actualAmount" slot-scope="text, record">
         <span>{{ record.actualAmount | fenToYuan }}</span>
       </template>
