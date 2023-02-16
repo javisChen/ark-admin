@@ -1,3 +1,8 @@
+// 商品
+
+
+// 交易
+
 export const DICT_ORDER_STATUS = {
   1: "待支付",
   2: "待发货",
@@ -22,8 +27,4 @@ export const DICT_PAY_STATUS = {
   2: "支付中",
   3: "支付成功",
   4: "支付失败"
-}
-
-export function translate(key, value) {
-  return key[value]
 }
