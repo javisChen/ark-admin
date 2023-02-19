@@ -72,19 +72,6 @@
         <a-col :lg="6" :md="12" :sm="24">
           <h1 class="trade-no">单号：32103921031209</h1>
         </a-col>
-        <a-col :lg="6" :md="12" :sm="24">
-          <h1 class="trade-no">金额：988.00</h1>
-        </a-col>
-        <a-col :lg="6" :md="12" :sm="24">
-          <h1 class="trade-no">状态：待支付</h1>
-        </a-col>
-      </a-row>
-      <a-row class="form-row" :gutter="16">
-        <a-col :lg="6" :md="12" :sm="24">
-          <p>创建人：诚墨</p>
-          <p>创建时间：2022-10-01 23:31:20</p>
-          <p>备注：抓紧发货</p>
-        </a-col>
       </a-row>
     </a-card>
   </div>
