@@ -67,13 +67,112 @@
         </a-col>
       </a-row>
     </a-card>
+
+    <!-- 基本信息 -->
     <a-card class="card" title="基本信息" :bordered="false">
-      <a-row class="form-row" :gutter="16">
-        <a-col :lg="6" :md="12" :sm="24">
-          <h1 class="trade-no">单号：32103921031209</h1>
+      <a-row>
+        <a-col class="t-header title first" :span="4">
+          订单编号
+        </a-col>
+        <a-col class="t-header title" :span="4">
+          发货流水号
+        </a-col>
+        <a-col class="t-header title" :span="4">
+          买家
+        </a-col>
+        <a-col class="t-header title" :span="4">
+          支付方式
+        </a-col>
+        <a-col class="t-header title" :span="4">
+          订单来源
+        </a-col>
+        <a-col class="t-header title" :span="4">
+          订单类型
+        </a-col>
+      </a-row>
+      <a-row>
+        <a-col class="t-header content first" :span="4">
+          haha
+        </a-col>
+        <a-col class="t-header content" :span="4">
+          haha
+        </a-col>
+        <a-col class="t-header content" :span="4">
+          haha
+        </a-col>
+        <a-col class="t-header content" :span="4">
+          haha
+        </a-col>
+        <a-col class="t-header content" :span="4">
+          haha
+        </a-col>
+        <a-col class="t-header content" :span="4">
+          haha
+        </a-col>
+      </a-row>
+      <a-row>
+        <a-col class="t-header title first" :span="4">
+          配送方式
+        </a-col>
+        <a-col class="t-header title" :span="4">
+          物流单号
+        </a-col>
+        <a-col class="t-header title" :span="4">
+          自动确认收货时间
+        </a-col>
+        <a-col class="t-header title" :span="4">
+          活动信息
+        </a-col>
+      </a-row>
+      <a-row>
+        <a-col class="t-header content first" :span="4">
+          haha
+        </a-col>
+        <a-col class="t-header content" :span="4">
+          haha
+        </a-col>
+        <a-col class="t-header content" :span="4">
+          haha
+        </a-col>
+        <a-col class="t-header content" :span="4">
+          haha
         </a-col>
       </a-row>
     </a-card>
+    <!-- 基本信息 -->
+
+    <!-- 收货人信息 -->
+    <a-card class="card" title="收货人信息" :bordered="false">
+      <a-row>
+        <a-col class="t-header title first" :span="4">
+          收货人
+        </a-col>
+        <a-col class="t-header title" :span="4">
+          手机号码
+        </a-col>
+        <a-col class="t-header title" :span="4">
+          邮政编码
+        </a-col>
+        <a-col class="t-header title" :span="4">
+          收货地址
+        </a-col>
+      </a-row>
+      <a-row>
+        <a-col class="t-header content first" :span="4">
+          haha
+        </a-col>
+        <a-col class="t-header content" :span="4">
+          haha
+        </a-col>
+        <a-col class="t-header content" :span="4">
+          haha
+        </a-col>
+        <a-col class="t-header content" :span="4">
+          haha
+        </a-col>
+      </a-row>
+    </a-card>
+    <!-- 收货人信息 -->
   </div>
 </template>
 
@@ -91,5 +190,28 @@ export default {
 <style scoped>
 .trade-no {
   font-size: 20px;
+}
+
+.t-header {
+  border-right: 1px solid #f0f0f0;
+  border-top: 1px solid #f0f0f0;
+  /*border: 1px solid gray;*/
+  text-align: center;
+  padding-top: 12px;
+  padding-bottom: 12px;
+}
+
+.t-header.title {
+  color: #000000d9;
+  font-weight: 500;
+  background-color: #fafafa;
+}
+
+.t-header.content {
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.t-header.first {
+  border-left: 1px solid #f0f0f0;
 }
 </style>
