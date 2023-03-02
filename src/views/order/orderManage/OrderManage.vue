@@ -38,19 +38,19 @@
       :data-source="tableData">
 
       <template slot="orderStatus" slot-scope="text, record">
-        <span>{{ translateOrderStatus(record.orderStatus) }}</span>
+        <span>{{ record.orderStatus | translateOrderStatus }}</span>
       </template>
 
       <template slot="orderChannel" slot-scope="text, record">
-        <span>{{ translateOrderChannel(record.orderChannel) }}</span>
+        <span>{{ record.orderChannel | translateOrderChannel }}</span>
       </template>
 
       <template slot="payStatus" slot-scope="text, record">
-        <span>{{ translatePayStatus(record.payStatus) }}</span>
+        <span>{{ record.payStatus | translatePayStatus }}</span>
       </template>
 
       <template slot="payType" slot-scope="text, record">
-        <span>{{ translatePayType(record.payType) }}</span>
+        <span>{{ record.payType | translatePayType }}</span>
       </template>
 
       <template slot="actualAmount" slot-scope="text, record">
@@ -70,7 +70,7 @@
 <script>
 
 import {getInfo, getPageList} from '@/api/trade/order-api'
-import {DICT_ORDER_STATUS, DICT_ORDER_CHANNEL, DICT_PAY_STATUS, DICT_PAY_TYPE} from '@/utils/biz-const'
+import {translatePayType, translatePayStatus, translateOrderStatus, translateOrderChannel} from '@/utils/biz-const'
 
 const pagination = {
   showSizeChanger: true,
@@ -163,22 +163,21 @@ export default {
     this.loadTableData();
   },
   methods: {
-    translateOrderStatus(value) {
-      return DICT_ORDER_STATUS[value]
-    },
-    translateOrderChannel(value) {
-      return DICT_ORDER_CHANNEL[value]
-    },
-    translatePayType(value) {
-      return DICT_PAY_TYPE[value]
-    },
-    translatePayStatus(value) {
-      return DICT_PAY_STATUS[value]
-    },
+    // translateOrderStatus(value) {
+    //   return DICT_ORDER_STATUS[value]
+    // },
+    // translateOrderChannel(value) {
+    //   return DICT_ORDER_CHANNEL[value]
+    // },
+    // translatePayType(value) {
+    //   return DICT_PAY_TYPE[value]
+    // },
+    // translatePayStatus(value) {
+    //   return DICT_PAY_STATUS[value]
+    // },
     toDetail(record) {
       this.$router.push({
-        path: '/commodity/form',
-        query: {spuId: record.id},
+        path: `/orders/${record.id}`,
       })
     },
     toAttrGroup(record) {
@@ -241,7 +240,6 @@ export default {
     },
     async loadTableData() {
       this.toggleLoading()
-      console.log(this.queryParam)
       const {data} = await getPageList(this.queryParam)
       if (data) {
         this.tableData = data.records;

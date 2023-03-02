@@ -1,6 +1,12 @@
 import Vue from 'vue'
 import moment from 'moment'
 import 'moment/locale/zh-cn'
+import {
+  DICT_ORDER_CHANNEL,
+  DICT_ORDER_STATUS,
+  DICT_PAY_STATUS,
+  DICT_PAY_TYPE
+} from "@/utils/biz-const";
 
 moment.locale('zh-cn')
 
@@ -62,4 +68,23 @@ Vue.filter('dayjs', function (dataStr, pattern = 'YYYY-MM-DD HH:mm:ss') {
 
 Vue.filter('moment', function (dataStr, pattern = 'YYYY-MM-DD HH:mm:ss') {
   return moment(dataStr).format(pattern)
+})
+
+Vue.filter('translateOrderStatus', function (value) {
+  return DICT_ORDER_STATUS[value]
+})
+
+
+Vue.filter('translateOrderChannel', function (value) {
+  return DICT_ORDER_CHANNEL[value]
+})
+
+
+Vue.filter('translatePayType', function (value) {
+  return DICT_PAY_TYPE[value]
+})
+
+
+Vue.filter('translatePayStatus', function (value) {
+  return DICT_PAY_STATUS[value]
 })

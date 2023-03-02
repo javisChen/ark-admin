@@ -28,3 +28,19 @@ export const DICT_PAY_STATUS = {
   3: "支付成功",
   4: "支付失败"
 }
+
+export function translateOrderStatus(value) {
+  return DICT_ORDER_STATUS[value]
+}
+
+export function translateOrderChannel(value) {
+  return DICT_ORDER_CHANNEL[value]
+}
+
+export function translatePayType(value) {
+  return DICT_PAY_TYPE[value]
+}
+
+export function translatePayStatus(value) {
+  return DICT_PAY_STATUS[value]
+}
