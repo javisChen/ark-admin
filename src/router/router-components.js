@@ -79,5 +79,6 @@ export default {
 
   // order
   'Order': () => import('@/views/order/orderManage/OrderManage'),
+  'OrderDetail': () => import('@/views/order/orderManage/OrderDetail'),
 
 }
