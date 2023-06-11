@@ -3,12 +3,12 @@ import Base from "./iam-base-api";
 
 const api = {
   users: Base.serviceName + '/v1/users',
-  user: Base.serviceName + '/v1/user',
+  user: Base.serviceName + '/v1/user/details',
   createUser: Base.serviceName + '/v1/user/create',
   updateUser: Base.serviceName + '/v1/user/update',
-  userInfo: Base.serviceName + '/v1/user/info',
-  userPermissionRoutes: Base.serviceName + '/v1/user/permission/routes',
-  userPermissionElements: Base.serviceName + '/v1/user/permission/elements',
+  userInfo: Base.serviceName + '/v1/user/self',
+  userPermissionRoutes: Base.serviceName + '/v1/user/self/routes',
+  userPermissionElements: Base.serviceName + '/v1/user/self/elements',
 }
 
 export default api
