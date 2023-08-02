@@ -63,7 +63,7 @@ const user = {
           const userInfoResp = await getUserInfo();
           const userInfo = userInfoResp.data
           commit('SET_INFO', userInfo)
-          commit('SET_NAME', {name: userInfo.userName, welcome: welcome()})
+          commit('SET_NAME', {name: userInfo.username, welcome: welcome()})
           commit('SET_IS_SUPER_ADMIN', userInfo.isSuperAdmin)
 
           const userPermissionsResp = await getUserPageElementPermissions()

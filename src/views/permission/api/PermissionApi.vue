@@ -111,8 +111,8 @@ const defaultColumns = [
     sortOrder: 'descend',
   },
   {
-    title: 'Url',
-    dataIndex: 'url',
+    title: 'Uri',
+    dataIndex: 'uri',
     width: 150,
     align: "left",
     customRender: (text, row, index) => {
@@ -157,8 +157,8 @@ const grantColumns = [
     sortOrder: 'descend',
   },
   {
-    title: 'Url',
-    dataIndex: 'url',
+    title: 'Uri',
+    dataIndex: 'uri',
     width: 150,
     align: "left",
     customRender: (text, row, index) => {

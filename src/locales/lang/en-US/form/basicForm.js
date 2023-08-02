@@ -36,7 +36,7 @@ export default {
   'form.basic-form.option.C': 'Colleague C',
   'form.basic-form.email.required': 'Please enter your email!',
   'form.basic-form.email.wrong-format': 'The email address is in the wrong format!',
-  'form.basic-form.userName.required': 'Please enter your userName!',
+  'form.basic-form.username.required': 'Please enter your username!',
   'form.basic-form.password.required': 'Please enter your password!',
   'form.basic-form.password.twice': 'The passwords entered twice do not match!',
   'form.basic-form.strength.msg':
