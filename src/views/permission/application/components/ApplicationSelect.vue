@@ -39,7 +39,6 @@ export default {
       getApplications({})
           .then(({data}) => {
             this.applicationsOptions = [...data]
-            const item = this.applicationsOptions[0]
           })
           .catch(e => e)
     },

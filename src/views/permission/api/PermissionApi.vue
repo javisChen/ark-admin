@@ -95,9 +95,9 @@ import ApiCategoryTree from "@/views/permission/api/components/ApiCategoryTree";
 import {getApiCategories} from "@/api/iam/api-category-api";
 
 const queryParam = {
-  applicationId: null,
-  categoryId: null,
-  authType: null
+  applicationId: '',
+  categoryId: '',
+  authType: ''
 }
 
 const NEED_AUTHORIZATION = 3
@@ -225,7 +225,7 @@ export default {
       apis: [],
       applications: [],
       columns: defaultColumns,
-      selectedApplication: 0,
+      selectedApplication: '',
       routeStatusOptions,
       addFormVisible: false,
     };
@@ -362,10 +362,8 @@ export default {
       this.toggleLoading()
       // 如果是授权调用组件的时候只筛选需要授权的api
       if (this.grant) {
-        console.log('2312313123123')
         this.queryParam.authType = NEED_AUTHORIZATION
       }
-      console.log(this.queryParam)
       const {data} = await getApis(this.queryParam)
       this.apis = data
       this.toggleLoading()

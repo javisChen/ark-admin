@@ -104,8 +104,8 @@ const defaultModel = {
   method: 'GET',
   authType: 1,
   status: 1,
-  applicationId: 1,
-  categoryId: 1,
+  applicationId: '1',
+  categoryId: '1',
 }
 
 export default {
@@ -113,7 +113,7 @@ export default {
   components: {ApplicationSelect},
   props: {
     applicationId: {
-      type: Number,
+      type: String,
       required: false
     },
     categories: {

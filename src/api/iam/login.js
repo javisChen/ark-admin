@@ -1,5 +1,5 @@
 import request from '@/utils/request'
-import Base from "./iam-base-api";
+import Base from "./auth-base-api";
 
 
 const userApi = {

@@ -61,7 +61,7 @@ export default {
   },
   props: {
     applicationId: {
-      type: Number,
+      type: String,
       required: false,
       default: () => 0
     },

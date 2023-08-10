@@ -240,7 +240,6 @@ export default {
   methods: {
     onApplicationSelectChange(val) {
       this.selectedApplication = val
-      console.log(this.selectedApplication)
       this.loadTableData()
     },
     initQueryParams() {
@@ -255,13 +254,17 @@ export default {
     handleTableChange(pagination, filters, sorter) {
       this.routes = []
       this.queryParam.current = pagination.current
+      console.log(123)
       this.loadTableData()
     },
     resetQueryParams() {
       this.queryParam = {}
+      console.log(1234)
       this.loadTableData()
     },
     handleQueryStatusChange(value) {
+      console.log(12345)
+
       this.loadTableData()
     },
     toggleAdvanced() {
@@ -270,6 +273,7 @@ export default {
     async routeStatusChange(value, route) {
       try {
         await updateRouteStatus({id: route.id, status: +value.key})
+        console.log(123456)
         await this.loadTableData()
         this.$message.success('修改成功')
       } catch (e) {
