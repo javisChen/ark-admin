@@ -117,6 +117,7 @@ export default {
       this.toggleConfirmLoading()
       try {
         const data = {
+          applicationId: this.selectedApplicationId,
           roleId: this.role.id,
           toAddApiPermissionIds: this.toAddApiPermissionIds,
           toRemoveApiPermissionIds: this.toRemoveApiPermissionIds
