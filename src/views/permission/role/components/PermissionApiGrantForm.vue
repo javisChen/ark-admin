@@ -43,11 +43,10 @@ export default {
   data() {
     return {
       apis: [],
-      rolePermissionApis: [],
       rolePermissionApiIds: [],
       checkedRoutePermissions: new Set(),
-      checkedApiPermissions: [],
-      selectedApplicationId: 1,
+      checkedApiPermissionIds: [],
+      selectedApplicationId: '1',
       confirmLoading: false,
       visible: false,
       role: {},
@@ -60,29 +59,29 @@ export default {
   created() {
   },
   watch: {
-    checkedApiPermissions(val) {
+    checkedApiPermissionIds(checkedPermission) {
       const {rolePermissionApiIds} = this
-      this.toAddApiPermissionIds = this.filterToAddPermissionIds(rolePermissionApiIds, val);
-      this.toRemoveApiPermissionIds = this.filterToRemovePermissionIds(rolePermissionApiIds, val);
+      this.toAddApiPermissionIds = this.filterToAddPermissionIds(rolePermissionApiIds, checkedPermission);
+      this.toRemoveApiPermissionIds = this.filterToRemovePermissionIds(rolePermissionApiIds, checkedPermission);
     }
   },
   methods: {
     filterToAddPermissionIds(originPermissions, currentPermission) {
       const toAddIds = currentPermission.filter(item => !originPermissions.includes(item));
-      // console.log('------------------过滤新增的权限------------------')
-      // console.log('原权限 ->', originPermissions);
-      // console.log('当前选中的权限 ->', currentPermission);
-      // console.log('新权限 ->', toAddIds);
-      // console.log('------------------过滤新增的权限------------------')
+      console.log('------------------过滤新增的权限------------------')
+      console.log('原权限 ->', originPermissions);
+      console.log('当前选中的权限 ->', currentPermission);
+      console.log('新权限 ->', toAddIds);
+      console.log('------------------过滤新增的权限------------------')
       return toAddIds;
     },
     filterToRemovePermissionIds(originPermissions, currentPermission) {
       const toRemoveIds = originPermissions.filter(item => !currentPermission.includes(item));
-      // console.log('------------------过滤移除的权限------------------')
-      // console.log('原权限 ->', originPermissions);
-      // console.log('当前选中的权限 ->', currentPermission);
-      // console.log('移除权限 ->', toRemoveIds);
-      // console.log('------------------过滤移除的权限------------------')
+      console.log('------------------过滤移除的权限------------------')
+      console.log('原权限 ->', originPermissions);
+      console.log('当前选中的权限 ->', currentPermission);
+      console.log('移除权限 ->', toRemoveIds);
+      console.log('------------------过滤移除的权限------------------')
       return toRemoveIds;
     },
     // 加载角色所拥有的api权限
@@ -91,12 +90,12 @@ export default {
         .then(({data}) => {
           this.rolePermissionApis = data;
           this.rolePermissionApiIds = this.rolePermissionApis.map(item => item.permissionId)
-          this.checkedApiPermissions = this.checkedApiPermissions.concat(this.rolePermissionApiIds)
+          this.checkedApiPermissionIds = this.checkedApiPermissionIds.concat(this.rolePermissionApis)
         })
         .catch()
     },
     onSelectElementChange(selectedRowKeys, selectedRows) {
-      this.checkedApiPermissions = selectedRowKeys
+      this.checkedApiPermissionIds = selectedRowKeys
     },
     toggleConfirmLoading() {
       this.confirmLoading = !this.confirmLoading
@@ -112,6 +111,9 @@ export default {
     },
     resetForm() {
       this.formModel = Object.assign({}, defaultModel)
+      this.toAddApiPermissionIds = []
+      this.checkedApiPermissionIds = []
+      this.rolePermissionApiIds = []
     },
     async handleOk() {
       this.toggleConfirmLoading()

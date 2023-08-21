@@ -43,8 +43,8 @@
         <a-input placeholder="接口名称" v-model="formModel.name"/>
       </a-form-model-item>
 
-      <a-form-model-item label="接口Url" prop="url" has-feedback>
-        <a-input placeholder="接口Url" v-model="formModel.url"/>
+      <a-form-model-item label="接口Uri" prop="uri" has-feedback>
+        <a-input placeholder="接口Uri" v-model="formModel.uri"/>
       </a-form-model-item>
 
       <a-form-model-item label="Method" prop="method">
@@ -100,7 +100,7 @@ const FORM_MODE_ADD = 'add';
 const defaultModel = {
   id: '',
   name: '',
-  url: '',
+  uri: '',
   method: 'GET',
   authType: 1,
   status: 1,
@@ -138,12 +138,11 @@ export default {
       form: {},
       rules: {
         name: [{required: true, message: '请输入接口名称', trigger: 'blur'}],
-        url: [{required: true, message: '请输入接口Url', trigger: 'blur'}],
+        uri: [{required: true, message: '请输入接口Uri', trigger: 'blur'}],
         method: [{required: true, message: '请输入接口Method', trigger: 'blur'}],
         status: [{required: true, message: '请选择接口状态', trigger: 'blur'}],
         categoryId: [
-          {type: 'number', required: true, message: '请选择接口分类', trigger: 'blur'},
-          {type: 'number',min: 1, message: '请选择接口分类'}
+          {type: 'string', required: true, message: '请选择接口分类', trigger: 'blur'},
         ],
       }
     }

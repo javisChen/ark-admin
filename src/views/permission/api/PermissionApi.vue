@@ -86,7 +86,7 @@
 
 <script>
 
-import {getApis, updateApi, deleteApi, updateCache, getApi} from '@/api/iam/api-api'
+import {getApis, updateApi, deleteApi, updateCache, getApi, enableApi} from '@/api/iam/api-api'
 import PermissionApiForm from './components/PermissionApiForm'
 import PermissionApiCategoryForm from "@/views/permission/api/components/PermissionApiCategoryForm";
 import ApplicationSelect from '@/views/permission/application/components/ApplicationSelect'
@@ -236,7 +236,6 @@ export default {
       this.columns = grantColumns
     }
     this.loadApiCategories()
-    console.log('grant', this.grant)
   },
   methods: {
     onSelectChange(selectedRowKeys, selectedRows) {
@@ -272,7 +271,7 @@ export default {
     initQueryParams() {
       const {query} = this.$route
       if (query) {
-        this.queryParam.applicationId = query.applicationId || 1
+        this.queryParam.applicationId = query.applicationId || '1'
       }
     },
     onApplicationSelectChange(val) {
@@ -302,7 +301,7 @@ export default {
     },
     async routeStatusChange(value, item) {
       try {
-        await updateApi({id: item.id, status: +value.key})
+        await enableApi({id: item.id, status: +value.key})
         await this.loadTableData()
         this.$message.success('修改成功')
       } catch (e) {

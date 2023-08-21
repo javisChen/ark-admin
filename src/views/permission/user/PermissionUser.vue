@@ -133,7 +133,7 @@ export default {
       columns: [
         {
           title: '用户名称',
-          dataIndex: 'name',
+          dataIndex: 'username',
           width: 50
         },
         {

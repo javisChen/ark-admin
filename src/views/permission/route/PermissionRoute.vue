@@ -273,7 +273,6 @@ export default {
     async routeStatusChange(value, route) {
       try {
         await updateRouteStatus({id: route.id, status: +value.key})
-        console.log(123456)
         await this.loadTableData()
         this.$message.success('修改成功')
       } catch (e) {

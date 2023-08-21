@@ -138,7 +138,7 @@ export default {
       pageElementTypeDictionary,
       tableLoading: false,
       selectedRowKeys: [],
-      selectedApplicationId: 1,
+      selectedApplicationId: '1',
       confirmLoading: false,
       visible: false,
       role: {},
