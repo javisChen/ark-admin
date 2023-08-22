@@ -304,7 +304,7 @@ export default {
     async loadElementsData(routeId) {
       this.toggleTableLoading()
       try {
-        const {data} = await getRouteElements(routeId)
+        const {data} = await getRouteElements({id: routeId})
         this.tableData = data
       } catch (e) {
       } finally {

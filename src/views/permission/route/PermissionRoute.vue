@@ -323,7 +323,7 @@ export default {
         title: `确认要删除[${record.name}]路由及其子路由吗？`,
         content: `删除操作会把子路由也一并删除掉，请慎重！`,
         onOk: async () => {
-          const {data} = await deleteRoute(record.id)
+          const {data} = await deleteRoute({id: record.id})
           await this.loadTableData();
         }
       })
