@@ -24,8 +24,8 @@
         <a-input :disabled="isEditMode" placeholder="手机号码（11位）" v-model="formModel.phone"/>
       </a-form-model-item>
 
-      <a-form-model-item label="用户名称" prop="name" has-feedback>
-        <a-input placeholder="用户名称" v-model="formModel.name"/>
+      <a-form-model-item label="用户名称" prop="username" has-feedback>
+        <a-input placeholder="用户名称" v-model="formModel.username"/>
       </a-form-model-item>
 
       <a-form-model-item label="用户密码" prop="password" has-feedback>
@@ -66,7 +66,7 @@ const FORM_MODE_ADD = 'add';
 
 const defaultModel = {
   id: '',
-  name: '',
+  username: '',
   phone: '',
   password: '88888888',
   status: 1,
@@ -88,7 +88,7 @@ export default {
       formModel: {...defaultModel},
       form: {},
       rules: {
-        name: [{required: true, message: '请输入用户名称', trigger: 'blur'}],
+        username: [{required: true, message: '请输入用户名称', trigger: 'blur'}],
         password: [
           {required: true, message: '请输入用户密码', trigger: 'blur'},
           {min: 8, max: 20, message: '请将密码设置为8-20位，并且由字母，数字和符号两种以上组合', trigger: 'blur'}

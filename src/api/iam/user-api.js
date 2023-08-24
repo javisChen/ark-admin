@@ -13,7 +13,7 @@ const api = {
 
 export default api
 
-export const getUsers = (data) => post({url: api.users, data})
+export const getUsers = (params) => get({url: api.users, params})
 
 export const getUser = (params) => get({url: api.user, params})
 
