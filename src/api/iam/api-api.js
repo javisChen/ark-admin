@@ -5,7 +5,7 @@ const api = {
   apis: Base.serviceName + '/v1/apis',
   api: Base.serviceName + '/v1/api',
   apiEnable: Base.serviceName + '/v1/api/enable',
-  // apiCache: Base.serviceName + '/v1/api/cache',
+  apiSync: Base.serviceName + '/v1/api/sync',
 }
 
 export default api
@@ -22,7 +22,7 @@ export const deleteApi = (id) => del({url: `${api.api}/${id}`})
 
 export const updateApi = (data) => put({url: api.api, data})
 
-export const updateCache = (data) => put({url: api.apiCache, data})
+export const syncApi = (data) => post({url: api.apiSync, data})
 
 
 

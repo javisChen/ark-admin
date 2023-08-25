@@ -86,7 +86,7 @@
 
 <script>
 
-import {getApis, updateApi, deleteApi, updateCache, getApi, enableApi} from '@/api/iam/api-api'
+import {getApis, updateApi, deleteApi, syncApi, getApi, enableApi} from '@/api/iam/api-api'
 import PermissionApiForm from './components/PermissionApiForm'
 import PermissionApiCategoryForm from "@/views/permission/api/components/PermissionApiCategoryForm";
 import ApplicationSelect from '@/views/permission/application/components/ApplicationSelect'
@@ -338,7 +338,7 @@ export default {
       this.$refs['apiForm'].open(model, type)
     },
     updateApiCache() {
-      updateCache()
+      syncApi({applicationId: this.selectedApplication})
         .then((resp) => {
           this.$message.success('缓存更新成功')
         })
