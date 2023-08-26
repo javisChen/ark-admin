@@ -1,4 +1,4 @@
-<template>
+  <template>
 
   <a-card :bordered="false">
 
@@ -18,7 +18,7 @@
 
     <div v-if="!grant" class="table-operator">
       <a-button v-has-permission:PE000000001 type="primary" icon="plus" @click="openForm('add')">添加接口</a-button>
-      <a-button type="primary" icon="reload" @click="updateApiCache">同步接口</a-button>
+      <a-button type="primary" icon="reload" @click="doSyncApi">同步接口</a-button>
     </div>
 
     <a-row :gutter="8">
@@ -337,10 +337,11 @@ export default {
       }
       this.$refs['apiForm'].open(model, type)
     },
-    updateApiCache() {
+    doSyncApi() {
       syncApi({applicationId: this.selectedApplication})
         .then((resp) => {
-          this.$message.success('缓存更新成功')
+          this.$message.success('同步完成')
+          this.loadTableData();
         })
         .catch((e) => e)
     },
