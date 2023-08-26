@@ -265,7 +265,12 @@ export default {
       this.loadApiCategories()
     },
     onCategoryChange(category) {
-      this.queryParam.categoryId = category.id
+      if (category.activated) {
+        this.queryParam.categoryId = category.id
+      } else {
+        this.queryParam.categoryId = undefined
+      }
+      console.log(category.activated)
       this.loadTableData()
     },
     initQueryParams() {

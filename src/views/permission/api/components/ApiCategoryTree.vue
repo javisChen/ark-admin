@@ -10,7 +10,7 @@
         <div class="category-wrapper">
           <div v-for="item in data" style="cursor: pointer"
                class="category-item"
-               :class="{activated: item.onhover || item.activated}">
+               :class="{activated: (item.onhover && !item.activated) || item.activated}">
             <div class="category-item-title"
                  @click="handleClick(item)"
                  @mouseleave="hover(item, false)"
@@ -101,10 +101,15 @@ export default {
       this.spinning = !this.spinning
     },
     handleClick(item) {
-      this.data.forEach(item => {
+      console.log(item)
+      if (item.activated) {
         this.$set(item, 'activated', false)
-      })
-      this.$set(item, 'activated', true)
+      } else {
+        this.data.forEach(item => {
+          this.$set(item, 'activated', false)
+        })
+        this.$set(item, 'activated', true)
+      }
       this.notify(item)
     },
     notify(item) {
