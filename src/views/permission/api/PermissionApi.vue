@@ -18,7 +18,7 @@
 
     <div v-if="!grant" class="table-operator">
       <a-button v-has-permission:PE000000001 type="primary" icon="plus" @click="openForm('add')">添加接口</a-button>
-      <a-button type="primary" icon="reload" @click="updateApiCache">更新缓存</a-button>
+      <a-button type="primary" icon="reload" @click="updateApiCache">同步接口</a-button>
     </div>
 
     <a-row :gutter="8">
@@ -249,11 +249,11 @@ export default {
           this.categories = data
           if (this.categories.length > 0) {
             this.queryParam.categoryId = this.categories[0].id
-            this.loadTableData()
           } else {
-            this.queryParam.categoryId = 0
+            this.queryParam.categoryId = undefined
             this.apis = []
           }
+          this.loadTableData()
         })
         .finally(() => {
           setTimeout(() => {

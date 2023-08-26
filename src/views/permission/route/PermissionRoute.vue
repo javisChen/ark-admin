@@ -110,7 +110,7 @@ const pagination = {
 const queryParam = {
   current: pagination.defaultCurrent,
   size: pagination.defaultPageSize,
-  applicationId: null
+  applicationId: ''
 }
 
 export default {
@@ -245,7 +245,7 @@ export default {
     initQueryParams() {
       const {query} = this.$route
       if (query) {
-        this.queryParam.applicationId = query.applicationId || 1
+        this.queryParam.applicationId = query.applicationId || '1'
       }
     },
     getTypeDesc(value) {
@@ -254,7 +254,6 @@ export default {
     handleTableChange(pagination, filters, sorter) {
       this.routes = []
       this.queryParam.current = pagination.current
-      console.log(123)
       this.loadTableData()
     },
     resetQueryParams() {
