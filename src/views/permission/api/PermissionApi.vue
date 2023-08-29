@@ -1,4 +1,4 @@
-  <template>
+<template>
 
   <a-card :bordered="false">
 
@@ -21,72 +21,74 @@
       <a-button type="primary" icon="reload" @click="doSyncApi">同步接口</a-button>
     </div>
 
-    <a-row :gutter="8">
-      <a-col :span="4">
-        <api-category-tree
-          :categories="categories"
-          :show-action="!grant"
-          @update="onCategoryUpdate"
-          @change="onCategoryChange"
-          :application-id="queryParam.applicationId"/>
-      </a-col>
-      <a-col :span="20">
-        <a-table
-          bordered
-          @change="handleTableChange"
-          :row-selection="grant ? rowSelection : null"
-          :pagination="false"
-          :loading="tableLoading"
-          :defaultExpandAllRows="defaultExpandAllRows"
-          :expandRowByClick="false"
-          :size="'small'"
-          :indent-size="15"
-          :row-key="rowKey"
-          :columns="columns"
-          :data-source="apis">
 
-          <template slot="status" slot-scope="text, record">
-            <a-dropdown :trigger="['click']">
-              <a-menu slot="overlay" @click="routeStatusChange($event, record)">
-                <a-menu-item v-for="(item) in routeStatusOptions" :key="item.value">
-                  {{ item.desc }}
-                </a-menu-item>
-              </a-menu>
-              <a-button
-                :style="record.status === 1 ? {'background-color': '#52c41a',border: 'none', 'color': 'white'}: {}"
-                shape="round" size="small" :type="record.status !== 1 ? 'danger' : ''">
-                {{ getStatusDesc(record.status) }}
-                <a-icon type="down"/>
-              </a-button>
-            </a-dropdown>
-          </template>
+    <a-spin :spinning="spinning">
+      <a-row :gutter="8">
+        <a-col :span="4">
+          <api-category-tree
+            :categories="categories"
+            :show-action="!grant"
+            @update="onCategoryUpdate"
+            @change="onCategoryChange"
+            :application-id="queryParam.applicationId"/>
+        </a-col>
+        <a-col :span="20">
+          <a-table
+            bordered
+            @change="handleTableChange"
+            :row-selection="grant ? rowSelection : null"
+            :pagination="false"
+            :loading="tableLoading"
+            :defaultExpandAllRows="defaultExpandAllRows"
+            :expandRowByClick="false"
+            :size="'small'"
+            :indent-size="15"
+            :row-key="rowKey"
+            :columns="columns"
+            :data-source="apis">
 
-          <template slot="action" slot-scope="text, record">
-            <k-tooltip-button title="编辑" @click="openForm('edit', record)" icon="edit"/>&nbsp;
-            <k-tooltip-button title="删除" @click="handleDelete(record)" type="danger" icon="delete"/>
-          </template>
+            <template slot="status" slot-scope="text, record">
+              <a-dropdown :trigger="['click']">
+                <a-menu slot="overlay" @click="routeStatusChange($event, record)">
+                  <a-menu-item v-for="(item) in routeStatusOptions" :key="item.value">
+                    {{ item.desc }}
+                  </a-menu-item>
+                </a-menu>
+                <a-button
+                  :style="record.status === 1 ? {'background-color': '#52c41a',border: 'none', 'color': 'white'}: {}"
+                  shape="round" size="small" :type="record.status !== 1 ? 'danger' : ''">
+                  {{ getStatusDesc(record.status) }}
+                  <a-icon type="down"/>
+                </a-button>
+              </a-dropdown>
+            </template>
 
-          <template slot="authType" slot-scope="text, record">
-            {{ getAuthTypeOptionDesc(record.authType) }}
-          </template>
+            <template slot="action" slot-scope="text, record">
+              <k-tooltip-button title="编辑" @click="openForm('edit', record)" icon="edit"/>&nbsp;
+              <k-tooltip-button title="删除" @click="handleDelete(record)" type="danger" icon="delete"/>
+            </template>
 
-        </a-table>
-      </a-col>
-    </a-row>
+            <template slot="authType" slot-scope="text, record">
+              {{ getAuthTypeOptionDesc(record.authType) }}
+            </template>
 
-    <permission-api-form
-      :categories="categories"
-      :application-id="queryParam.applicationId"
-      ref="apiForm"
-      @success="handleFormOnSuccess"
-      @cancel="handleEditFormCancel"/>
+          </a-table>
+        </a-col>
+      </a-row>
 
+      <permission-api-form
+        :categories="categories"
+        :application-id="queryParam.applicationId"
+        ref="apiForm"
+        @success="handleFormOnSuccess"
+        @cancel="handleEditFormCancel"/>
+    </a-spin>
   </a-card>
 </template>
 
 <script>
 
-import {getApis, updateApi, deleteApi, syncApi, getApi, enableApi} from '@/api/iam/api-api'
+import {getApis, deleteApi, syncApi, getApi, enableApi} from '@/api/iam/api-api'
 import PermissionApiForm from './components/PermissionApiForm'
 import PermissionApiCategoryForm from "@/views/permission/api/components/PermissionApiCategoryForm";
 import ApplicationSelect from '@/views/permission/application/components/ApplicationSelect'
@@ -215,6 +217,7 @@ export default {
   },
   data() {
     return {
+      spinning: false,
       selectedApiKeys: [],
       categories: [],
       replaceFields: {children: 'children', title: 'name', key: 'permissionId'},
@@ -343,12 +346,14 @@ export default {
       this.$refs['apiForm'].open(model, type)
     },
     doSyncApi() {
+      this.spinning = true
       syncApi({applicationId: this.selectedApplication})
         .then((resp) => {
           this.$message.success('同步完成')
           this.loadTableData();
         })
         .catch((e) => e)
+        .finally(() => this.spinning = false)
     },
     handleDelete(record) {
       this.$confirm({

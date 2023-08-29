@@ -60,7 +60,6 @@ export const generatorDynamicRouter = () => {
       const childrenNav = []
       //      后端数据, 根级树数组,  根级 PID
       listToTree(data, childrenNav, 0)
-      console.log('childrenNav', childrenNav)
       childrenNav.unshift(workplaceRouter)
       rootRouter.children = childrenNav
       menuNav.push(rootRouter)
