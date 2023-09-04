@@ -128,7 +128,7 @@ export default {
     return {
       customActiveKey: 'tab1',
       loginBtn: false,
-      // login type: 0 email, 1 username, 2 telephone
+      // login type: 0 email, 1 username, 2 telemobile
       loginType: 0,
       isLoginError: false,
       requiredTwoStepCaptcha: false,

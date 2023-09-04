@@ -138,7 +138,7 @@ export default {
         },
         {
           title: '手机号码',
-          dataIndex: 'phone',
+          dataIndex: 'mobile',
           width: 50,
           customRender: (text, row, index) => {
             return text || '-'

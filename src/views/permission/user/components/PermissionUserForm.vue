@@ -20,8 +20,8 @@
       :label-col="labelCol"
       :wrapper-col="wrapperCol">
 
-      <a-form-model-item label="手机号码" prop="phone" has-feedback>
-        <a-input :disabled="isEditMode" placeholder="手机号码（11位）" v-model="formModel.phone"/>
+      <a-form-model-item label="手机号码" prop="mobile" has-feedback>
+        <a-input :disabled="isEditMode" placeholder="手机号码（11位）" v-model="formModel.mobile"/>
       </a-form-model-item>
 
       <a-form-model-item label="用户名称" prop="username" has-feedback>
@@ -67,7 +67,7 @@ const FORM_MODE_ADD = 'add';
 const defaultModel = {
   id: '',
   username: '',
-  phone: '',
+  mobile: '',
   password: '88888888',
   status: 1,
   roleIds: [],
@@ -93,7 +93,7 @@ export default {
           {required: true, message: '请输入用户密码', trigger: 'blur'},
           {min: 8, max: 20, message: '请将密码设置为8-20位，并且由字母，数字和符号两种以上组合', trigger: 'blur'}
         ],
-        phone: [
+        mobile: [
           {type: 'string', len: 11, required: true, message: '请输入11位的手机号码', trigger: 'blur'},
         ],
         status: [{required: true, message: '请选择用户状态', trigger: 'blur'}],
@@ -158,7 +158,7 @@ export default {
             .catch(e => e)
             .finally(() => this.closeConfirmLoading())
         } else {
-          delete form.phone;
+          delete form.mobile;
           updateUser(form)
             .then(({data}) => this.afterSuccess())
             .catch(e => e)

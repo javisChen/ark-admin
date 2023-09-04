@@ -223,7 +223,6 @@ export default {
             .catch(e => e)
             .finally(() => this.closeConfirmLoading())
         } else {
-          delete form.phone;
           updateApi(form)
             .then(({data}) => this.afterSuccess())
             .catch(e => e)

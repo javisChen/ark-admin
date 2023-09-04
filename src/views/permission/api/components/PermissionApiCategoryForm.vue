@@ -155,7 +155,6 @@ export default {
             .catch(e => e)
             .finally(() => this.closeConfirmLoading())
         } else {
-          delete form.phone;
           updateApiCategory(form)
             .then(({data}) => this.afterSuccess())
             .catch(e => e)
