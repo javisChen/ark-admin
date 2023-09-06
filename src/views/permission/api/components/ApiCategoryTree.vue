@@ -101,7 +101,6 @@ export default {
       this.spinning = !this.spinning
     },
     handleClick(item) {
-      console.log(item)
       if (item.activated) {
         this.$set(item, 'activated', false)
       } else {

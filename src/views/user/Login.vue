@@ -43,7 +43,10 @@
         </a-tab-pane>
         <a-tab-pane key="tab2" :tab="$t('user.login.tab-login-mobile')">
           <a-form-item>
-            <a-input size="large" type="text" :placeholder="$t('user.login.mobile.placeholder')" v-decorator="['mobile', {rules: [{ required: true, pattern: /^1[34578]\d{9}$/, message: $t('user.login.mobile.placeholder') }], validateTrigger: 'change'}]">
+            <a-input size="large"
+                     type="text"
+                     :placeholder="$t('user.login.mobile.placeholder')"
+                     v-decorator="['mobile', {rules: [{ required: true, pattern: /^1[34578]\d{9}$/, message: $t('user.login.mobile.placeholder') }], validateTrigger: 'change'}]">
               <a-icon slot="prefix" type="mobile" :style="{ color: 'rgba(0,0,0,.25)' }"/>
             </a-input>
           </a-form-item>
@@ -154,7 +157,7 @@ export default {
     // this.requiredTwoStepCaptcha = true
   },
   methods: {
-    ...mapActions(['Login', 'Logout']),
+    ...mapActions(['Login', 'MobileLogin', 'Logout']),
     // handler
     handleUsernameOrEmail (rule, value, callback) {
       const { state } = this
@@ -176,25 +179,36 @@ export default {
         form: { validateFields },
         state,
         customActiveKey,
-        Login
+        Login,
+        MobileLogin,
       } = this
 
       state.loginBtn = true
 
       const validateFieldsKey = customActiveKey === 'tab1' ? ['username', 'password'] : ['mobile', 'captcha']
+      const loginType = customActiveKey === 'tab1' ? 1 : 2
 
       validateFields(validateFieldsKey, { force: true }, (err, values) => {
         if (!err) {
           const loginParams = { ...values }
-          delete loginParams.username
-          loginParams[!state.loginType ? 'email' : 'username'] = values.username
-          loginParams.password = md5(values.password)
-          Login(loginParams)
-            .then((res) => this.loginSuccess(res))
-            .catch(err => this.requestFailed(err))
-            .finally(() => {
-              state.loginBtn = false
-            })
+          console.log(loginType)
+          if (loginType === 1) {
+            loginParams.password = md5(values.password)
+            Login(loginParams)
+              .then((res) => this.loginSuccess(res))
+              .catch(err => this.requestFailed(err))
+              .finally(() => {
+                state.loginBtn = false
+              })
+          } else {
+            console.log(123)
+            MobileLogin(loginParams)
+              .then((res) => this.loginSuccess(res))
+              .catch(err => this.requestFailed(err))
+              .finally(() => {
+                state.loginBtn = false
+              })
+          }
         } else {
           setTimeout(() => {
             state.loginBtn = false
@@ -219,14 +233,15 @@ export default {
           }, 1000)
 
           const hide = this.$message.loading('验证码发送中..', 0)
-          getSmsCaptcha({ mobile: values.mobile }).then(res => {
-            setTimeout(hide, 2500)
-            this.$notification['success']({
-              message: '提示',
-              description: '验证码获取成功，您的验证码为：' + res.data.captcha,
-              duration: 8
-            })
-          }).catch(err => {
+          getSmsCaptcha({ mobile: values.mobile })
+            .then(res => {
+              setTimeout(hide, 1000)
+              this.$notification['success']({
+                message: '提示',
+                description: '验证码发送成功',
+                duration: 8
+              })
+            }).catch(err => {
             setTimeout(hide, 1)
             clearInterval(interval)
             state.time = 60

@@ -1,5 +1,5 @@
 import storage from 'store'
-import {login, getInfo, logout} from '@/api/iam/login'
+import {login, getInfo, logout, mobileLogin} from '@/api/iam/login'
 import {getUserPageElementPermissions, getUserInfo} from '@/api/iam/user-api'
 import {ACCESS_TOKEN} from '@/store/mutation-types'
 import {welcome} from '@/utils/util'
@@ -46,6 +46,19 @@ const user = {
     Login({commit}, userInfo) {
       return new Promise((resolve, reject) => {
         login(userInfo).then(({data}) => {
+          const result = data
+          storage.set(ACCESS_TOKEN, result.accessToken, result.expires * 1000)
+          commit('SET_TOKEN', result.accessToken)
+          resolve()
+        }).catch(error => {
+          reject(error)
+        })
+      })
+    },
+    // 登录
+    MobileLogin({commit}, userInfo) {
+      return new Promise((resolve, reject) => {
+        mobileLogin(userInfo).then(({data}) => {
           const result = data
           storage.set(ACCESS_TOKEN, result.accessToken, result.expires * 1000)
           commit('SET_TOKEN', result.accessToken)
