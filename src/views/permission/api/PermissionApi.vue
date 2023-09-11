@@ -350,7 +350,7 @@ export default {
       syncApi({applicationId: this.selectedApplication})
         .then((resp) => {
           this.$message.success('同步完成')
-          this.loadTableData();
+          this.loadApiCategories()
         })
         .catch((e) => e)
         .finally(() => this.spinning = false)
