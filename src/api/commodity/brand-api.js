@@ -3,8 +3,7 @@ import Base  from './commodity-base-api'
 
 const api = {
   pageList: Base.serviceName + '/v1/brand/pages',
-  create: Base.serviceName + '/v1/brand/create',
-  update: Base.serviceName + '/v1/brand/update',
+  save: Base.serviceName + '/v1/brand/save',
   details: Base.serviceName + '/v1/brand/details',
 }
 
@@ -12,8 +11,6 @@ export default api
 
 export const getPageList = (data) => post({url: api.pageList, data})
 
-export const create = (data) => post({url: api.create, data})
-
-export const update = (data) => post({url: api.update, data})
+export const save = (data) => post({url: api.save, data})
 
 export const getInfo = (params) => get({url: api.details, params})

@@ -40,7 +40,7 @@
 
 <script>
 
-import {create, update} from '@/api/commodity/brand-api'
+import {save} from '@/api/commodity/brand-api'
 import KUpload from "@/components/KUpload/KUpload";
 
 const defaultModel = {
@@ -136,17 +136,10 @@ export default {
           return false;
         }
         this.toggleConfirmLoading()
-        if (this.type === FORM_MODE_ADD) {
-          create(this.formModel)
-            .then(({data}) => this.afterSuccess())
-            .catch(e => e)
-            .finally(() => this.closeConfirmLoading())
-        } else {
-          update(this.formModel)
-            .then(({data}) => this.afterSuccess())
-            .catch(e => e)
-            .finally(() => this.closeConfirmLoading())
-        }
+        save(this.formModel)
+          .then(({data}) => this.afterSuccess())
+          .catch(e => e)
+          .finally(() => this.closeConfirmLoading())
       });
     },
     checkElementsIsValid() {

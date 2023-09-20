@@ -186,10 +186,13 @@ export default {
     },
     async loadTableData() {
       this.toggleLoading()
-      const {data} = await getPageList(this.queryParam)
-      this.tableData = data.records;
-      this.pagination.total = data.total
-      this.toggleLoading()
+      try {
+        const {data} = await getPageList(this.queryParam)
+        this.tableData = data.records;
+        this.pagination.total = data.total
+      } finally {
+        this.toggleLoading()
+      }
     }
   }
 };
