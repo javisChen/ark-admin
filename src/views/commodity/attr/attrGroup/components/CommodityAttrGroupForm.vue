@@ -31,7 +31,7 @@
 
 <script>
 
-import {create, update} from '@/api/commodity/attr-group-api'
+import {save} from '@/api/commodity/attr-group-api'
 
 const defaultModel = {
   id: '',
@@ -110,17 +110,10 @@ export default {
           return false;
         }
         this.toggleConfirmLoading()
-        if (this.type === FORM_MODE_ADD) {
-          create(this.formModel)
+          save(this.formModel)
             .then(({data}) => this.afterSuccess())
             .catch(e => e)
             .finally(() => this.closeConfirmLoading())
-        } else {
-          update(this.formModel)
-            .then(({data}) => this.afterSuccess())
-            .catch(e => e)
-            .finally(() => this.closeConfirmLoading())
-        }
       });
     },
     checkElementsIsValid() {

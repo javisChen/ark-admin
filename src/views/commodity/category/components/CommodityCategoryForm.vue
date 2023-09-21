@@ -58,7 +58,7 @@
 
 <script>
 
-import {create, update, getInfo} from '@/api/commodity/category-api';
+import {save, getInfo} from '@/api/commodity/category-api';
 import CommodityAttrTemplateSelect from "@/views/commodity/attr/attrTemplate/components/CommodityAttrTemplateSelect";
 
 
@@ -180,17 +180,10 @@ export default {
           return false;
         }
         this.toggleConfirmLoading()
-        if (this.type === FORM_MODE_ADD) {
-          create(this.formModel)
-            .then(({data}) => this.afterSuccess())
-            .catch(e => e)
-            .finally(() => this.closeConfirmLoading())
-        } else {
-          update(this.formModel)
-            .then(({data}) => this.afterSuccess())
-            .catch(e => e)
-            .finally(() => this.closeConfirmLoading())
-        }
+        save(this.formModel)
+          .then(({data}) => this.afterSuccess())
+          .catch(e => e)
+          .finally(() => this.closeConfirmLoading())
       });
     },
     checkElementsIsValid() {
