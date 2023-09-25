@@ -66,7 +66,7 @@
 
 <script>
 
-import {create as createAttr, update as updateAttr} from '@/api/commodity/attr-api'
+import {save as createAttr} from '@/api/commodity/attr-api'
 import CommodityAttrGroupSelect from "../../attrGroup/components/CommodityAttrGroupSelect";
 
 const defaultModel = {
@@ -181,20 +181,10 @@ export default {
         }
         this.toggleConfirmLoading()
         this.formModel.values = this.valueList.map(item => item.value)
-        console.log(this.formModel)
-        // this.closeConfirmLoading()
-        // return
-        if (this.type === FORM_MODE_ADD) {
-          createAttr(this.formModel)
-            .then(({data}) => this.afterSuccess())
-            .catch(e => e)
-            .finally(() => this.closeConfirmLoading())
-        } else {
-          updateAttr(this.formModel)
-            .then(({data}) => this.afterSuccess())
-            .catch(e => e)
-            .finally(() => this.closeConfirmLoading())
-        }
+        saveAttr(this.formModel)
+          .then(({data}) => this.afterSuccess())
+          .catch(e => e)
+          .finally(() => this.closeConfirmLoading())
       });
     },
     checkElementsIsValid() {

@@ -217,11 +217,9 @@ export default {
     handleEditFormCancel() {
     },
     showForm(e, mode = 'add', record) {
-      console.log(e)
-      console.log(mode)
       if (!record) {
         record = {
-          pid: this.queryParam.pid
+          pid: this.queryParam.pid || 0
         }
       }
       this.$refs['commodityCategoryForm'].open(mode, record)

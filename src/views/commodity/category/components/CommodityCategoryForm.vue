@@ -26,11 +26,13 @@
       </a-form-model-item>
 
       <a-form-model-item label="上级分类" v-if="parent">
-        <span>{{parent.name}}</span>
+        <span>{{ parent.name }}</span>
       </a-form-model-item>
 
       <a-form-model-item ref="isShow" label="是否显示" prop="isShow">
-        <a-radio-group v-model="formModel.isShow" name="isShow">
+        <a-radio-group v-model="formModel.isShow"
+                       :default-value="formModel.isShow"
+                       name="isShow">
           <a-radio v-for="item in isShowOptions"
                    :key="item.value"
                    :value="item.value">{{ item.desc }}
@@ -39,7 +41,9 @@
       </a-form-model-item>
 
       <a-form-model-item ref="isNav" label="是否导航" prop="isNav">
-        <a-radio-group v-model="formModel.isNav" name="isNav">
+        <a-radio-group v-model="formModel.isNav"
+                       :default-value="formModel.isNav"
+                       name="isNav">
           <a-radio v-for="item in isNavOptions"
                    :key="item.value"
                    :value="item.value">{{ item.desc }}
@@ -142,12 +146,16 @@ export default {
       }
     },
     open(type = FORM_MODE_ADD, formModel) {
+      console.log('in', formModel)
       this.visible = true
-      if (formModel) {
-        this.getParentInfo(formModel);
-        this.formModel = this.$cloneDeep(formModel)
+      this.getParentInfo(formModel);
+      if (type === FORM_MODE_ADD) {
+        this.formModel.pid = formModel.pid
+      } else {
+        this.formModel = this.$cloneDeep(formModel);
       }
       this.type = type
+      console.log('for', this.formModel)
     },
     close() {
       this.closeConfirmLoading()
@@ -157,6 +165,7 @@ export default {
     resetForm() {
       this.formModel = Object.assign({}, defaultModel)
       this.valueList = []
+      this.parent = undefined
     },
     handleClose() {
       this.close()
@@ -179,7 +188,11 @@ export default {
         if (!valid) {
           return false;
         }
+        console.log('formModel', this.formModel)
         this.toggleConfirmLoading()
+        if (this.formModel.id < 1) {
+          delete this.formModel.id
+        }
         save(this.formModel)
           .then(({data}) => this.afterSuccess())
           .catch(e => e)
@@ -205,7 +218,6 @@ export default {
   created() {
   },
   beforeDestroy() {
-    console.log('destroy')
   }
 }
 </script>
