@@ -66,7 +66,7 @@
 
 <script>
 
-import {save as createAttr} from '@/api/commodity/attr-api'
+import {save as saveAttr} from '@/api/commodity/attr-api'
 import CommodityAttrGroupSelect from "../../attrGroup/components/CommodityAttrGroupSelect";
 
 const defaultModel = {
