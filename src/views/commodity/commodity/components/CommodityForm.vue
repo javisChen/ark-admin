@@ -25,7 +25,7 @@ import CommodityBaseInfo from "@/views/commodity/commodity/components/CommodityB
 import CommodityAttrSpec from "@/views/commodity/commodity/components/CommodityAttrSpec";
 import CommodityAttrParam from "@/views/commodity/commodity/components/CommodityAttrParam";
 import CommodityDetailInfo from "@/views/commodity/commodity/components/CommodityDetailInfo";
-import {create, update, getInfo} from "@/api/commodity/commodity-api";
+import {save, getInfo} from "@/api/commodity/commodity-api";
 
 const defaultModel = {
   name: "",
@@ -136,17 +136,10 @@ export default {
         paramList: attrParam
       }
       console.log('商品表单', form)
-      if (this.mode === FORM_MODE_ADD) {
-        create(form)
-          .then(({data}) => this.afterSuccess())
-          .catch(e => e)
-          .finally(() => this.closeConfirmLoading())
-      } else {
-        update(form)
-          .then(({data}) => this.afterSuccess())
-          .catch(e => e)
-          .finally(() => this.closeConfirmLoading())
-      }
+      save(form)
+        .then(({data}) => this.afterSuccess())
+        .catch(e => e)
+        .finally(() => this.closeConfirmLoading())
     },
     async loadInfo(spuId) {
       try {

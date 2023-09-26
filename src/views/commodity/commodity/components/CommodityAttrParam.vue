@@ -45,9 +45,11 @@ export default {
     formModel(newV, oldV) {
       this.internalModel = cloneDeep(newV)
       // 回显初始化
-      this.internalModel.paramList.forEach(item => {
-        this.$set(this.paramMap, item.attrId, item.attrValue)
-      })
+      if (this.internalModel.paramList && this.internalModel.paramList.length > 0) {
+        this.internalModel.paramList.forEach(item => {
+          this.$set(this.paramMap, item.attrId, item.attrValue)
+        })
+      }
     },
   },
   data() {
