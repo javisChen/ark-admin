@@ -6,9 +6,12 @@
       :model="internalModel"
       :label-col="labelCol"
       :wrapper-col="wrapperCol">
+      <!-- 遍历规格属性 -->
       <a-form-model-item style="margin-bottom: 10px" v-for="(attrItem, attrListIdx) in attrList" :label="attrItem.name">
-        <div v-if="attrItem.inputType == 1">
+        <!-- 手工录入 -->
+        <div v-if="attrItem.inputType === 1">
           <div v-if="attrItem.optionList.length > 0" class="ant-checkbox-group">
+            <!-- 遍历规格属性可选参数 -->
             <label v-for="(attrOption, attrOptionLisIdx) in attrItem.optionList">
               <a-checkbox @change="checkedValue($event, attrOption, attrItem)">{{ attrOption.label }}</a-checkbox>
               <a title="删除" @click.prevent="removeValueListItem(attrItem, attrOptionLisIdx)">删除</a>&nbsp;
@@ -19,9 +22,18 @@
             <k-tooltip-button title="添加" @click="addAttrValueListItem(attrItem)" icon="plus"/>
           </div>
         </div>
-        <div v-else-if="attrItem.inputType == 2">
-          <a-checkbox-group :options="attrItem.optionList" @change="onValueChange($event, attrItem)"/>
+        <!-- 从选项列表选择 -->
+        <div v-else-if="attrItem.inputType === 2">
+          <!-- 遍历规格属性可选参数 -->
+          <a-checkbox-group :options="attrItem.optionList"
+                            @change="onValueChange($event, attrItem)"/>
+          <!-- 判断是否可以手动添加规则 -->
+          <div v-if="attrItem.canManualAdd">
+            <a-input style="width: 20%" :placeholder="attrItem.name" v-model="attrItem.manualAttrValue"/>&nbsp;
+            <k-tooltip-button title="添加" @click="addAttrValueListItem(attrItem)" icon="plus"/>
+          </div>
         </div>
+
       </a-form-model-item>
     </a-form-model>
 
@@ -179,12 +191,13 @@ export default {
     },
     formModel(newV, oldV) {
       this.internalModel = newV
+      console.log('model', newV)
       this.dynamicBuildSkuTableColumns(this.internalModel.skuList[0].specList);
       this.initSkuTable();
-      this.internalModel.skuList[0].specList.forEach(item => {
-        const {attrId, attrName, attrValue} = item
+      // this.internalModel.skuList[0].specList.forEach(item => {
+        // const {attrId, attrName, attrValue} = item
         // this.attrValueOnChange(this.assembleSku(attrId, attrName, attrValue), 'add');
-      })
+      // })
     },
   },
   data() {
@@ -207,7 +220,7 @@ export default {
   created() {
   },
   methods: {
-    initSkuTable () {
+    initSkuTable() {
       this.skuTableData = this.internalModel.skuList
       this.skuTableData.forEach(item => {
         item.specList.forEach(s => {
@@ -227,17 +240,15 @@ export default {
       attrList.forEach(attrItem => {
         cols.unshift({
           title: attrItem.name,
-          // title: attrItem.attrName,
           align: 'center',
           width: columnWidth,
-          // dataIndex: attrItem.attrId
           dataIndex: attrItem.id
         })
       })
       this.columns = cols
     },
     onSkuColumnChange(e, col, idx, record) {
-      // console.log(`SKU[${col}] change `, e.target.value)
+
     },
     saveSkuColumn(idx) {
       this.$set(this.skuTableData, idx, this.editSkuTableData[idx])
@@ -248,7 +259,6 @@ export default {
       this.$set(this.editSkuTableData, idx, undefined)
     },
     syncSkuColumn(idx, record) {
-      console.log('sync record', record)
       for (let i = 0; i < this.editSkuTableData.length; i++) {
         this.$set(this.editSkuTableData, i, this.$cloneDeep(record))
       }
@@ -366,6 +376,8 @@ export default {
       }
     },
     onValueChange(attrValue, attr) {
+      console.log('attrValue', attrValue)
+      console.log('attr', attr)
       const checkedAttrValueMap = this.checkedAttrValueMap
       if (checkedAttrValueMap.has(attr.id)) {
         checkedAttrValueMap.delete(attr.id)
