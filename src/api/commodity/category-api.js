@@ -6,7 +6,7 @@ const api = {
   tree: Base.serviceName + '/v1/admin/category/tree',
   save: Base.serviceName + '/v1/admin/category/save',
   details: Base.serviceName + '/v1/admin/category/details',
-  remove: Base.serviceName + '/v1/admin/category',
+  remove: Base.serviceName + '/v1/admin/category/delete',
 }
 
 export default api

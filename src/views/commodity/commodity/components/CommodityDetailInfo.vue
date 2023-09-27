@@ -26,7 +26,6 @@ export default {
   components: { Editor, Toolbar },
   watch: {
     formModel(newV, oldV) {
-      console.log('formmodel', newV)
       this.internalModel = newV
     },
   },
@@ -34,7 +33,7 @@ export default {
     return {
       internalModel: cloneDeep(this.formModel),
       editor: null,
-      html: '<p>hello</p>',
+      html: '',
       toolbarConfig: {},
       editorConfig: {placeholder: '请输入内容...'},
       mode: 'default', // or 'simple'

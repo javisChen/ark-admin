@@ -115,7 +115,6 @@ export default {
       console.log('attrParam', attrParam)
       const detailInfo = this.$refs['detailInfo'].getData();
       console.log('detailInfo', detailInfo)
-
       const form = {
         id: baseInfo.id,
         name: baseInfo.name,

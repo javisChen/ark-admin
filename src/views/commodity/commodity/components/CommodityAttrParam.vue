@@ -74,6 +74,10 @@ export default {
     rowKey(record, index) {
       return index
     },
+
+    /**
+     * 加载商品参数组
+     */
     async loadAttrGroupList() {
       const {data} = await getAttrGroupList({
         current: 1,
@@ -95,10 +99,14 @@ export default {
           }],
           attrList: []
         };
-        item.attrList.forEach(attrItem => {
-          obj.attrList.push({[item.id]: attrItem.name})
-          this.paramTable.push({attrId: attrItem.id, attrValue: attrItem.value, attrName: attrItem.name})
-        });
+        if (item.attrList && item.attrList.length > 0) {
+
+          item.attrList.forEach(attrItem => {
+            obj.attrList.push({[item.id]: attrItem.name})
+            this.paramTable.push({attrId: attrItem.id, attrValue: attrItem.value, attrName: attrItem.name})
+          });
+        }
+
       })
     },
     onSkuColumnChange(e, col, idx, record) {

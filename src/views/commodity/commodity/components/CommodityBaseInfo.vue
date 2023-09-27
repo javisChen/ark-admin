@@ -71,6 +71,9 @@ export default {
   watch: {
     formModel(newV, oldV) {
       this.internalModel = newV
+      if (this.internalModel.unit === 2) {
+        this.internalModel.weight /= 1000
+      }
     },
   },
   data() {
@@ -100,7 +103,11 @@ export default {
       this.$emit("onCategoryChange", value)
     },
     getData() {
-      return this.internalModel;
+      const internalModel = this.internalModel;
+      if (internalModel.unit === 2) {
+        internalModel.weight *= 1000
+      }
+      return internalModel;
     }
   }
 }

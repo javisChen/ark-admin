@@ -142,8 +142,10 @@ export default {
       if (formModel) {
         this.formModel = Object.assign(this.formModel, formModel)
         this.formModel = this.$cloneDeep(this.formModel)
-        console.log(this.formModel.optionList)
-        this.valueList = this.formModel.optionList.map(item => ({value: item.value}))
+        const optionList = this.formModel.optionList;
+        if (optionList && optionList.length > 0) {
+          this.valueList = optionList.map(item => ({value: item.value}))
+        }
       }
       this.formModel.attrTemplateId = attrTemplateId
       this.formModel.type = attrType

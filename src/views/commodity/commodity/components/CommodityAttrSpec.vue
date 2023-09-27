@@ -13,24 +13,30 @@
           <div v-if="attrItem.optionList.length > 0" class="ant-checkbox-group">
             <!-- 遍历规格属性可选参数 -->
             <label v-for="(attrOption, attrOptionLisIdx) in attrItem.optionList">
-              <a-checkbox @change="checkedValue($event, attrOption, attrItem)">{{ attrOption.label }}</a-checkbox>
-              <a title="删除" @click.prevent="removeValueListItem(attrItem, attrOptionLisIdx)">删除</a>&nbsp;
+              <a-checkbox @change="onAttrChecked($event, attrOption, attrItem)">{{ attrOption.label }}</a-checkbox>
+              <a title="删除" @click.prevent="removeAttrOption(attrItem, attrOption, attrOptionLisIdx)">删除</a>&nbsp;
             </label>
           </div>
           <div>
             <a-input style="width: 20%" :placeholder="attrItem.name" v-model="attrItem.manualAttrValue"/>&nbsp;
-            <k-tooltip-button title="添加" @click="addAttrValueListItem(attrItem)" icon="plus"/>
+            <k-tooltip-button title="添加" @click="addAttrOption(attrItem)" icon="plus"/>
           </div>
         </div>
         <!-- 从选项列表选择 -->
         <div v-else-if="attrItem.inputType === 2">
-          <!-- 遍历规格属性可选参数 -->
-          <a-checkbox-group :options="attrItem.optionList"
-                            @change="onValueChange($event, attrItem)"/>
+          <div v-if="attrItem.optionList.length > 0" class="ant-checkbox-group">
+            <!-- 遍历规格属性可选参数 -->
+            <label v-for="(attrOption, attrOptionLisIdx) in attrItem.optionList">
+              <a-checkbox @change="onAttrChecked($event, attrOption, attrItem)">{{ attrOption.label }}</a-checkbox>
+              <a v-if="isExclusiveOption(attrOption)"
+                 title="删除"
+                 @click.prevent="removeAttrOption(attrItem, attrOption, attrOptionLisIdx)">删除</a>&nbsp;
+            </label>
+          </div>
           <!-- 判断是否可以手动添加规则 -->
           <div v-if="attrItem.canManualAdd">
             <a-input style="width: 20%" :placeholder="attrItem.name" v-model="attrItem.manualAttrValue"/>&nbsp;
-            <k-tooltip-button title="添加" @click="addAttrValueListItem(attrItem)" icon="plus"/>
+            <k-tooltip-button title="添加" @click="addAttrOption(attrItem)" icon="plus"/>
           </div>
         </div>
 
@@ -39,7 +45,7 @@
 
     <div v-if="showSkuTable">
       <div style="margin-bottom: 10px">
-        <a-button type="primary" @click="flushSKu">刷新SKU</a-button>
+        <a-button type="primary" @click="flushSKU">刷新SKU</a-button>
       </div>
       <div>
         <a-table
@@ -75,7 +81,7 @@
               <span v-if="editSkuTableData[idx]">
                 <a @click="saveSkuColumn(idx, record)">保存</a>
                 <a @click="cancelSkuColumn(idx, record)">取消</a>
-                <a @click="syncSkuColumn(idx, record)">‘同步到其他项</a>
+                <a @click="syncSkuColumn(idx, record)">同步到其他项</a>
               </span>
               <span v-else>
                 <a @click="editSkuColumn(idx, record)">编辑</a>
@@ -195,8 +201,8 @@ export default {
       this.dynamicBuildSkuTableColumns(this.internalModel.skuList[0].specList);
       this.initSkuTable();
       // this.internalModel.skuList[0].specList.forEach(item => {
-        // const {attrId, attrName, attrValue} = item
-        // this.attrValueOnChange(this.assembleSku(attrId, attrName, attrValue), 'add');
+      // const {attrId, attrName, attrValue} = item
+      // this.attrValueOnChange(this.assembleSku(attrId, attrName, attrValue), 'add');
       // })
     },
   },
@@ -220,6 +226,12 @@ export default {
   created() {
   },
   methods: {
+    /**
+     * 判断是否商品特有的可选项
+     */
+    isExclusiveOption(attrOption) {
+      return attrOption.type === 2;
+    },
     initSkuTable() {
       this.skuTableData = this.internalModel.skuList
       this.skuTableData.forEach(item => {
@@ -251,7 +263,9 @@ export default {
 
     },
     saveSkuColumn(idx) {
-      this.$set(this.skuTableData, idx, this.editSkuTableData[idx])
+      const editSkuTableItem = this.editSkuTableData[idx];
+      console.log('编辑列', editSkuTableItem)
+      this.$set(this.skuTableData, idx, editSkuTableItem)
       this.$set(this.editSkuTableData, idx, undefined)
       console.log(`保存列`, this.skuTableData)
     },
@@ -260,22 +274,27 @@ export default {
     },
     syncSkuColumn(idx, record) {
       for (let i = 0; i < this.editSkuTableData.length; i++) {
-        this.$set(this.editSkuTableData, i, this.$cloneDeep(record))
+        const item = this.editSkuTableData[i];
+        item.costPrice = record.costPrice
+        item.salesPrice = record.salesPrice
+        item.stock = record.stock
+        item.warnStock = record.warnStock
+        this.$set(this.editSkuTableData, i, item)
       }
-      console.log(this.editSkuTableData)
     },
     editSkuColumn(idx, record) {
       this.$set(this.editSkuTableData, idx, this.$cloneDeep(this.skuTableData[idx]))
     },
-    initTableData() {
+    initSkuTableData() {
       this.skuTableData = []
       this.editSkuTableData = []
     },
-    flushSKu() {
+    flushSKU() {
       this.skuTableLoading = true
       try {
-        this.initTableData();
+        this.initSkuTableData();
         const attrTable = []
+        console.log('checkedAttrs', this.checkedAttrValueMap)
         this.checkedAttrValueMap.forEach((value, key) => attrTable.push(value))
         const combineTable = calcDescartes(attrTable)
         console.log('所有SKU组合', combineTable)
@@ -308,19 +327,46 @@ export default {
     rowKey(record, index) {
       return index
     },
-    addAttrValueListItem(attrItem) {
+    /**
+     * 添加可选项
+     */
+    addAttrOption(attrItem) {
       const manualAttrValue = attrItem.manualAttrValue
       const attrId = attrItem.id;
-      attrItem.optionList.push({label: manualAttrValue, value: manualAttrValue})
+
+      attrItem.optionList.push({
+        attrId: attrId,
+        label: manualAttrValue,
+        value: `${attrItem.id}-${attrItem.name}-${manualAttrValue}`,
+        type: 2
+      })
       if (this.newAttrOptions.size < 1 || !this.newAttrOptions.has(attrId)) {
         this.newAttrOptions.set(attrId, [manualAttrValue])
       } else {
         this.newAttrOptions.get(attrId).push(manualAttrValue)
       }
+      console.log('新的可选项', this.newAttrOptions)
       attrItem.manualAttrValue = ''
     },
-    removeValueListItem(item, idx) {
-      item.optionList.splice(idx, 1)
+    /**
+     * 删除可选项
+     */
+    removeAttrOption(attrItem, attrOption, attrOptionIdx) {
+      attrItem.optionList.splice(attrOptionIdx, 1)
+      console.log('attrOption', attrOption)
+      const attrId = attrItem.id;
+      const attrName = attrItem.name;
+      if (this.newAttrOptions.has(attrId)) {
+        let attrOptions = this.newAttrOptions.get(attrId);
+        attrOptions = attrOptions.filter(item => item !== attrOption.label);
+        this.newAttrOptions.set(attrId, attrOptions)
+        if (attrOptions.length === 0) {
+          this.newAttrOptions.delete(attrId)
+        }
+        console.log(`${attrId}下的可选项`, attrOptions)
+      }
+      // 尝试从已选中的属性值中移除
+      this.attrValueOnChange(this.assembleSku(attrId, attrName, attrOption.label), 'delete');
     },
     async loadAttrList() {
       try {
@@ -355,13 +401,9 @@ export default {
     },
     /**
      * 设置已选属性值的Map
-     * @param attr 属性
-     * @param value 属性值
-     * @param action add、delete
      */
     attrValueOnChange(value, action) {
-      const {attrId, attrName} = value;
-      console.log(`${attrName} ${action}`, value)
+      const {attrId} = value;
       if (action === 'add') {
         if (this.checkedAttrValueMap.size < 1 || !this.checkedAttrValueMap.has(attrId)) {
           this.checkedAttrValueMap.set(attrId, [value])
@@ -370,22 +412,11 @@ export default {
         }
       } else {
         if (this.checkedAttrValueMap.has(attrId)) {
-          const valueList = this.checkedAttrValueMap.get(attrId)
-          valueList.splice(valueList.indexOf(value), 1)
+          let valueList = this.checkedAttrValueMap.get(attrId)
+          valueList = valueList.filter(item => `${item.attrId}-${item.attrName}-${item.attrValue}` !== `${value.attrId}-${value.attrName}-${value.attrValue}`);
+          this.checkedAttrValueMap.set(attrId, valueList)
         }
       }
-    },
-    onValueChange(attrValue, attr) {
-      console.log('attrValue', attrValue)
-      console.log('attr', attr)
-      const checkedAttrValueMap = this.checkedAttrValueMap
-      if (checkedAttrValueMap.has(attr.id)) {
-        checkedAttrValueMap.delete(attr.id)
-      }
-      attrValue.forEach(item => {
-        const s = item.split('-')
-        this.attrValueOnChange(this.assembleSku(s[0], s[1], s[2]), 'add');
-      })
     },
     assembleSku(attrId, attrName, attrValue) {
       return {
@@ -394,8 +425,12 @@ export default {
         attrValue
       };
     },
-    checkedValue(e, attrOption, attr) {
+    /**
+     * 选中属性值
+     */
+    onAttrChecked(e, attrOption, attr) {
       const action = e.target.checked ? 'add' : 'delete';
+      console.log('选中属性', attrOption, attr)
       this.attrValueOnChange(this.assembleSku(attr.id, attr.name, attrOption.label), action);
     },
     getNewAttrOptions() {
@@ -419,7 +454,6 @@ export default {
         };
         skuList.push(skuObj)
       })
-      console.log(skuList)
       return {
         newAttrOptions: this.getNewAttrOptions(),
         skuList,
