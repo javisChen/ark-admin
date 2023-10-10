@@ -201,7 +201,10 @@ export default {
     }
   },
   created() {
-    this.orderId = this.$route.params.id
+    if (this.$route.query.orderId) {
+      this.orderId = this.$route.query.orderId;
+      this.loadInfo(this.orderId);
+    }
     this.loadOrder();
   },
 }

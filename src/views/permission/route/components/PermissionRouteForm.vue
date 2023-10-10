@@ -96,12 +96,12 @@
         <a-col :span="12">
           <a-form-model-item label="路由类型" prop="type">
             <span v-if="isViewMode">{{ getRouteTypeDesc(formModel.type) }}</span>
-            <a-radio-group v-else v-model="formModel.type" name="radioGroup">
-              <a-radio-button v-for="item in routeTypeOptions"
+            <a-select v-else v-model="formModel.type">
+              <a-select-option v-for="item in routeTypeOptions"
                               :key="item.value"
                               :value="item.value">{{ item.desc }}
-              </a-radio-button>
-            </a-radio-group>
+              </a-select-option>
+            </a-select>
           </a-form-model-item>
         </a-col>
         <a-col :span="12">

@@ -177,7 +177,8 @@ export default {
     // },
     toDetail(record) {
       this.$router.push({
-        path: `/orders/${record.id}`,
+        path: `/order/details`,
+        query: {orderId: record.id},
       })
     },
     toAttrGroup(record) {
