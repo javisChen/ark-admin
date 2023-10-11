@@ -2,7 +2,7 @@
   <a-cascader popupPlacement="bottomLeft"
               :changeOnSelect="true"
               :options="options"
-              :fieldNames="{ label: 'name', value: 'code', children: 'nodes' }"
+              :fieldNames="{ label: 'name', value: 'id', children: 'nodes' }"
               placeholder="请选择商品类目"
               v-model="defaultValue"
               @change="onChange"/>
@@ -36,15 +36,14 @@ export default {
   },
   watch: {
     path(val) {
-      let defaultValue = parseLevelPathFull(val);
-      console.log('path',defaultValue)
-      this.defaultValue = defaultValue
+      console.log('path val', val)
+      this.defaultValue = parseLevelPathFull(val)
     },
   },
   methods: {
     onChange(value, selectedOptions) {
+      console.log('selectedOptions', selectedOptions)
       console.log('category value', value)
-      // this.defaultValue = value
       this.$emit('change', value[value.length - 1])
     },
     async loadList() {

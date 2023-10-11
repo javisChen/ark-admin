@@ -103,11 +103,7 @@ export default {
       this.$emit("onCategoryChange", value)
     },
     getData() {
-      const internalModel = this.internalModel;
-      if (internalModel.unit === 2) {
-        internalModel.weight *= 1000
-      }
-      return internalModel;
+      return this.internalModel;
     }
   }
 }

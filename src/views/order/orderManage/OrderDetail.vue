@@ -201,7 +201,6 @@ export default {
     }
   },
   created() {
-    console.log(this.$route.query)
     if (this.$route.query.orderId) {
       this.orderId = this.$route.query.orderId;
       this.loadOrder();

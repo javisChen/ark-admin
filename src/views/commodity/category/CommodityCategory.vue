@@ -97,7 +97,7 @@ const pagination = {
 const queryParam = {
   name: '',
   pid: undefined,
-  level: undefined,
+  level: 1,
   current: 1,
   size: 15,
 }
@@ -162,8 +162,8 @@ export default {
     initQueryParams(query) {
       if (this.$route.query) {
         const {pid , level} = this.$route.query;
-        this.queryParam.pid = pid
-        this.queryParam.level = level
+        this.queryParam.pid = pid || 0
+        this.queryParam.level = level || 1
       }
     },
     toChildren(record) {

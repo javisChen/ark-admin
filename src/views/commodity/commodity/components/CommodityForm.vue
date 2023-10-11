@@ -90,13 +90,12 @@ export default {
       this.formModel.categoryId = value
     },
     handleClose() {
-      this.close()
       this.$emit('cancel', '')
     },
     afterSuccess: function ($form) {
       this.toggleConfirmLoading()
       this.$message.success('保存成功')
-      this.close()
+      this.$router.push({ name: 'commodity' })
     },
     toggleConfirmLoading() {
       this.confirmLoading = !this.confirmLoading
@@ -134,7 +133,10 @@ export default {
         newAttrOptionList: attrSpec.newAttrOptions,
         paramList: attrParam
       }
-      console.log('商品表单', form)
+      if (form.unit === 2) {
+        form.weight *= 1000
+      }
+      console.log('save')
       save(form)
         .then(({data}) => this.afterSuccess())
         .catch(e => e)
