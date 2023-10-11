@@ -135,7 +135,7 @@ export const generator = (routerMap, parent) => {
 const listToTree = (list, tree, parentId) => {
   list.forEach(item => {
     // 判断是否为父级菜单
-    if (item.parentId === parentId) {
+    if (item.parentId == parentId) {
       const child = {
         ...item,
         key: item.key || item.name,
