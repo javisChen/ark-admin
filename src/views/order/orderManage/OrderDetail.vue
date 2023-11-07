@@ -95,13 +95,13 @@
           {{ this.order.orderBase.tradeNo }}
         </a-col>
         <a-col class="t-header content" :span="4">
-
+          -
         </a-col>
         <a-col class="t-header content" :span="4">
-
+          -
         </a-col>
         <a-col class="t-header content" :span="4">
-
+          -
         </a-col>
         <a-col class="t-header content" :span="4">
           {{ this.order.orderBase.orderChannel }}
