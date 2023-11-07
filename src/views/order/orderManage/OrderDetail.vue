@@ -126,16 +126,16 @@
       </a-row>
       <a-row>
         <a-col class="t-header content first" :span="4">
-
+          -
         </a-col>
         <a-col class="t-header content" :span="4">
-
+          -
         </a-col>
         <a-col class="t-header content" :span="4">
-
+          -
         </a-col>
         <a-col class="t-header content" :span="4">
-
+          -
         </a-col>
       </a-row>
     </a-card>
@@ -156,13 +156,13 @@
       </a-row>
       <a-row>
         <a-col class="t-header content first" :span="4">
-          haha
+          -
         </a-col>
         <a-col class="t-header content" :span="4">
-          haha
+          -
         </a-col>
         <a-col class="t-header content" :span="4">
-          haha
+          -
         </a-col>
       </a-row>
     </a-card>
