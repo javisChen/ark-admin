@@ -64,7 +64,6 @@ export const generatorDynamicRouter = () => {
       rootRouter.children = childrenNav
       menuNav.push(rootRouter)
       const routers = generator(menuNav)
-      console.log('routers', routers)
       routers.push(notFoundRouter)
       resolve(routers)
     }).catch(err => {

@@ -92,22 +92,22 @@
       </a-row>
       <a-row>
         <a-col class="t-header content first" :span="4">
-          haha
+          {{ this.order.orderBase.tradeNo }}
         </a-col>
         <a-col class="t-header content" :span="4">
-          haha
+
         </a-col>
         <a-col class="t-header content" :span="4">
-          haha
+
         </a-col>
         <a-col class="t-header content" :span="4">
-          haha
+
         </a-col>
         <a-col class="t-header content" :span="4">
-          haha
+          {{ this.order.orderBase.orderChannel }}
         </a-col>
         <a-col class="t-header content" :span="4">
-          haha
+          {{ this.order.orderBase.orderType }}
         </a-col>
       </a-row>
       <a-row>
@@ -126,16 +126,16 @@
       </a-row>
       <a-row>
         <a-col class="t-header content first" :span="4">
-          haha
+
         </a-col>
         <a-col class="t-header content" :span="4">
-          haha
+
         </a-col>
         <a-col class="t-header content" :span="4">
-          haha
+
         </a-col>
         <a-col class="t-header content" :span="4">
-          haha
+
         </a-col>
       </a-row>
     </a-card>
@@ -151,17 +151,11 @@
           手机号码
         </a-col>
         <a-col class="t-header title" :span="4">
-          邮政编码
-        </a-col>
-        <a-col class="t-header title" :span="4">
           收货地址
         </a-col>
       </a-row>
       <a-row>
         <a-col class="t-header content first" :span="4">
-          haha
-        </a-col>
-        <a-col class="t-header content" :span="4">
           haha
         </a-col>
         <a-col class="t-header content" :span="4">

@@ -2,9 +2,9 @@ import {post, get, del, put} from '@/utils/request'
 import Base  from './order-base-api'
 
 const api = {
-  pageList: Base.serviceName + '/v1/order/page',
+  pageList: Base.serviceName + '/v1/order/pages',
   update: Base.serviceName + '/v1/order/update',
-  info: Base.serviceName + '/v1/order/info',
+  info: Base.serviceName + '/v1/order/details',
 }
 
 export default api
