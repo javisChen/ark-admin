@@ -23,7 +23,6 @@
         row-key="id"
         :columns="goodsColumns"
         :data="loadGoodsData">
-
       </s-table>
 
       <div class="title">退货进度</div>

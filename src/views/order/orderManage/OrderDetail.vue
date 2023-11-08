@@ -141,6 +141,51 @@
     </a-card>
     <!-- 基本信息 -->
 
+    <!-- 商品信息 -->
+    <a-card class="card" title="商品信息" :bordered="false">
+      <a-row>
+        <a-col class="t-header title first" :span="4">
+          商品编号
+        </a-col>
+        <a-col class="t-header title" :span="4">
+          名称
+        </a-col>
+        <a-col class="t-header title" :span="4">
+          图片
+        </a-col>
+        <a-col class="t-header title" :span="4">
+          单价
+        </a-col>
+        <a-col class="t-header title" :span="4">
+          数量
+        </a-col>
+        <a-col class="t-header title" :span="4">
+          金额
+        </a-col>
+      </a-row>
+      <a-row v-for="item in order.orderProducts" :key="item.id">
+        <a-col class="t-header content first" :span="4">
+          {{ item.code }}
+        </a-col>
+        <a-col class="t-header content" :span="4">
+          {{ item.productName }}
+        </a-col>
+        <a-col class="t-header content" :span="4">
+          <img width="100" height="100" :src="item.picUrl" alt="">
+        </a-col>
+        <a-col class="t-header content" :span="4">
+          {{item.price | fenToYuan}}
+        </a-col>
+        <a-col class="t-header content" :span="4">
+          {{item.quantity}}
+        </a-col>
+        <a-col class="t-header content" :span="4">
+          {{item.price | fenToYuan}}
+        </a-col>
+      </a-row>
+    </a-card>
+    <!-- 商品信息 -->
+
     <!-- 收货人信息 -->
     <a-card class="card" title="收货人信息" :bordered="false">
       <a-row>
@@ -156,13 +201,13 @@
       </a-row>
       <a-row>
         <a-col class="t-header content first" :span="4">
-          -
+          {{ this.order.orderReceive.name }}
         </a-col>
         <a-col class="t-header content" :span="4">
-          -
+          {{ this.order.orderReceive.mobile }}
         </a-col>
         <a-col class="t-header content" :span="4">
-          -
+          {{ this.order.orderReceive.province }}{{ this.order.orderReceive.city }}{{ this.order.orderReceive.district }}{{ this.order.orderReceive.address }}
         </a-col>
       </a-row>
     </a-card>
