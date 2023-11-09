@@ -58,7 +58,10 @@
       </template>
 
       <template slot="action" slot-scope="text, record">
-        <k-tooltip-button title="查看" @click="toDetail(record)" icon="search"/>
+        <k-tooltip-button title="查看" @click="toDetail(record)" icon="search"/>&nbsp;
+        <k-tooltip-button title="模拟支付" @click="toDetail(record)" icon="wallet">
+          模拟支付
+        </k-tooltip-button>
       </template>
     </a-table>
     <a-empty v-else/>
@@ -70,7 +73,9 @@
 <script>
 
 import {getInfo, getPageList} from '@/api/trade/order-api'
+import {notify} from '@/api/pay/pay-api'
 import {translatePayType, translatePayStatus, translateOrderStatus, translateOrderChannel} from '@/utils/biz-const'
+import {remove} from "@/api/commodity/attr-api";
 
 const pagination = {
   showSizeChanger: true,
@@ -176,6 +181,20 @@ export default {
     //   return DICT_PAY_STATUS[value]
     // },
     toDetail(record) {
+      this.$router.push({
+        path: `/order/details`,
+        query: {orderId: record.id},
+      })
+    },
+    mockPay(record) {
+      this.$confirm({
+        title: `提示`,
+        content: `确认要发起模拟支付完成吗？`,
+        onOk: async () => {
+          const {data} = await notify({id: record.id})
+          await this.loadTableData();
+        }
+      })
       this.$router.push({
         path: `/order/details`,
         query: {orderId: record.id},
