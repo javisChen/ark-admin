@@ -59,7 +59,7 @@
 
       <template slot="action" slot-scope="text, record">
         <k-tooltip-button title="查看" @click="toDetail(record)" icon="search"/>&nbsp;
-        <k-tooltip-button title="模拟支付" @click="toDetail(record)" icon="wallet">
+        <k-tooltip-button title="模拟支付" @click="mockPay(record)" icon="wallet">
           模拟支付
         </k-tooltip-button>
       </template>
@@ -76,6 +76,7 @@ import {getInfo, getPageList} from '@/api/trade/order-api'
 import {notify} from '@/api/pay/pay-api'
 import {translatePayType, translatePayStatus, translateOrderStatus, translateOrderChannel} from '@/utils/biz-const'
 import {remove} from "@/api/commodity/attr-api";
+import {timeFix} from "@/utils/util";
 
 const pagination = {
   showSizeChanger: true,
@@ -191,13 +192,17 @@ export default {
         title: `提示`,
         content: `确认要发起模拟支付完成吗？`,
         onOk: async () => {
-          const {data} = await notify({payOrderId: record.id, orderId: '', status : 3})
+          try {
+            const {data} = await notify({payTradeNo: record.payTradeNo, orderId: record.id, status: 3})
+            this.$notification.success({
+              message: '操作成功',
+              description: ''
+            })
+          } catch (e) {
+            console.log(e)
+          }
           await this.loadTableData();
         }
-      })
-      this.$router.push({
-        path: `/order/details`,
-        query: {orderId: record.id},
       })
     },
     toAttrGroup(record) {

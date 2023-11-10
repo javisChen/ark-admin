@@ -1,9 +1,8 @@
 <template>
 
-  <div>
-
+  <div v-if="order && order.orderBase">
     <a-card :bordered="false" title="订单流程">
-      <a-steps size="small" :direction="isMobile && 'vertical' || 'horizontal'" :current="0">
+      <a-steps size="small" :direction="isMobile && 'vertical' || 'horizontal'" :current="orderStep()">
         <a-step>
           <template v-slot:title>
             <span>提交订单</span>
@@ -174,13 +173,13 @@
           <img width="100" height="100" :src="item.picUrl" alt="">
         </a-col>
         <a-col class="t-header content" :span="4">
-          {{item.price | fenToYuan}}
+          {{ item.price | fenToYuan }}
         </a-col>
         <a-col class="t-header content" :span="4">
-          {{item.quantity}}
+          {{ item.quantity }}
         </a-col>
         <a-col class="t-header content" :span="4">
-          {{item.price | fenToYuan}}
+          {{ item.price | fenToYuan }}
         </a-col>
       </a-row>
     </a-card>
@@ -207,7 +206,9 @@
           {{ this.order.orderReceive.mobile }}
         </a-col>
         <a-col class="t-header content" :span="4">
-          {{ this.order.orderReceive.province }}{{ this.order.orderReceive.city }}{{ this.order.orderReceive.district }}{{ this.order.orderReceive.address }}
+          {{ this.order.orderReceive.province }}{{ this.order.orderReceive.city }}{{
+            this.order.orderReceive.district
+          }}{{ this.order.orderReceive.address }}
         </a-col>
       </a-row>
     </a-card>
@@ -229,6 +230,8 @@ export default {
       order: {}
     }
   },
+  computed: {
+  },
   methods: {
     async loadOrder() {
       try {
@@ -236,6 +239,21 @@ export default {
         this.order = data
       } catch (e) {
         console.log(e)
+      }
+    },
+    orderStep() {
+      if (this.order && this.order.orderBase) {
+        console.log(this)
+        console.log(this.order)
+        console.log(this.order.orderBase)
+        console.log(this.orderId)
+        const orderStatus = this.order.orderBase.orderStatus;
+        if (orderStatus == 1) {
+          return 0
+        }
+        if (orderStatus == 2) {
+          return 1
+        }
       }
     }
   },
