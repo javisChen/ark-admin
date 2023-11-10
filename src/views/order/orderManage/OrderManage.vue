@@ -191,7 +191,7 @@ export default {
         title: `提示`,
         content: `确认要发起模拟支付完成吗？`,
         onOk: async () => {
-          const {data} = await notify({id: record.id})
+          const {data} = await notify({payOrderId: record.id, orderId: '', status : 3})
           await this.loadTableData();
         }
       })
