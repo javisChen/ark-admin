@@ -18,8 +18,8 @@ export const DICT_ORDER_CHANNEL = {
 }
 
 export const DICT_PAY_TYPE = {
-  1: "微信支付",
-  2: "支付宝",
+  'WECHAT': "微信支付",
+  'ALIPAY': "支付宝",
 }
 
 

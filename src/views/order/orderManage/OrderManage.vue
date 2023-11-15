@@ -50,7 +50,7 @@
       </template>
 
       <template slot="payType" slot-scope="text, record">
-        <span>{{ record.payType | translatePayType }}</span>
+        <span>{{ record.payTypeCode | translatePayType }}</span>
       </template>
 
       <template slot="actualAmount" slot-scope="text, record">
