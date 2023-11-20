@@ -62,6 +62,9 @@
         <k-tooltip-button title="模拟支付" @click="mockPay(record)" icon="wallet">
           模拟支付
         </k-tooltip-button>
+        <k-tooltip-button title="模拟支付" @click="delivery(record)" icon="wallet">
+          发货
+        </k-tooltip-button>
       </template>
     </a-table>
     <a-empty v-else/>
@@ -191,6 +194,24 @@ export default {
       this.$confirm({
         title: `提示`,
         content: `确认要发起模拟支付完成吗？`,
+        onOk: async () => {
+          try {
+            const {data} = await notify({payTradeNo: record.payTradeNo, orderId: record.id, status: 3})
+            this.$notification.success({
+              message: '操作成功',
+              description: ''
+            })
+          } catch (e) {
+            console.log(e)
+          }
+          await this.loadTableData();
+        }
+      })
+    },
+    delivery(record) {
+      this.$confirm({
+        title: `提示`,
+        content: `确认要发货吗？`,
         onOk: async () => {
           try {
             const {data} = await notify({payTradeNo: record.payTradeNo, orderId: record.id, status: 3})
