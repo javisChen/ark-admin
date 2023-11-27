@@ -59,10 +59,10 @@
 
       <template slot="action" slot-scope="text, record">
         <k-tooltip-button title="查看" @click="toDetail(record)" icon="search"/>&nbsp;
-        <k-tooltip-button title="模拟支付" @click="mockPay(record)" icon="wallet">
+        <k-tooltip-button title="模拟支付" @click="mockPay(record)" icon="money-collect">
           模拟支付
-        </k-tooltip-button>
-        <k-tooltip-button title="模拟支付" @click="delivery(record)" icon="wallet">
+        </k-tooltip-button>&nbsp;
+        <k-tooltip-button title="发货" @click="delivery(record)" icon="mobile">
           发货
         </k-tooltip-button>
       </template>
@@ -100,8 +100,7 @@ const queryParam = {
 
 export default {
   name: 'OrderManage',
-  components: {
-  },
+  components: {},
   data() {
     return {
       selectedAttrTemplate: {},
@@ -120,40 +119,47 @@ export default {
         {
           title: '订单编号',
           align: 'center',
+          width: 200,
           dataIndex: 'tradeNo',
         },
         {
           title: '提交时间',
           align: 'center',
+          width: 200,
           dataIndex: 'gmtCreate',
         },
         {
           title: '订单金额',
           align: 'center',
+          width: 200,
           dataIndex: 'actualAmount',
           scopedSlots: {customRender: 'actualAmount'},
         },
         {
           title: '支付方式',
           align: 'center',
+          width: 100,
           dataIndex: 'payType',
           scopedSlots: {customRender: 'payType'},
         },
         {
           title: '订单来源',
           align: 'center',
+          width: 100,
           dataIndex: 'orderChannel',
           scopedSlots: {customRender: 'orderChannel'},
         },
         {
           title: '支付状态',
           align: 'center',
+          width: 100,
           dataIndex: 'payStatus',
           scopedSlots: {customRender: 'payStatus'},
         },
         {
           title: '订单状态',
           align: 'center',
+          width: 100,
           dataIndex: 'orderStatus',
           scopedSlots: {customRender: 'orderStatus'},
         },
