@@ -8,6 +8,7 @@ import router from './router'
 import store from './store/'
 import i18n from './locales'
 import { VueAxios } from './utils/request'
+import util from './utils/util'
 import ProLayout, { PageHeaderWrapper } from '@ant-design-vue/pro-layout'
 import themePluginConfig from '../config/themePluginConfig'
 
@@ -21,6 +22,8 @@ import './utils/filter' // global filter
 import './global.less' // global style
 
 Vue.prototype.$cloneDeep = cloneDeep
+
+Vue.prototype.$utils = cloneDeep
 
 Vue.config.productionTip = false
 

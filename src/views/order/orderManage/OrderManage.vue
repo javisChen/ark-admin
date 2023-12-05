@@ -26,6 +26,7 @@
     <a-table
       v-if="tableData && tableData.length > 0"
       bordered
+      emptyText="暂无数据"
       @change="handleTableChange"
       :pagination="pagination"
       :loading="tableLoading"
@@ -37,24 +38,28 @@
       :columns="columns"
       :data-source="tableData">
 
+      <template slot="actualAmount" slot-scope="text, record">
+        <span>{{ record.orderAmount.actualAmount | formatPrice }}</span>
+      </template>
+
       <template slot="orderStatus" slot-scope="text, record">
-        <span>{{ record.orderStatus | translateOrderStatus }}</span>
+        <span>{{ record.orderBase.orderStatus | translateOrderStatus }}</span>
       </template>
 
       <template slot="orderChannel" slot-scope="text, record">
-        <span>{{ record.orderChannel | translateOrderChannel }}</span>
+        <span>{{ record.orderBase.orderChannel | translateOrderChannel }}</span>
       </template>
 
       <template slot="payStatus" slot-scope="text, record">
-        <span>{{ record.payStatus | translatePayStatus }}</span>
+        <span>{{ record.orderBase.payStatus | translatePayStatus }}</span>
       </template>
 
       <template slot="payType" slot-scope="text, record">
-        <span>{{ record.payTypeCode | translatePayType }}</span>
+        <span>{{ record.orderBase.payTypeId | translatePayType }}</span>
       </template>
 
       <template slot="actualAmount" slot-scope="text, record">
-        <span>{{ record.actualAmount | fenToYuan }}</span>
+        <span>{{ record.orderAmount.actualAmount | fenToYuan }}</span>
       </template>
 
       <template slot="action" slot-scope="text, record">
@@ -79,7 +84,7 @@ import {getInfo, getPageList} from '@/api/trade/order-api'
 import {notify} from '@/api/pay/pay-api'
 import {translatePayType, translatePayStatus, translateOrderStatus, translateOrderChannel} from '@/utils/biz-const'
 import {remove} from "@/api/commodity/attr-api";
-import {timeFix} from "@/utils/util";
+import {timeFix, formatPrice} from "@/utils/util";
 
 const pagination = {
   showSizeChanger: true,
@@ -120,40 +125,36 @@ export default {
           title: '订单编号',
           align: 'center',
           width: 200,
-          dataIndex: 'tradeNo',
+          customRender: (order) => order.orderBase.tradeNo,
         },
         {
           title: '提交时间',
           align: 'center',
           width: 200,
-          dataIndex: 'gmtCreate',
+          customRender: (order) => order.orderBase.createTime,
         },
         {
           title: '订单金额',
           align: 'center',
           width: 200,
-          dataIndex: 'actualAmount',
           scopedSlots: {customRender: 'actualAmount'},
         },
         {
           title: '支付方式',
           align: 'center',
           width: 100,
-          dataIndex: 'payType',
           scopedSlots: {customRender: 'payType'},
         },
         {
           title: '订单来源',
           align: 'center',
           width: 100,
-          dataIndex: 'orderChannel',
           scopedSlots: {customRender: 'orderChannel'},
         },
         {
           title: '支付状态',
           align: 'center',
           width: 100,
-          dataIndex: 'payStatus',
           scopedSlots: {customRender: 'payStatus'},
         },
         {
@@ -202,15 +203,19 @@ export default {
         content: `确认要发起模拟支付完成吗？`,
         onOk: async () => {
           try {
-            const {data} = await notify({payTradeNo: record.payTradeNo, orderId: record.id, status: 3})
+            const {data} = await notify({
+              payTradeNo: record.orderBase.payTradeNo,
+              bizTradeNo: record.orderBase.tradeNo,
+              status: 3
+            })
             this.$notification.success({
               message: '操作成功',
               description: ''
             })
+            await this.loadTableData();
           } catch (e) {
             console.log(e)
           }
-          await this.loadTableData();
         }
       })
     },

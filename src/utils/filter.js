@@ -1,6 +1,10 @@
 import Vue from 'vue'
 import moment from 'moment'
 import 'moment/locale/zh-cn'
+import accounting from "accounting";
+import {fenToYuan, yuanToFen} from "@/utils/util";
+
+
 import {
   DICT_ORDER_CHANNEL,
   DICT_ORDER_STATUS,
@@ -88,3 +92,8 @@ Vue.filter('translatePayType', function (value) {
 Vue.filter('translatePayStatus', function (value) {
   return DICT_PAY_STATUS[value]
 })
+
+Vue.filter('formatShowPrice', function (value) {
+  return accounting.format(fenToYuan(value))
+})
+
