@@ -24,7 +24,7 @@
     </div>
 
     <a-table
-      v-if="tableData && tableData.length > 0"
+      v-if="orders && orders.length > 0"
       bordered
       emptyText="暂无数据"
       @change="handleTableChange"
@@ -36,7 +36,7 @@
       :indent-size="15"
       :row-key="rowKey"
       :columns="columns"
-      :data-source="tableData">
+      :data-source="orders">
 
       <template slot="actualAmount" slot-scope="text, record">
         <span>{{ record.orderAmount.actualAmount | formatShowPrice }}</span>
@@ -64,7 +64,8 @@
 
       <template slot="action" slot-scope="text, order">
         <k-tooltip-button title="查看" @click="toDetail(order)" icon="search"/>&nbsp;
-        <k-tooltip-button v-if="order.orderBase.orderStatus === 1" title="模拟支付" @click="mockPay(order)" icon="money-collect">
+        <k-tooltip-button v-if="order.orderBase.orderStatus === 1" title="模拟支付" @click="mockPay(order)"
+                          icon="money-collect">
           模拟支付
         </k-tooltip-button>&nbsp;
         <k-tooltip-button title="发货" @click="delivery(order)" icon="mobile">
@@ -76,7 +77,7 @@
     <a-empty v-else/>
 
     <deliver-form :visible="showDeliverForm"
-                  @on-submit="onDeliverSubmit"/>
+                  @submit-ok="onDeliverSubmit" :order-id="selectedOrderId"/>
 
   </a-card>
 
@@ -107,10 +108,13 @@ const queryParam = {
 
 export default {
   name: 'OrderManage',
-  components: {DeliverForm},
+  components: {
+    DeliverForm
+  },
   data() {
     return {
       selectedOrder: {},
+      selectedOrderId: '',
       showDeliverForm: false,
       selectedAttrTemplate: {},
       showAttrGroup: false,
@@ -123,7 +127,7 @@ export default {
       tableLoading: false,
       advanced: false,
       queryParam: Object.assign({}, queryParam),
-      tableData: [],
+      orders: [],
       columns: [
         {
           title: '订单编号',
@@ -183,23 +187,10 @@ export default {
     this.loadTableData();
   },
   methods: {
-    async onDeliverSubmit(deliverInfo) {
+    async onDeliverSubmit() {
+      console.log('发货提交成功...')
       this.showDeliverForm = false
-      console.log('deliver submit', deliverInfo)
-      try {
-        const {data} = await deliver({
-          ...deliverInfo,
-          orderId: this.selectedOrder.orderBase.id
-        })
-        this.$notification.success({
-          message: '发货成功',
-          description: ''
-        })
-        await this.loadTableData();
-      } catch (e) {
-        console.log(e)
-      }
-
+      await this.loadTableData();
     },
     toDetail(record) {
       this.$router.push({
@@ -232,6 +223,7 @@ export default {
     delivery(order) {
       this.showDeliverForm = true
       this.selectedOrder = order
+      this.selectedOrderId = order.orderBase.id
     },
     toAttrGroup(record) {
       this.$router.push({
@@ -295,7 +287,7 @@ export default {
       this.toggleLoading()
       const {data} = await getPageList(this.queryParam)
       if (data) {
-        this.tableData = data.records;
+        this.orders = data.records;
       }
       this.pagination.total = data.total
       this.toggleLoading()

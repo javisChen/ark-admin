@@ -17,6 +17,8 @@
   </a-modal>
 </template>
 <script>
+import {deliver} from "@/api/trade/order-api";
+
 export default {
   name: 'DeliverForm',
   props: {
@@ -24,6 +26,11 @@ export default {
       type: Boolean,
       required: true,
       default: true
+    },
+    orderId: {
+      type: String,
+      required: true,
+      default: ''
     }
   },
   data() {
@@ -49,15 +56,30 @@ export default {
     }
   },
   methods: {
+    doDelivery: async function () {
+      const deliverInfo = {...this.formState}
+      try {
+        await deliver({
+          ...deliverInfo,
+          orderId: this.orderId
+        })
+        console.log('发货成功...')
+        this.$notification.success({
+          message: '发货成功',
+          description: ''
+        })
+      } catch (e) {
+        console.log(e)
+      }
+    },
     handleOk() {
-      this.$refs['ruleForm'].validate(valid => {
-        if (valid) {
-          this.$emit('on-submit', {...this.formState})
-          this.formState = {};
-        } else {
-          console.log('error submit!!');
+      this.$refs.ruleForm.validate(async valid => {
+        if (!valid) {
           return false;
         }
+        await this.doDelivery();
+        this.$emit('submit-ok', {...this.formState})
+        this.formState = {};
       });
     }
   }

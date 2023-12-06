@@ -2,6 +2,11 @@
 
   <div v-if="order && order.orderBase">
     <a-card :bordered="false" title="订单流程">
+
+      <template #extra>
+        <a-button type="secondary">发货</a-button>
+      </template>
+
       <a-steps size="small" :direction="isMobile && 'vertical' || 'horizontal'" :current="orderStep()">
         <a-step>
           <template v-slot:title>

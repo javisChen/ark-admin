@@ -62,7 +62,7 @@ export default {
   & > div {
     display: flex;
     flex-direction: column;
-    justify-content: start;
+    justify-content: flex-start;
     width: 33%;
     text-align: center;
 

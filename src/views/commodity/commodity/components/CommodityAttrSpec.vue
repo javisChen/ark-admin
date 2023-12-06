@@ -7,7 +7,10 @@
       :label-col="labelCol"
       :wrapper-col="wrapperCol">
       <!-- 遍历规格属性 -->
-      <a-form-model-item style="margin-bottom: 10px" v-for="(attrItem, attrListIdx) in attrList" :label="attrItem.name">
+      <a-form-model-item style="margin-bottom: 10px"
+                         v-for="(attrItem, attrListIdx) in attrList"
+                         :key="attrListIdx"
+                         :label="attrItem.name">
         <!-- 手工录入 -->
         <div v-if="attrItem.inputType === 1">
           <div v-if="attrItem.optionList.length > 0" class="ant-checkbox-group">

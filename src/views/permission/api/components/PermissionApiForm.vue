@@ -79,7 +79,7 @@
 
       <a-form-model-item label="状态" prop="status" required>
         <a-radio-group name="radioGroup" v-model="formModel.status" :default-value="1">
-          <a-radio v-for="item in routeStatusOptions" :value="item.value">{{ item.desc }}</a-radio>
+          <a-radio v-for="item in routeStatusOptions" :value="item.value" :key="item.value">{{ item.desc }}</a-radio>
         </a-radio-group>
       </a-form-model-item>
 
