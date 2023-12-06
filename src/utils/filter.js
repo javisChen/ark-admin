@@ -75,6 +75,8 @@ Vue.filter('moment', function (dataStr, pattern = 'YYYY-MM-DD HH:mm:ss') {
 })
 
 Vue.filter('translateOrderStatus', function (value) {
+  console.log(DICT_ORDER_STATUS[value])
+  console.log(DICT_ORDER_STATUS)
   return DICT_ORDER_STATUS[value]
 })
 
@@ -94,6 +96,6 @@ Vue.filter('translatePayStatus', function (value) {
 })
 
 Vue.filter('formatShowPrice', function (value) {
-  return accounting.format(fenToYuan(value))
+  return accounting.format(fenToYuan(value)) + ' 元'
 })
 

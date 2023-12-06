@@ -9,7 +9,7 @@
           </template>
           <template v-slot:description>
             <div class="antd-pro-pages-profile-advanced-style-stepDescription">
-              <div>2016-12-12 12:32</div>
+              <div class="step-time">{{ order.orderBase.createTime }}</div>
             </div>
           </template>
         </a-step>
@@ -19,7 +19,7 @@
           </template>
           <template v-slot:description>
             <div class="antd-pro-pages-profile-advanced-style-stepDescription">
-              <div>2016-12-12 12:32</div>
+              <div class="step-time">{{ order.orderBase.payTime }}</div>
             </div>
           </template>
         </a-step>
@@ -29,7 +29,7 @@
           </template>
           <template v-slot:description>
             <div class="antd-pro-pages-profile-advanced-style-stepDescription">
-              <div>2016-12-12 12:32</div>
+              <div class="step-time">{{ order.orderBase.deliverTime }}</div>
             </div>
           </template>
         </a-step>
@@ -39,7 +39,17 @@
           </template>
           <template v-slot:description>
             <div class="antd-pro-pages-profile-advanced-style-stepDescription">
-              <div>2016-12-12 12:32</div>
+              <div class="step-time">{{ order.orderBase.receiveTime }}</div>
+            </div>
+          </template>
+        </a-step>
+        <a-step>
+          <template v-slot:title>
+            <span>交易完成</span>
+          </template>
+          <template v-slot:description>
+            <div class="antd-pro-pages-profile-advanced-style-stepDescription">
+              <div class="step-time">{{ order.orderBase.completionTime }}</div>
             </div>
           </template>
         </a-step>
@@ -49,20 +59,20 @@
     <a-card class="card" title="基本信息" :bordered="false">
       <a-row class="form-row" :gutter="16">
         <a-col :span="8">
-          <h1 class="trade-no">单号：{{ this.order.orderBase.tradeNo }}</h1>
+          <h1 class="trade-no">单号：{{ order.orderBase.tradeNo }}</h1>
         </a-col>
         <a-col :span="6">
-          <h1 class="trade-no">金额：{{ this.order.orderCharge.actualAmount | fenToYuan }}</h1>
+          <h1 class="trade-no">金额：<span class="amount">{{ order.orderAmount.actualAmount | formatShowPrice }} </span></h1>
         </a-col>
         <a-col :span="4">
-          <h1 class="trade-no">状态：{{ this.order.orderBase.orderStatus | translateOrderStatus }}</h1>
+          <h1 class="trade-no">状态：{{ order.orderBase.orderStatus | translateOrderStatus }}</h1>
         </a-col>
       </a-row>
       <a-row class="form-row" :gutter="16">
         <a-col :lg="6" :md="12" :sm="24">
-          <p>创建人：{{ this.order.orderBase.buyerId }}</p>
-          <p>创建时间：{{ this.order.orderBase.createTime }}</p>
-          <p>备注：{{ this.order.orderBase.buyerRemark }}</p>
+          <p>创建人：{{ order.orderBase.buyerName }}</p>
+          <p>创建时间：{{ order.orderBase.createTime }}</p>
+          <p>备注：{{ order.orderBase.buyerRemark }}</p>
         </a-col>
       </a-row>
     </a-card>
@@ -74,67 +84,55 @@
           订单编号
         </a-col>
         <a-col class="t-header title" :span="4">
-          发货流水号
-        </a-col>
-        <a-col class="t-header title" :span="4">
           买家
         </a-col>
         <a-col class="t-header title" :span="4">
           支付方式
         </a-col>
         <a-col class="t-header title" :span="4">
+          支付单号
+        </a-col>
+        <a-col class="t-header title" :span="4">
           订单来源
         </a-col>
         <a-col class="t-header title" :span="4">
-          订单类型
+          收货时间
         </a-col>
       </a-row>
       <a-row>
         <a-col class="t-header content first" :span="4">
-          {{ this.order.orderBase.tradeNo }}
+          {{ order.orderBase.tradeNo }}
         </a-col>
         <a-col class="t-header content" :span="4">
-          -
+          {{ order.orderBase.buyerName }}
         </a-col>
         <a-col class="t-header content" :span="4">
-          -
+          {{ order.orderBase.payType | translatePayType }}
         </a-col>
         <a-col class="t-header content" :span="4">
-          -
+          {{ order.orderBase.payTradeNo }}
         </a-col>
         <a-col class="t-header content" :span="4">
-          {{ this.order.orderBase.orderChannel }}
+          {{ order.orderBase.orderChannel | translateOrderChannel }}
         </a-col>
         <a-col class="t-header content" :span="4">
-          {{ this.order.orderBase.orderType }}
+          {{ order.orderBase.receiveTime || '-' }}
         </a-col>
       </a-row>
       <a-row>
-        <a-col class="t-header title first" :span="4">
-          配送方式
+        <a-col class="t-header title" :span="4">
+          物流公司
         </a-col>
         <a-col class="t-header title" :span="4">
           物流单号
         </a-col>
-        <a-col class="t-header title" :span="4">
-          自动确认收货时间
-        </a-col>
-        <a-col class="t-header title" :span="4">
-          活动信息
-        </a-col>
       </a-row>
       <a-row>
         <a-col class="t-header content first" :span="4">
-          -
+          {{ order.orderBase.logisticsCompany || '-' }}
         </a-col>
         <a-col class="t-header content" :span="4">
-          -
-        </a-col>
-        <a-col class="t-header content" :span="4">
-          -
-        </a-col>
-        <a-col class="t-header content" :span="4">
-          -
+          {{ order.orderBase.logisticsCode || '-' }}
         </a-col>
       </a-row>
     </a-card>
@@ -162,24 +160,24 @@
           金额
         </a-col>
       </a-row>
-      <a-row v-for="item in order.orderProducts" :key="item.id">
+      <a-row v-for="item in order.orderItems" :key="item.id" class="order-items">
         <a-col class="t-header content first" :span="4">
-          {{ item.code }}
+          {{ item.code || '-' }}
         </a-col>
         <a-col class="t-header content" :span="4">
-          {{ item.productName }}
+          {{ item.productName || '-' }}
         </a-col>
         <a-col class="t-header content" :span="4">
-          <img width="100" height="100" :src="item.picUrl" alt="">
+          <img :src="item.picUrl" alt="">
         </a-col>
         <a-col class="t-header content" :span="4">
-          {{ item.price | fenToYuan }}
+          {{ item.price | formatShowPrice }}
         </a-col>
         <a-col class="t-header content" :span="4">
-          {{ item.quantity }}
+          {{ item.quantity || '-' }}
         </a-col>
         <a-col class="t-header content" :span="4">
-          {{ item.price | fenToYuan }}
+          {{ item.price | formatShowPrice }}
         </a-col>
       </a-row>
     </a-card>
@@ -200,15 +198,15 @@
       </a-row>
       <a-row>
         <a-col class="t-header content first" :span="4">
-          {{ this.order.orderReceive.name }}
+          {{ order.orderReceive.name }}
         </a-col>
         <a-col class="t-header content" :span="4">
-          {{ this.order.orderReceive.mobile }}
+          {{ order.orderReceive.mobile }}
         </a-col>
         <a-col class="t-header content" :span="4">
-          {{ this.order.orderReceive.province }}{{ this.order.orderReceive.city }}{{
-            this.order.orderReceive.district
-          }}{{ this.order.orderReceive.address }}
+          {{ order.orderReceive.province }}{{ order.orderReceive.city }}{{
+            order.orderReceive.district
+          }}{{ order.orderReceive.address }}
         </a-col>
       </a-row>
     </a-card>
@@ -219,7 +217,13 @@
 <script>
 
 import {getInfo} from '@/api/trade/order-api'
-import {DICT_ORDER_STATUS, DICT_ORDER_CHANNEL, DICT_PAY_STATUS, DICT_PAY_TYPE} from '@/utils/biz-const'
+import {
+  DICT_ORDER_STATUS_WAIT_PAY,
+  DICT_ORDER_STATUS_WAIT_DELIVER,
+  DICT_ORDER_STATUS_WAIT_RECEIVE,
+  DICT_ORDER_STATUS_WAIT_EVALUATE,
+  DICT_ORDER_STATUS_COMPLETED
+} from '@/utils/biz-const'
 
 export default {
   name: "OrderDetail",
@@ -230,8 +234,7 @@ export default {
       order: {}
     }
   },
-  computed: {
-  },
+  computed: {},
   methods: {
     async loadOrder() {
       try {
@@ -243,17 +246,19 @@ export default {
     },
     orderStep() {
       if (this.order && this.order.orderBase) {
-        console.log(this)
-        console.log(this.order)
-        console.log(this.order.orderBase)
-        console.log(this.orderId)
         const orderStatus = this.order.orderBase.orderStatus;
-        if (orderStatus == 1) {
+        if (orderStatus === DICT_ORDER_STATUS_WAIT_PAY) {
           return 0
-        }
-        if (orderStatus == 2) {
+        } else if (orderStatus === DICT_ORDER_STATUS_WAIT_DELIVER) {
           return 1
+        } else if (orderStatus === DICT_ORDER_STATUS_WAIT_RECEIVE) {
+          return 2
+        } else if (orderStatus === DICT_ORDER_STATUS_WAIT_EVALUATE) {
+          return 3
+        } else if (orderStatus === DICT_ORDER_STATUS_COMPLETED) {
+          return 5
         }
+        return 0
       }
     }
   },
@@ -292,5 +297,16 @@ export default {
 
 .t-header.first {
   border-left: 1px solid #f0f0f0;
+}
+
+.order-items .content {
+  height: 80px;
+  line-height: 80px;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.step-time {
+  width: 150px;
 }
 </style>

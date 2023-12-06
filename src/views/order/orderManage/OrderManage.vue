@@ -39,7 +39,7 @@
       :data-source="tableData">
 
       <template slot="actualAmount" slot-scope="text, record">
-        <span>{{ record.orderAmount.actualAmount | formatPrice }}</span>
+        <span>{{ record.orderAmount.actualAmount | formatShowPrice }}</span>
       </template>
 
       <template slot="orderStatus" slot-scope="text, record">
@@ -55,24 +55,28 @@
       </template>
 
       <template slot="payType" slot-scope="text, record">
-        <span>{{ record.orderBase.payTypeId | translatePayType }}</span>
+        <span>{{ record.orderBase.payType | translatePayType }}</span>
       </template>
 
       <template slot="actualAmount" slot-scope="text, record">
-        <span>{{ record.orderAmount.actualAmount | fenToYuan }}</span>
+        <span>{{ record.orderAmount.actualAmount | formatShowPrice }}</span>
       </template>
 
-      <template slot="action" slot-scope="text, record">
-        <k-tooltip-button title="查看" @click="toDetail(record)" icon="search"/>&nbsp;
-        <k-tooltip-button title="模拟支付" @click="mockPay(record)" icon="money-collect">
+      <template slot="action" slot-scope="text, order">
+        <k-tooltip-button title="查看" @click="toDetail(order)" icon="search"/>&nbsp;
+        <k-tooltip-button v-if="order.orderBase.orderStatus === 1" title="模拟支付" @click="mockPay(order)" icon="money-collect">
           模拟支付
         </k-tooltip-button>&nbsp;
-        <k-tooltip-button title="发货" @click="delivery(record)" icon="mobile">
+        <k-tooltip-button title="发货" @click="delivery(order)" icon="mobile">
           发货
         </k-tooltip-button>
       </template>
     </a-table>
+
     <a-empty v-else/>
+
+    <deliver-form :visible="showDeliverForm"
+                  @on-submit="onDeliverSubmit"/>
 
   </a-card>
 
@@ -80,11 +84,9 @@
 
 <script>
 
-import {getInfo, getPageList} from '@/api/trade/order-api'
+import {getPageList, deliver} from '@/api/trade/order-api'
 import {notify} from '@/api/pay/pay-api'
-import {translatePayType, translatePayStatus, translateOrderStatus, translateOrderChannel} from '@/utils/biz-const'
-import {remove} from "@/api/commodity/attr-api";
-import {timeFix, formatPrice} from "@/utils/util";
+import DeliverForm from "@/views/order/orderManage/DeliverForm.vue";
 
 const pagination = {
   showSizeChanger: true,
@@ -105,9 +107,11 @@ const queryParam = {
 
 export default {
   name: 'OrderManage',
-  components: {},
+  components: {DeliverForm},
   data() {
     return {
+      selectedOrder: {},
+      showDeliverForm: false,
       selectedAttrTemplate: {},
       showAttrGroup: false,
       showAttrSpec: false,
@@ -179,22 +183,28 @@ export default {
     this.loadTableData();
   },
   methods: {
-    // translateOrderStatus(value) {
-    //   return DICT_ORDER_STATUS[value]
-    // },
-    // translateOrderChannel(value) {
-    //   return DICT_ORDER_CHANNEL[value]
-    // },
-    // translatePayType(value) {
-    //   return DICT_PAY_TYPE[value]
-    // },
-    // translatePayStatus(value) {
-    //   return DICT_PAY_STATUS[value]
-    // },
+    async onDeliverSubmit(deliverInfo) {
+      this.showDeliverForm = false
+      console.log('deliver submit', deliverInfo)
+      try {
+        const {data} = await deliver({
+          ...deliverInfo,
+          orderId: this.selectedOrder.orderBase.id
+        })
+        this.$notification.success({
+          message: '发货成功',
+          description: ''
+        })
+        await this.loadTableData();
+      } catch (e) {
+        console.log(e)
+      }
+
+    },
     toDetail(record) {
       this.$router.push({
         path: `/order/details`,
-        query: {orderId: record.id},
+        query: {orderId: record.orderBase.id},
       })
     },
     mockPay(record) {
@@ -203,7 +213,7 @@ export default {
         content: `确认要发起模拟支付完成吗？`,
         onOk: async () => {
           try {
-            const {data} = await notify({
+            await notify({
               payTradeNo: record.orderBase.payTradeNo,
               bizTradeNo: record.orderBase.tradeNo,
               status: 3
@@ -219,23 +229,9 @@ export default {
         }
       })
     },
-    delivery(record) {
-      this.$confirm({
-        title: `提示`,
-        content: `确认要发货吗？`,
-        onOk: async () => {
-          try {
-            const {data} = await notify({payTradeNo: record.payTradeNo, orderId: record.id, status: 3})
-            this.$notification.success({
-              message: '操作成功',
-              description: ''
-            })
-          } catch (e) {
-            console.log(e)
-          }
-          await this.loadTableData();
-        }
-      })
+    delivery(order) {
+      this.showDeliverForm = true
+      this.selectedOrder = order
     },
     toAttrGroup(record) {
       this.$router.push({

@@ -3,16 +3,14 @@ import Base  from './order-base-api'
 
 const api = {
   pageList: Base.serviceName + '/v1/order/pages',
-  update: Base.serviceName + '/v1/order/update',
-  info: Base.serviceName + '/v1/order/details',
+  create: Base.serviceName + '/v1/order/create',
+  details: Base.serviceName + '/v1/order/details',
+  deliver: Base.serviceName + '/v1/order/deliver',
 }
 
 export default api
 
 export const getPageList = (data) => post({url: api.pageList, data})
-
 export const create = (data) => post({url: api.create, data})
-
-export const update = (data) => post({url: api.update, data})
-
-export const getInfo = (params) => get({url: api.info, params})
+export const getInfo = (params) => get({url: api.details, params})
+export const deliver = (data) => post({url: api.deliver, data})
