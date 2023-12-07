@@ -94,6 +94,6 @@ Vue.filter('translatePayStatus', function (value) {
 })
 
 Vue.filter('formatShowPrice', function (value) {
-  return accounting.format(fenToYuan(value)) + ' 元'
+  return '¥' + accounting.format(fenToYuan(value))
 })
 

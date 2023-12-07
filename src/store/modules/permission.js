@@ -59,6 +59,7 @@ const permission = {
     SET_ROUTERS: (state, routers) => {
       state.addRouters = routers
       state.routers = constantRouterMap.concat(routers)
+      console.log(routers)
     }
   },
   actions: {
@@ -67,6 +68,7 @@ const permission = {
         const { roles } = data
         const accessedRouters = filterAsyncRouter(asyncRouterMap, roles)
         commit('SET_ROUTERS', accessedRouters)
+        console.log(accessedRouters)
         resolve()
       })
     }

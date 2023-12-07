@@ -1,6 +1,7 @@
 <template>
-  <a-modal v-model:visible="visible"
+  <a-modal :visible="visible"
            title="发货信息"
+           @cancel="handleCancel"
            @ok="handleOk">
     <a-form-model ref="ruleForm"
                   :rules="rules"
@@ -16,6 +17,7 @@
     </a-form-model>
   </a-modal>
 </template>
+
 <script>
 import {deliver} from "@/api/trade/order-api";
 
@@ -78,13 +80,19 @@ export default {
           return false;
         }
         await this.doDelivery();
-        this.$emit('submit-ok', {...this.formState})
+        this.$emit('ok', {...this.formState})
         this.formState = {};
       });
-    }
+    },
+    handleCancel() {
+      this.formState = {};
+      this.$emit('cancel')
+    },
+
   }
 }
 </script>
+
 <style lang="css">
 
 input:focus {

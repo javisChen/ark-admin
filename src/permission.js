@@ -26,10 +26,8 @@ router.beforeEach((to, from, next) => {
     } else {
       // check login user.roles is null
       if (store.getters.addRouters.length === 0) {
-        // request login userInfo
         store.dispatch('GetInfo')
           .then(({data}) => {
-            console.log('get info')
             // generate dynamic router
             store.dispatch('GenerateRoutes').then(() => {
               // 根据roles权限生成可访问的路由表
@@ -37,9 +35,14 @@ router.beforeEach((to, from, next) => {
               router.addRoutes(store.getters.addRouters)
               // 请求带有 redirect 重定向时，登录自动重定向到该地址
               const redirect = decodeURIComponent(from.query.redirect || to.path)
+              let params
+              let query
+              if (to.path) {
+                params = to.params
+                query = to.query
+              }
               if (to.path === redirect) {
-                // set the replace: true so the navigation will not leave a history record
-                next({path: to.path, replace: true})
+                next({path: to.path, replace: true, params, query})
               } else {
                 // 跳转到目的路由
                 next({path: redirect})
@@ -53,9 +56,8 @@ router.beforeEach((to, from, next) => {
               next({path: loginRoutePath, query: {redirect: to.fullPath}})
             })
               .catch((e) => {
-                console.log('3eeee')
+                console.log(e)
               })
-            // next({path: loginRoutePath, query: {redirect: to.fullPath}})
           })
       } else {
         next()
@@ -67,11 +69,11 @@ router.beforeEach((to, from, next) => {
       next()
     } else {
       next({path: loginRoutePath, query: {redirect: to.fullPath}})
-      NProgress.done() // if current page is login will not trigger afterEach hook, so manually handle it
+      NProgress.done()
     }
   }
 })
 
 router.afterEach(() => {
-  NProgress.done() // finish progress bar
+  NProgress.done()
 })

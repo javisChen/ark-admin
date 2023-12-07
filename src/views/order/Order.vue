@@ -3,9 +3,9 @@
     <div class="table-page-search-wrapper">
       <a-form layout="inline">
         <a-row :gutter="48">
-          <a-col :md="8" :sm="24">
+          <a-col span="6">
             <a-form-item label="订单编号">
-              <a-input v-model="queryParam.code" placeholder=""/>
+              <a-input v-model="queryParam.tradeNo" placeholder="订单编号"/>
             </a-form-item>
           </a-col>
           <a-col :md="!advanced && 8 || 24" :sm="24">
@@ -17,10 +17,6 @@
           </a-col>
         </a-row>
       </a-form>
-    </div>
-
-    <div class="table-operator">
-      <a-button type="primary" icon="plus" @click="showForm">添加商品</a-button>
     </div>
 
     <a-table
@@ -77,7 +73,10 @@
     <a-empty v-else/>
 
     <deliver-form :visible="showDeliverForm"
-                  @submit-ok="onDeliverSubmit" :order-id="selectedOrderId"/>
+                  :order-id="selectedOrderId"
+                  @ok="onDeliverSubmit"
+                  @cancel="() => showDeliverForm = false"
+    />
 
   </a-card>
 
@@ -87,7 +86,7 @@
 
 import {getPageList, deliver} from '@/api/trade/order-api'
 import {notify} from '@/api/pay/pay-api'
-import DeliverForm from "@/views/order/orderManage/DeliverForm.vue";
+import DeliverForm from "@/views/order/common/DeliverForm.vue";
 
 const pagination = {
   showSizeChanger: true,
@@ -107,7 +106,7 @@ const queryParam = {
 }
 
 export default {
-  name: 'OrderManage',
+  name: 'Order',
   components: {
     DeliverForm
   },
@@ -136,7 +135,7 @@ export default {
           customRender: (order) => order.orderBase.tradeNo,
         },
         {
-          title: '提交时间',
+          title: '下单时间',
           align: 'center',
           width: 200,
           customRender: (order) => order.orderBase.createTime,
@@ -188,7 +187,6 @@ export default {
   },
   methods: {
     async onDeliverSubmit() {
-      console.log('发货提交成功...')
       this.showDeliverForm = false
       await this.loadTableData();
     },
@@ -209,11 +207,14 @@ export default {
               bizTradeNo: record.orderBase.tradeNo,
               status: 3
             })
-            this.$notification.success({
-              message: '操作成功',
-              description: ''
-            })
-            await this.loadTableData();
+            setTimeout(async () => {
+
+              this.$notification.success({
+                message: '操作成功',
+                description: ''
+              })
+              await this.loadTableData();
+            }, 1000)
           } catch (e) {
             console.log(e)
           }
@@ -275,7 +276,7 @@ export default {
       })
     },
     rowKey(record) {
-      return record.id
+      return record.orderBase.id
     },
     goToGit(text) {
       window.open(text)

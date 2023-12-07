@@ -78,7 +78,7 @@ export default {
   'CommodityForm': () => import('@/views/commodity/commodity/components/CommodityForm'),
 
   // order
-  'Order': () => import('@/views/order/orderManage/OrderManage'),
-  'OrderDetail': () => import('@/views/order/orderManage/OrderDetail'),
+  'Order': () => import('@/views/order/Order'),
+  'OrderDetail': () => import('@/views/order/detail/OrderDetail.vue'),
 
 }
