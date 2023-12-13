@@ -73,10 +73,6 @@ export default {
     }
   },
   props: {
-    // mode: {
-    //   type: String,
-    //   default: 'add'
-    // },
   },
   data() {
     return {

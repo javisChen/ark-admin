@@ -18,8 +18,9 @@
 
 </template>
 <script>
+
 import {upload} from "@/api/file/file-api";
-import cloneDeep from "lodash.clonedeep";
+import moment from "moment";
 
 function getBase64(file) {
   return new Promise((resolve, reject) => {
@@ -28,6 +29,11 @@ function getBase64(file) {
     reader.onload = () => resolve(reader.result);
     reader.onerror = error => reject(error);
   });
+}
+
+function createFileName(file) {
+  var s = moment().format("YYYYMMDD");
+  return `commodity/${s}/${file.name}`;
 }
 
 export default {
@@ -45,7 +51,6 @@ export default {
   },
   watch: {
     value(val) {
-      console.log('val', val)
       this.internalValue = val.map(item => {
         return {
           uid: Math.random() * 10,
@@ -54,7 +59,6 @@ export default {
           url: item
         }
       })
-      console.log('internalValue', this.internalValue)
     }
   },
   data() {
@@ -79,20 +83,21 @@ export default {
       this.internalValue = this.internalValue.filter(item => item.uid !== v1.uid)
     },
     handleChange(value) {
-      console.log('value', value)
-      this.$emit('change', value)
     },
     async customRequest(f) {
       const {file} = f
       const formData = new FormData();
       formData.append('file', file);
+      formData.append('fileName', createFileName(file));
+      formData.append('bucket', "product");
       try {
         const {data} = await upload(formData);
         this.internalValue.push({
           uid: file.uid,
           name: file.name,
           status: 'done',
-          url: data.url
+          // url: `${process.env.VUE_APP_API_BASE_URL}/v1/file/get?${data.url}`
+          url: '/minio/' + data.url
         })
         this.handleChange(this.internalValue)
         this.$message.success('上传成功')

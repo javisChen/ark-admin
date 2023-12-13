@@ -10,7 +10,7 @@
     <a-steps size="small"
              :direction="'horizontal'"
              :current="currentStep">
-      <a-step v-for="step in steps">
+      <a-step v-for="(step, idx) in steps" :key="idx">
         <template v-slot:title>
           <span>{{ step.title }}</span>
         </template>

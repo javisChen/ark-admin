@@ -5,15 +5,16 @@ const GitRevision = new GitRevisionPlugin()
 const buildDate = JSON.stringify(new Date().toLocaleString())
 const createThemeColorReplacerPlugin = require('./config/plugin.config')
 
-function resolve (dir) {
+function resolve(dir) {
   return path.join(__dirname, dir)
 }
 
 // check Git
-function getGitHash () {
+function getGitHash() {
   try {
     return GitRevision.version()
-  } catch (e) {}
+  } catch (e) {
+  }
   return 'unknown'
 }
 
@@ -107,9 +108,17 @@ const vueConfig = {
     port: 8000,
     // If you want to turn on the proxy, please remove the mockjs /src/main.jsL11
     proxy: {
+      // 代理minio地址
+      '/minio': {
+        target: 'http://localhost:9000',
+        ws: false,
+        changeOrigin: true,
+        pathRewrite: {
+          '^/minio': ''
+        }
+      },
       '/': {
         target: 'http://localhost:8082',
-        // target: 'http://gateway.ark.com',
         ws: false,
         changeOrigin: true,
         pathRewrite: {
