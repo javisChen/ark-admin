@@ -87,7 +87,7 @@ export const generator = (routerMap, parent) => {
       path: item.path || `${parent && parent.path || ''}/${item.key}`,
       // 路由名称，建议唯一
 
-      name: item.name || item.key || '',
+      name: item.component.toLowerCase(),
       // 该路由对应页面的 组件 :方案1
       // component: constantRouterComponents[item.component || item.key],
       // 该路由对应页面的 组件 :方案2 (动态加载)

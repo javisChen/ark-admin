@@ -228,13 +228,13 @@ export default {
     },
     toAttrGroup(record) {
       this.$router.push({
-        path: '/commodity/attr/group',
+        path: '/goods/attr/group',
         query: {templateId: record.id},
       })
     },
     toAttrSpec(record) {
       this.$router.push({
-        path: '/commodity/attr',
+        path: '/goods/attr',
         query: {
           templateId: record.id,
           type: 1
@@ -243,7 +243,7 @@ export default {
     },
     toAttrParam(record) {
       this.$router.push({
-        path: '/commodity/attr',
+        path: '/goods/attr',
         query: {
           templateId: record.id,
           type: 2
@@ -272,7 +272,7 @@ export default {
     },
     showForm() {
       this.$router.push({
-        path: '/commodity/form',
+        path: '/goods/form',
       })
     },
     rowKey(record) {

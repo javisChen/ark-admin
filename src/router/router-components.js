@@ -68,14 +68,14 @@ export default {
   // eop
   'CodeProject': () => import('@/views/eop/codeproject/CodeProject'),
 
-  // commodity
-  'CommodityCategory': () => import('@/views/commodity/category/CommodityCategory'),
-  'CommodityBrand': () => import('@/views/commodity/brand/CommodityBrand'),
-  'CommodityAttrTemplate': () => import('@/views/commodity/attr/attrTemplate/CommodityAttrTemplate'),
-  'CommodityAttrGroup': () => import('@/views/commodity/attr/attrGroup/CommodityAttrGroup'),
-  'CommodityAttr': () => import('@/views/commodity/attr/attr/CommodityAttr'),
-  'Commodity': () => import('@/views/commodity/commodity/Commodity'),
-  'CommodityForm': () => import('@/views/commodity/commodity/components/CommodityForm'),
+  // goods
+  'GoodsCategory': () => import('@/views/product/category/GoodsCategory'),
+  'GoodsBrand': () => import('@/views/product/brand/GoodsBrand'),
+  'GoodsAttrTemplate': () => import('@/views/product/attr/attrTemplate/GoodsAttrTemplate'),
+  'GoodsAttrGroup': () => import('@/views/product/attr/attrGroup/GoodsAttrGroup'),
+  'GoodsAttr': () => import('@/views/product/attr/attr/GoodsAttr'),
+  'Goods': () => import('@/views/product/goods/Goods'),
+  'GoodsForm': () => import('@/views/product/goods/components/GoodsForm'),
 
   // order
   'Order': () => import('@/views/order/Order'),

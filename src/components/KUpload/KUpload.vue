@@ -21,6 +21,7 @@
 
 import {upload} from "@/api/file/file-api";
 import moment from "moment";
+import {v4 as uuidv4} from 'uuid';
 
 function getBase64(file) {
   return new Promise((resolve, reject) => {
@@ -31,9 +32,14 @@ function getBase64(file) {
   });
 }
 
-function createFileName(file) {
-  var s = moment().format("YYYYMMDD");
-  return `commodity/${s}/${file.name}`;
+/**
+ * 文件名规范bucket/YYYY/MM/业务code/<filename>
+ */
+function createFileName(file, bucket) {
+  const date = moment();
+  const yyyyMM = date.format("YYYY/MM");
+  const bizCode = 'product'
+  return `${yyyyMM}/${bizCode}/${uuidv4()}.${file.name}`;
 }
 
 export default {
@@ -44,13 +50,18 @@ export default {
       required: false,
       default: () => 1
     },
+    files: {
+      required: false,
+      default: () => [],
+      type: Array
+    },
     value: {
       required: false,
       default: () => []
     },
   },
   watch: {
-    value(val) {
+    files(val) {
       this.internalValue = val.map(item => {
         return {
           uid: Math.random() * 10,
@@ -83,21 +94,23 @@ export default {
       this.internalValue = this.internalValue.filter(item => item.uid !== v1.uid)
     },
     handleChange(value) {
+      this.$emit('change', value)
     },
     async customRequest(f) {
       const {file} = f
+      const bucket = 'ark'
       const formData = new FormData();
+      const fileName = createFileName(file, bucket);
       formData.append('file', file);
-      formData.append('fileName', createFileName(file));
-      formData.append('bucket', "product");
+      formData.append('fileName', fileName);
+      formData.append('bucket', bucket);
       try {
         const {data} = await upload(formData);
         this.internalValue.push({
           uid: file.uid,
           name: file.name,
           status: 'done',
-          // url: `${process.env.VUE_APP_API_BASE_URL}/v1/file/get?${data.url}`
-          url: '/minio/' + data.url
+          url: `${process.env.VUE_APP_FILE_URL}/${bucket}/${fileName}`
         })
         this.handleChange(this.internalValue)
         this.$message.success('上传成功')

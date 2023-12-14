@@ -117,12 +117,12 @@ const vueConfig = {
           '^/minio': ''
         }
       },
-      '/': {
+      '/api': {
         target: 'http://localhost:8082',
         ws: false,
         changeOrigin: true,
         pathRewrite: {
-          '^/': ''
+          '^/api': ''
         }
       }
     }
