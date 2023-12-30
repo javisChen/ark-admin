@@ -11,7 +11,7 @@ import {ACCESS_TOKEN} from '@/store/mutation-types'
 const request = axios.create({
   // API 请求的默认前缀
   baseURL: process.env.VUE_APP_API_BASE_URL,
-  timeout: 6000 // 请求超时时间
+  timeout: 1000 * 60 // 请求超时时间
 })
 
 const post = ({url, params, data}) => request({url, method: 'post', params, data})

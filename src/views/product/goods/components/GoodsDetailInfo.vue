@@ -52,7 +52,7 @@ export default {
       this.editor = Object.seal(editor) // 一定要用 Object.seal() ，否则会报错
     },
     getData() {
-      return {pcDetailHtml: this.html}
+      return {pcRichText: this.html}
     }
   }
 }

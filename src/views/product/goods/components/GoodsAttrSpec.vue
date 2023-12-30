@@ -48,7 +48,7 @@
 
     <div v-if="showSkuTable">
       <div style="margin-bottom: 10px">
-        <a-button type="primary" @click="flushSKU">刷新SKU</a-button>
+        <a-button type="primary" @click="resetSku">刷新SKU</a-button>
       </div>
       <div>
         <a-table
@@ -197,20 +197,15 @@ export default {
     categoryId(newV, oldV) {
       this.internalModel.categoryId = newV
       this.loadAttrList()
+      this.resetSku()
     },
     formModel(newV, oldV) {
       this.internalModel = newV
-      this.dynamicBuildSkuTableColumns(this.internalModel.skus[0].specs);
       this.initSkuTable();
-      // this.internalModel.skus[0].specs.forEach(item => {
-      // const {attrId, attrName, attrValue} = item
-      // this.attrValueOnChange(this.assembleSku(attrId, attrName, attrValue), 'add');
-      // })
     },
   },
   data() {
     return {
-      flushSku: false,
       newAttrOptions: new Map(), // 新增的属性项选
       internalModel: cloneDeep(this.formModel),
       editableColumns, // 可编辑的列
@@ -291,7 +286,7 @@ export default {
       this.skuTableData = []
       this.editSkuTableData = []
     },
-    flushSKU() {
+    resetSku() {
       this.skuTableLoading = true
       try {
         this.initSkuTableData();
@@ -320,7 +315,6 @@ export default {
           this.skuTableData.push(obj)
           this.editSkuTableData.push(obj)
         })
-        this.flushSku = true
         console.log('SKU TABLE刷新完成', this.skuTableData)
       } finally {
         this.skuTableLoading = false
@@ -381,6 +375,7 @@ export default {
           spuId: this.formModel.id
         })
         if (!data.records || data.records.length === 0) {
+          this.attrList = data.records
           return
         }
         this.showSkuTable = true
@@ -459,7 +454,6 @@ export default {
       return {
         newAttrOptions: this.getNewAttrOptions(),
         skus,
-        flushSku: this.flushSku
       }
     }
   }

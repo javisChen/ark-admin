@@ -37,8 +37,8 @@ const defaultModel = {
   unit: "",
   weight: 0,
   freightTemplateId: undefined,
-  pcDetailHtml: "",
-  mobileDetailHtml: "",
+  pcRichText: "",
+  mobileRichText: "",
   skus: [
     {
       specs: [
@@ -122,10 +122,9 @@ export default {
         unit: baseInfo.unit,
         weight: baseInfo.weight,
         freightTemplateId: 0,
-        pcDetailHtml: detailInfo.pcDetailHtml,
-        mobileDetailHtml: "",
+        pcRichText: detailInfo.pcRichText,
+        mobileRichText: "",
         skus: attrSpec.skus,
-        flushSku: attrSpec.flushSku,
         newAttrOptionList: attrSpec.newAttrOptions,
         params: attrParam
       }
