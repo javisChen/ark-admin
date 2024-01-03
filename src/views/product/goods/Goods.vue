@@ -48,7 +48,9 @@
       </template>
 
       <template slot="action" slot-scope="text, record">
-        <k-tooltip-button title="查看" @click="toDetail(record)" icon="search"/>
+        <a @click="toDetail(record)">编辑</a>&nbsp;
+        <a v-if="record.shelfStatus === 1" @click="changeShelf(record, 0)">下架</a>
+        <a v-else @click="changeShelf(record, 1)">上架</a>
       </template>
     </a-table>
     <a-empty v-else/>
@@ -59,7 +61,8 @@
 
 <script>
 
-import {getInfo, getPageList} from '@/api/product/goods-api'
+import {changeShelfStatus, getPageList} from '@/api/product/goods-api'
+import {deleteRole} from "@/api/iam/role-api";
 
 const shelfStatusDict = {
   1: '已上架',
@@ -85,8 +88,7 @@ const queryParam = {
 
 export default {
   name: 'Goods',
-  components: {
-  },
+  components: {},
   data() {
     return {
       selectedAttrTemplate: {},
@@ -150,8 +152,23 @@ export default {
         query: {spuId: record.id},
       })
     },
+    changeShelf(record, shelfStatus) {
+      const text = shelfStatus === 1 ? '下架' : '上架'
+      this.$confirm({
+        title: `提示`,
+        content: `确定要${text}该商品吗？`,
+        onOk: async () => {
+          try {
+            await changeShelfStatus({id: record.id, shelfStatus})
+            await this.loadTableData()
+            this.$message.success(`${text}成功`)
+          } catch (e) {
+            console.log(e)
+          }
+        }
+      })
+    },
     getShelfStatus(value) {
-      console.log(value)
       return shelfStatusDict[value]
     },
     toAttrGroup(record) {
