@@ -156,7 +156,7 @@ export default {
         {
           title: '创建时间',
           align: 'center',
-          dataIndex: 'gmtCreate',
+          dataIndex: 'createTime',
         },
         {
           title: '设置',
