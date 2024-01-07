@@ -153,7 +153,7 @@ export default {
       })
     },
     changeShelf(record, shelfStatus) {
-      const text = shelfStatus === 1 ? '下架' : '上架'
+      const text = shelfStatus === 1 ? '上架' : '下架'
       this.$confirm({
         title: `提示`,
         content: `确定要${text}该商品吗？`,
