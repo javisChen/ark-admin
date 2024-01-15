@@ -93,7 +93,7 @@ Vue.filter('translatePayStatus', function (value) {
   return DICT_PAY_STATUS[value]
 })
 
-Vue.filter('formatShowPrice', function (value) {
-  return '¥' + accounting.format(fenToYuan(value))
+Vue.filter('formatPrice', function (value) {
+  return accounting.formatMoney(fenToYuan(value), '¥', 2, '', '.', '%s%v')
 })
 

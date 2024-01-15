@@ -11,7 +11,7 @@
       :data-source="order.orderItems">
 
       <template slot="price" slot-scope="text, record">
-        <span>{{ record.price | formatShowPrice }}</span>
+        <span>{{ record.price | formatPrice }}</span>
       </template>
 
     </a-table>
@@ -19,15 +19,15 @@
     <div class="amount-info">
       <a-row class="row">
         <a-col class="label" span="22">商品总价：</a-col>
-        <a-col class="value" span="2">{{ order.orderAmount.expectAmount | formatShowPrice}}</a-col>
+        <a-col class="value" span="2">{{ order.orderAmount.expectAmount | formatPrice}}</a-col>
       </a-row>
       <a-row class="row">
         <a-col class="label" span="22">运费（快递）：</a-col>
-        <a-col class="value" span="2">{{ order.orderAmount.freightAmount | formatShowPrice}}</a-col>
+        <a-col class="value" span="2">{{ order.orderAmount.freightAmount | formatPrice}}</a-col>
       </a-row>
       <a-row class="row">
         <a-col class="label actual" span="22">实付款：</a-col>
-        <a-col class="value actual" span="2">{{ order.orderAmount.actualAmount | formatShowPrice}}</a-col>
+        <a-col class="value actual" span="2">{{ order.orderAmount.actualAmount | formatPrice}}</a-col>
       </a-row>
     </div>
 

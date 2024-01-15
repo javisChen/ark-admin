@@ -35,7 +35,7 @@
       :data-source="orders">
 
       <template slot="actualAmount" slot-scope="text, record">
-        <span>{{ record.orderAmount.actualAmount | formatShowPrice }}</span>
+        <span>{{ record.orderAmount.actualAmount | formatPrice }}</span>
       </template>
 
       <template slot="orderStatus" slot-scope="text, record">
@@ -55,7 +55,7 @@
       </template>
 
       <template slot="actualAmount" slot-scope="text, record">
-        <span>{{ record.orderAmount.actualAmount | formatShowPrice }}</span>
+        <span>{{ record.orderAmount.actualAmount | formatPrice }}</span>
       </template>
 
       <template slot="action" slot-scope="text, order">
