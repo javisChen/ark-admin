@@ -3,14 +3,14 @@ import Base from "./iam-base-api";
 
 const api = {
   applications: Base.serviceName + '/v1/applications',
-  applicationCreate: Base.serviceName + '/v1/application/create',
-  applicationUpdate: Base.serviceName + '/v1/application/update',
-  applicationDelete: Base.serviceName + '/v1/application/delete',
+  applicationCreate: Base.serviceName + '/v1/applications',
+  applicationUpdate: Base.serviceName + '/v1/applications',
+  applicationDelete: Base.serviceName + '/v1/applications',
 }
 
 export default api
 
-export const getApplications = (data) => post({url: api.applications, data})
+export const getApplications = (params) => get({url: api.applications, params})
 
 export const addApplication = (data) => post({url: api.applicationCreate, data})
 

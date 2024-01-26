@@ -3,9 +3,9 @@ import Base from './iam-base-api'
 
 const api = {
   apis: Base.serviceName + '/v1/apis',
-  api: Base.serviceName + '/v1/api',
-  apiEnable: Base.serviceName + '/v1/api/enable',
-  apiSync: Base.serviceName + '/v1/api/sync',
+  api: Base.serviceName + '/v1/apis/details',
+  apiEnable: Base.serviceName + '/v1/apis/status',
+  apiSync: Base.serviceName + '/v1/apis/sync',
 }
 
 export default api
