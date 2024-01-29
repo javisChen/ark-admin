@@ -170,7 +170,6 @@ export default {
           width: 100
         },
       ],
-      selectedRoute: {},
       routeStatusDictionary,
       roleFormVisible: false,
     };

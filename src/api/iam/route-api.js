@@ -2,14 +2,14 @@ import {post, get, del, put} from '@/utils/request'
 import Base from "./iam-base-api";
 
 const api = {
-  routesAll:Base.serviceName + '/v1/routes/all',
-  routes:Base.serviceName + '/v1/routes',
-  routeCreate:Base.serviceName + '/v1/route/create',
-  routeUpdate:Base.serviceName + '/v1/route/update',
-  route:Base.serviceName + '/v1/route',
-  routeDelete:Base.serviceName + '/v1/route/delete',
-  routeStatus:Base.serviceName + '/v1/route/status',
-  routeElements:Base.serviceName + '/v1/route/elements',
+  routesAll:Base.serviceName + '/v1/menus/all',
+  routes:Base.serviceName + '/v1/menus',
+  routeCreate:Base.serviceName + '/v1/menus',
+  routeUpdate:Base.serviceName + '/v1/menus',
+  route:Base.serviceName + '/v1/menus/details',
+  routeDelete:Base.serviceName + '/v1/menus',
+  routeStatus:Base.serviceName + '/v1/menus/status',
+  routeElements:Base.serviceName + '/v1/menus/elements',
 }
 
 export default api

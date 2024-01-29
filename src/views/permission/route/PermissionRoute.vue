@@ -226,7 +226,6 @@ export default {
           scopedSlots: {customRender: 'action'},
         },
       ],
-      selectedRoute: {},
       routeStatusDictionary,
       addFormVisible: false,
       scroll: {x: 1000},
