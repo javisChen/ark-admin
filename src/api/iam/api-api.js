@@ -2,7 +2,7 @@ import {post, get, del, put} from '@/utils/request'
 import Base from './iam-base-api'
 
 const api = {
-  apis: Base.serviceName + '/v1/apis',
+  apis: Base.serviceName + '/v1/apis/all',
   api: Base.serviceName + '/v1/apis/details',
   apiEnable: Base.serviceName + '/v1/apis/status',
   apiSync: Base.serviceName + '/v1/apis/sync',

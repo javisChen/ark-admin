@@ -7,10 +7,9 @@ const api = {
   userGroupsAll: Base.serviceName + '/v1/userGroups/all',
   userGroupsTree: Base.serviceName + '/v1/userGroups/tree',
 }
-
 export default api
 
-export const getUserGroups = (data) => post({url: api.userGroups, data})
+export const getUserGroups = (data) => get({url: api.userGroups, data})
 
 export const getUserGroup = (params) => get({url: api.userGroupsDetails, params})
 
