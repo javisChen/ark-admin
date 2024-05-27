@@ -79,7 +79,7 @@
 
 <script>
 
-import {getRoutes, deleteRoute, updateRouteStatus, getRoute} from '@/api/iam/route-api'
+import {getRoutes, deleteRoute, updateRouteStatus, getRoute} from '@/api/iam/menu-api'
 import PermissionRouteForm from './components/PermissionRouteForm'
 import ApplicationSelect from '@/views/permission/application/components/ApplicationSelect'
 

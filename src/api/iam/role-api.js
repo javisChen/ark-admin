@@ -7,11 +7,11 @@ const api = {
   roleCreate: Base.serviceName + '/v1/roles/create',
   roleUpdate: Base.serviceName + '/v1/roles',
   roleDelete: Base.serviceName + '/v1/roles',
-  rolePermissionRoutes: Base.serviceName + '/v1/role/permission/routes',
-  rolePermissionRoute: Base.serviceName + '/v1/role/permission/grant',
+  rolePermissionRoutes: Base.serviceName + '/v1/role/permission/menus',
+  rolePermissionRoute: Base.serviceName + '/v1/role/permission/menus',
   rolePermissionElements: Base.serviceName + '/v1/role/permission/elements',
   rolePermissionApis: Base.serviceName + '/v1/role/permission/apis',
-  rolePermissionApi: Base.serviceName + '/v1/role/permission/api',
+  rolePermissionApi: Base.serviceName + '/v1/role/permission/apis',
 }
 
 export default api
