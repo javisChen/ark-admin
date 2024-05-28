@@ -2,13 +2,13 @@ import {post, get, del, put} from '@/utils/request'
 import Base from "./iam-base-api";
 
 const api = {
-  users: Base.serviceName + '/v1/users',
-  user: Base.serviceName + '/v1/user/details',
-  createUser: Base.serviceName + '/v1/user/create',
-  updateUser: Base.serviceName + '/v1/user/update',
-  userInfo: Base.serviceName + '/v1/user/self',
-  userPermissionRoutes: Base.serviceName + '/v1/user/self/routes',
-  userPermissionElements: Base.serviceName + '/v1/user/self/elements',
+  users: Base.serviceName + '/v1/users/pages',
+  user: Base.serviceName + '/v1/users/details',
+  createUser: Base.serviceName + '/v1/users/create',
+  updateUser: Base.serviceName + '/v1/users/update',
+  userInfo: Base.serviceName + '/v1/users/self',
+  userPermissionRoutes: Base.serviceName + '/v1/users/self/menus',
+  userPermissionElements: Base.serviceName + '/v1/users/self/elements',
 }
 
 export default api
@@ -27,4 +27,4 @@ export const getUserPageElementPermissions = (params) => get({url: api.userPermi
 
 export const addUser = (data) => post({url: api.createUser, data})
 
-export const updateUser = (data) => post({url: api.updateUser, data})
+export const updateUser = (data) => put({url: api.updateUser, data})

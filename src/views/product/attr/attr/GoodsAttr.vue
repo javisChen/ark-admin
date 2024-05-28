@@ -161,7 +161,6 @@ export default {
           width: 100
         },
       ],
-      selectedRoute: {},
       typeDict,
       roleFormVisible: false,
     };

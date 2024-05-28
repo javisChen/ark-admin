@@ -76,7 +76,7 @@ import ApplicationSelect from '../../application/components/ApplicationSelect'
 import {updateRoleRoutePermission, getRolePermissionRoutes, getRolePermissionElements} from "@/api/iam/role-api";
 
 import {pageElementTypeDictionary} from "../../dictionary";
-import {getRoutesTree, getRouteElements} from '@/api/iam/route-api'
+import {getRoutesTree, getRouteElements} from '@/api/iam/menu-api'
 
 function getPageElementTypeDictionary(value) {
   return pageElementTypeDictionary[value]

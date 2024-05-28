@@ -137,7 +137,6 @@ export default {
           width: 100
         },
       ],
-      selectedRoute: {},
       shelfStatusDict,
       roleFormVisible: false,
     };

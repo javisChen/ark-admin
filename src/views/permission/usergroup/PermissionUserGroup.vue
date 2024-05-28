@@ -175,7 +175,6 @@ export default {
           scopedSlots: {customRender: 'action'},
         }
       ],
-      selectedRoute: {},
       routeStatusDictionary,
       userGroupFormVisible: false,
     };

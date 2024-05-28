@@ -142,7 +142,6 @@ export default {
           scopedSlots: {customRender: 'action'},
         }
       ],
-      selectedRoute: {},
       roleFormVisible: false,
     };
   },

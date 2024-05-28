@@ -2,24 +2,23 @@ import {post, get, del, put} from '@/utils/request'
 import Base from "./iam-base-api";
 
 const api = {
-  usergroups: Base.serviceName + '/v1/usergroups',
-  usergroupsAll: Base.serviceName + '/v1/usergroups/all',
-  usergroupsTree: Base.serviceName + '/v1/usergroups/tree',
-  usergroup: Base.serviceName + '/v1/usergroup',
+  userGroups: Base.serviceName + '/v1/userGroups',
+  userGroupsDetails: Base.serviceName + '/v1/userGroups/details',
+  userGroupsAll: Base.serviceName + '/v1/userGroups/all',
+  userGroupsTree: Base.serviceName + '/v1/userGroups/tree',
 }
-
 export default api
 
-export const getUserGroups = (data) => post({url: api.usergroups, data})
+export const getUserGroups = (data) => get({url: api.userGroups, data})
 
-export const getUserGroup = (params) => get({url: api.usergroup, params})
+export const getUserGroup = (params) => get({url: api.userGroupsDetails, params})
 
-export const getAllUserGroups = (data) => get({url: api.usergroupsAll, data})
+export const getAllUserGroups = (data) => get({url: api.userGroupsAll, data})
 
-export const deleteUserGroup = (params) => del({url: api.usergroup, params})
+export const deleteUserGroup = (params) => del({url: api.userGroups, params})
 
-export const getUserGroupsTree = (data) => post({url: api.usergroupsTree, data})
+export const getUserGroupsTree = (data) => post({url: api.userGroupsTree, data})
 
-export const addUserGroup = (data) => post({url: api.usergroup, data})
+export const addUserGroup = (data) => post({url: api.userGroups, data})
 
-export const updateUserGroup = (data) => put({url: api.usergroup, data})
+export const updateUserGroup = (data) => put({url: api.userGroups, data})

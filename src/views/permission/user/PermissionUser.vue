@@ -172,7 +172,6 @@ export default {
           scopedSlots: {customRender: 'action'},
         },
       ],
-      selectedRoute: {},
       routeStatusDictionary,
       userFormVisible: false,
     };

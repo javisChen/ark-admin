@@ -4,14 +4,14 @@ import Base from "./iam-base-api";
 const api = {
   roles: Base.serviceName + '/v1/roles',
   rolesAll: Base.serviceName + '/v1/roles/all',
-  roleCreate: Base.serviceName + '/v1/role/create',
-  roleUpdate: Base.serviceName + '/v1/role/update',
-  roleDelete: Base.serviceName + '/v1/role/delete',
-  rolePermissionRoutes: Base.serviceName + '/v1/role/permission/routes',
-  rolePermissionRoute: Base.serviceName + '/v1/role/permission/grant',
+  roleCreate: Base.serviceName + '/v1/roles/create',
+  roleUpdate: Base.serviceName + '/v1/roles',
+  roleDelete: Base.serviceName + '/v1/roles',
+  rolePermissionRoutes: Base.serviceName + '/v1/role/permission/menus',
+  rolePermissionRoute: Base.serviceName + '/v1/role/permission/menus',
   rolePermissionElements: Base.serviceName + '/v1/role/permission/elements',
   rolePermissionApis: Base.serviceName + '/v1/role/permission/apis',
-  rolePermissionApi: Base.serviceName + '/v1/role/permission/api',
+  rolePermissionApi: Base.serviceName + '/v1/role/permission/apis',
 }
 
 export default api
@@ -24,7 +24,7 @@ export const deleteRole = (params) => del({url: api.roleDelete, params})
 
 export const addRole = (data) => post({url: api.roleCreate, data})
 
-export const updateRole = (data) => post({url: api.roleUpdate, data})
+export const updateRole = (data) => put({url: api.roleUpdate, data})
 
 /**
  * 提交角色路由权限

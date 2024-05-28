@@ -1,19 +1,5 @@
 <template>
     <a-card :bordered="false">
-<!--      <a-form-item>-->
-<!--        <tag-select>-->
-<!--          <tag-select-option value="Category1">类目一</tag-select-option>-->
-<!--          <tag-select-option value="Category2">类目二</tag-select-option>-->
-<!--          <tag-select-option value="Category3">类目三</tag-select-option>-->
-<!--          <tag-select-option value="Category4">类目四</tag-select-option>-->
-<!--          <tag-select-option value="Category5">类目五</tag-select-option>-->
-<!--          <tag-select-option value="Category6">类目六</tag-select-option>-->
-<!--          <tag-select-option value="Category7">类目七</tag-select-option>-->
-<!--          <tag-select-option value="Category8">类目八</tag-select-option>-->
-<!--          <tag-select-option value="Category9">类目九</tag-select-option>-->
-<!--          <tag-select-option value="Category10">类目十</tag-select-option>-->
-<!--        </tag-select>-->
-<!--      </a-form-item>-->
       <div class="table-operator">
         <a-button type="primary" icon="plus" @click="showApplicationForm">新建应用</a-button>
       </div>
