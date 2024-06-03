@@ -2,10 +2,8 @@ import {post, get, del, put} from '@/utils/request'
 import Base from "./iam-base-api";
 
 const api = {
-  users: Base.serviceName + '/v1/users/pages',
+  users: Base.serviceName + '/v1/users',
   user: Base.serviceName + '/v1/users/details',
-  createUser: Base.serviceName + '/v1/users/create',
-  updateUser: Base.serviceName + '/v1/users/update',
   userInfo: Base.serviceName + '/v1/users/self',
   userPermissionRoutes: Base.serviceName + '/v1/users/self/menus',
   userPermissionElements: Base.serviceName + '/v1/users/self/elements',
@@ -25,6 +23,6 @@ export const getUserRoutes = (params) => get({url: api.userPermissionRoutes, par
 
 export const getUserPageElementPermissions = (params) => get({url: api.userPermissionElements, params})
 
-export const addUser = (data) => post({url: api.createUser, data})
+export const addUser = (data) => post({url: api.users, data})
 
-export const updateUser = (data) => put({url: api.updateUser, data})
+export const updateUser = (data) => put({url: api.users, data})

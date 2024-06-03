@@ -97,7 +97,7 @@
 
 <script>
 
-import {getUserGroups, getUserGroup, deleteUserGroup} from '@/api/iam/usergroup-api'
+import {fetchUserGroupPages, getUserGroup, deleteUserGroup} from '@/api/iam/usergroup-api'
 import PermissionUserGroupForm from "./components/PermissionUserGroupForm";
 import PermissionUserGroupTree from "./components/PermissionUserGroupTree";
 import {filterNonChildren} from "@/utils/util";
@@ -123,7 +123,6 @@ const pagination = {
 const queryParam = {
   current: 1,
   size: 15,
-  params: {}
 }
 
 export default {
@@ -249,7 +248,8 @@ export default {
     },
     async loadTableData() {
       this.toggleLoading()
-      const {data} = await getUserGroups(this.queryParam)
+      const params = {...this.queryParam};
+      const {data} = await fetchUserGroupPages(params)
       this.userGroups = data.records.map(item => {
         filterNonChildren(item);
         return item;

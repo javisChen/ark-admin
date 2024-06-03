@@ -2,6 +2,7 @@ import {post, get, del, put} from '@/utils/request'
 import Base from "./iam-base-api";
 
 const api = {
+  userGroupPages: Base.serviceName + '/v1/userGroups/pages',
   userGroups: Base.serviceName + '/v1/userGroups',
   userGroupsDetails: Base.serviceName + '/v1/userGroups/details',
   userGroupsAll: Base.serviceName + '/v1/userGroups/all',
@@ -9,7 +10,7 @@ const api = {
 }
 export default api
 
-export const getUserGroups = (data) => get({url: api.userGroups, data})
+export const fetchUserGroupPages = (params) => get({url: api.userGroupPages, params})
 
 export const getUserGroup = (params) => get({url: api.userGroupsDetails, params})
 
