@@ -10,7 +10,7 @@ const api = {
 
 export default api
 
-export const getApplications = (params) => get({url: api.applications, params})
+export const getApplications = (data) => post({url: api.applications, data})
 
 export const addApplication = (data) => post({url: api.applicationCreate, data})
 

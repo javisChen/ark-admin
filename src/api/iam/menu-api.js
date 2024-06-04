@@ -6,7 +6,7 @@ const api = {
   routes:Base.serviceName + '/v1/menus',
   routeCreate:Base.serviceName + '/v1/menus',
   routeUpdate:Base.serviceName + '/v1/menus',
-  route:Base.serviceName + '/v1/menus/details',
+  routeDetails:Base.serviceName + '/v1/menus/details',
   routeDelete:Base.serviceName + '/v1/menus',
   routeStatus:Base.serviceName + '/v1/menus/status',
   routeElements:Base.serviceName + '/v1/menus/elements',
@@ -18,7 +18,7 @@ export const getRoutesTree = (data) => post({url: api.routesAll, data})
 
 export const getRoutes = (params) => get({url: api.routes, params})
 
-export const getRoute = (params) => get({url: `${api.route}`, params})
+export const getRoute = (params) => get({url: `${api.routeDetails}`, params})
 
 export const addRoute = (data) => post({url: api.routeCreate, data})
 
