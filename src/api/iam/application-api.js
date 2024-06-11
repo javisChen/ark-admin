@@ -10,11 +10,9 @@ const api = {
 
 export default api
 
-export const getApplications = (data) => post({url: api.applications, data})
+export const getApplications = (params) => get({url: api.applications, params})
 
 export const addApplication = (data) => post({url: api.applicationCreate, data})
-
-export const deleteApplication = (id) => del({url: `${api.applicationDelete}/${id}`})
 
 export const updateApplication = (data) => put({url: api.applicationUpdate, data})
 

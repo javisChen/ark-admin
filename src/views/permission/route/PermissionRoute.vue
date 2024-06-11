@@ -332,7 +332,7 @@ export default {
     async loadTableData() {
       this.toggleLoading()
       const {data} = await getRoutes(this.queryParam)
-      this.routes = data.records.map(item => {
+      this.routes = data.map(item => {
         filterNonChildren(item);
         return item;
       });
