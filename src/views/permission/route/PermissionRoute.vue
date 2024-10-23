@@ -20,7 +20,7 @@
       v-if="routes.length > 0"
       bordered
       @change="handleTableChange"
-      :pagination="pagination"
+      :pagination="false"
       :loading="tableLoading"
       :defaultExpandAllRows="defaultExpandAllRows"
       :expandRowByClick="false"
@@ -164,12 +164,6 @@ export default {
           customRender: (text, row, index) => {
             return text || '-'
           },
-        },
-        {
-          title: '所属应用',
-          align: "center",
-          dataIndex: 'applicationName',
-          width: 100,
         },
         {
           title: '类型',
@@ -336,7 +330,7 @@ export default {
         filterNonChildren(item);
         return item;
       });
-      this.pagination.total = data.total
+      // this.pagination.total = data.total
       this.toggleLoading()
     }
   }

@@ -119,13 +119,13 @@ export function filterNonChildren(item) {
 }
 
 export function parseLevelPath(levelPath) {
-  const split = levelPath.split('.');
+  const split = levelPath.split('/');
   const splice = split.splice(0, split.length - 2); // -2 是把自身给排除掉
   return splice.map(item => item);
 }
 
 export function parseLevelPathFull(levelPath) {
-  const split = levelPath.split('.');
+  const split = levelPath.split('/');
   const splice = split.splice(0, split.length); // -2 是把自身给排除掉
   return splice.map(item => item);
 }

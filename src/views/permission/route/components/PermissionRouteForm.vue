@@ -1,4 +1,3 @@
-
 <template>
 
   <a-modal
@@ -33,7 +32,7 @@
         <a-col :span="12">
           <a-form-model-item label="路由编码" prop="code" has-feedback>
             <span v-if="isViewMode">{{ formModel.code }}</span>
-            <a-input v-else placeholder="路由编码（格式 一级路由:二级路由:三级路由:...）" v-model="formModel.code"  @change="test"/>
+            <a-input v-else placeholder="路由编码（格式 一级路由:二级路由:三级路由:...）" v-model="formModel.code"/>
           </a-form-model-item>
         </a-col>
       </a-row>
@@ -48,7 +47,7 @@
         <a-col :span="12">
           <a-form-model-item label="路由地址" prop="path" has-feedback>
             <span v-if="isViewMode">{{ formModel.path }}</span>
-            <a-input v-else v-model="formModel.path" @change="test"/>
+            <a-input v-else v-model="formModel.path"/>
           </a-form-model-item>
         </a-col>
       </a-row>
@@ -81,7 +80,8 @@
         <a-col :span="12">
           <a-form-model-item label="所属应用" prop="applicationId" has-feedback>
             <span v-if="isViewMode">{{ formModel.applicationName }}</span>
-            <application-select v-else :disabled="isAddChildrenMode" v-model="formModel.applicationId"/>
+            <application-select v-else :disabled="isAddChildrenMode"
+                                v-model="formModel.applicationId"/>
           </a-form-model-item>
         </a-col>
         <a-col :span="12">
@@ -98,8 +98,8 @@
             <span v-if="isViewMode">{{ getRouteTypeDesc(formModel.type) }}</span>
             <a-select v-else v-model="formModel.type">
               <a-select-option v-for="item in routeTypeOptions"
-                              :key="item.value"
-                              :value="item.value">{{ item.desc }}
+                               :key="item.value"
+                               :value="item.value">{{ item.desc }}
               </a-select-option>
             </a-select>
           </a-form-model-item>
@@ -251,10 +251,6 @@ export default {
     },
   },
   methods: {
-    test(t) {
-      console.log(this.formModel.code)
-      console.log(this.formModel.path)
-    },
     getRouteTypeDesc(value) {
       return this.routeTypeOptions.find(item => item.value === value).desc
     },
@@ -270,18 +266,17 @@ export default {
     onSelectRouteChange(value, selectedOptions) {
       this.formModel.pid = value[value.length - 1]
     },
-    open(formModel, mode = FORM_MODE_ADD) {
+    open(sourceModel, mode = FORM_MODE_ADD) {
       this.visible = true
-      if (formModel) {
-        this.formModel = Object.assign(this.formModel, formModel)
-        this.formModel = this.$cloneDeep(this.formModel)
-        console.log(this.formModel)
-        if (mode == FORM_MODE_ADD_CHILDREN) {
+      if (sourceModel) {
+        console.log('1', sourceModel)
+        Object.assign(this.formModel, sourceModel);
+        console.log('4', this.formModel)
+        if (mode === FORM_MODE_ADD_CHILDREN) {
           this.routesOptionsDefaultValue = parseLevelPathFull(this.formModel.levelPath)
         } else if (this.formModel.levelPath) {
           this.routesOptionsDefaultValue = parseLevelPath(this.formModel.levelPath)
         }
-        console.log(this.routesOptionsDefaultValue)
       }
       this.mode = mode
     },
