@@ -251,12 +251,9 @@ export default {
     },
     resetQueryParams() {
       this.queryParam = {}
-      console.log(1234)
       this.loadTableData()
     },
     handleQueryStatusChange(value) {
-      console.log(12345)
-
       this.loadTableData()
     },
     toggleAdvanced() {
@@ -291,7 +288,7 @@ export default {
             levelPath,
             code: code + ':',
             path: path + '/',
-            pid: id,
+            parentId: id,
             applicationId
           }
           break

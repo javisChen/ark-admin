@@ -54,7 +54,7 @@
 
       <a-row :gutter="8">
         <a-col :span="12">
-          <a-form-model-item label="所属路由" prop="pid" has-feedback>
+          <a-form-model-item label="所属路由" prop="parentId" has-feedback>
             <span v-if="isViewMode">{{ formModel.parentRouteName }}</span>
             <a-cascader :disabled="isAddChildrenMode"
                         v-else
@@ -166,7 +166,7 @@ let defaultModel = {
   name: '',
   code: '',
   component: '',
-  pid: 0,
+  parentId: 0,
   status: 1,
   icon: '',
   applicationId: 1,
@@ -264,14 +264,12 @@ export default {
       return this.mode === FORM_MODE_EDIT
     },
     onSelectRouteChange(value, selectedOptions) {
-      this.formModel.pid = value[value.length - 1]
+      this.formModel.parentId = value[value.length - 1]
     },
     open(sourceModel, mode = FORM_MODE_ADD) {
       this.visible = true
       if (sourceModel) {
-        console.log('1', sourceModel)
         Object.assign(this.formModel, sourceModel);
-        console.log('4', this.formModel)
         if (mode === FORM_MODE_ADD_CHILDREN) {
           this.routesOptionsDefaultValue = parseLevelPathFull(this.formModel.levelPath)
         } else if (this.formModel.levelPath) {
@@ -317,7 +315,7 @@ export default {
         if (!valid) {
           return false;
         }
-        this.formModel.pid = this.formModel.pid || 0
+        this.formModel.parentId = this.formModel.parentId || 0
         if (this.$refs['elementTable']) {
           this.formModel.elements = this.$refs['elementTable'].data
         }
