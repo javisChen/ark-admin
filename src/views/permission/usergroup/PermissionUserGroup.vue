@@ -250,11 +250,11 @@ export default {
       this.toggleLoading()
       const params = {...this.queryParam};
       const {data} = await fetchUserGroupPages(params)
-      this.userGroups = data.records.map(item => {
+      this.userGroups = data.map(item => {
         filterNonChildren(item);
         return item;
       });
-      this.pagination.total = data.total
+      // this.pagination.total = data.total
       this.toggleLoading()
     }
   }

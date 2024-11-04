@@ -24,7 +24,7 @@
         <a-input placeholder="用户组名称" v-model="formModel.name"/>
       </a-form-model-item>
 
-      <a-form-model-item label="所属用户组" prop="pid" has-feedback>
+      <a-form-model-item label="所属用户组" prop="parentId" has-feedback>
         <a-cascader popupPlacement="bottomLeft"
                     :changeOnSelect="true"
                     :options="userGroups"
@@ -34,7 +34,7 @@
                     @change="onSelectUserGroupsChange"/>
       </a-form-model-item>
 
-      <a-form-model-item label="拥有角色" prop="pid" has-feedback>
+      <a-form-model-item label="拥有角色" prop="parentId" has-feedback>
         <role-select v-model="formModel.roleIds"/>
       </a-form-model-item>
 
@@ -88,7 +88,7 @@ const defaultModel = {
   id: '',
   name: '',
   status: 1,
-  pid: 0,
+  parentId: 0,
   inheritType: 0,
   type: 1,
   roleIds: []
@@ -138,7 +138,7 @@ export default {
       this.confirmLoading = !this.confirmLoading
     },
     onSelectUserGroupsChange(value, selectedOptions) {
-      this.formModel.pid = value[value.length - 1]
+      this.formModel.parentId = value[value.length - 1]
     },
     open(formModel, mode = FORM_MODE_ADD) {
       this.visible = true
