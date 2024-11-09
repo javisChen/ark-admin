@@ -2,11 +2,11 @@ import {post, get, del, put} from '@/utils/request'
 import Base from "./iam-base-api";
 
 const api = {
-  userGroupPages: Base.serviceName + '/v1/userGroups',
-  userGroups: Base.serviceName + '/v1/userGroups',
-  userGroupsDetails: Base.serviceName + '/v1/userGroups/details',
-  userGroupsAll: Base.serviceName + '/v1/userGroups/all',
-  userGroupsTree: Base.serviceName + '/v1/userGroups/tree',
+  userGroupPages: Base.serviceName + '/v1/user-groups',
+  userGroups: Base.serviceName + '/v1/user-groups',
+  userGroupsDetails: Base.serviceName + '/v1/user-groups/details',
+  userGroupsAll: Base.serviceName + '/v1/user-groups/all',
+  userGroupsTree: Base.serviceName + '/v1/user-groups/tree',
 }
 export default api
 

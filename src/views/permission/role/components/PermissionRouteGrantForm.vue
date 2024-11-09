@@ -144,8 +144,8 @@ export default {
       role: {},
       okText: '保存授权',
 
-      toAddRoutePermissionIds: [],
-      toRemoveRoutePermissionIds: [],
+      toAddMenuPermissionIds: [],
+      toRemoveMenuPermissionIds: [],
       toAddElementPermissionIds: [],
       toRemoveElementPermissionIds: [],
 
@@ -157,8 +157,8 @@ export default {
       const {rolePermissionRouteIds} = this
       const checkedPermissionIds = [...val];
       console.log(rolePermissionRouteIds)
-      this.toAddRoutePermissionIds = this.filterToAddPermissionIds(rolePermissionRouteIds, checkedPermissionIds);
-      this.toRemoveRoutePermissionIds = this.filterToRemovePermissionIds(rolePermissionRouteIds, checkedPermissionIds);
+      this.toAddMenuPermissionIds = this.filterToAddPermissionIds(rolePermissionRouteIds, checkedPermissionIds);
+      this.toRemoveMenuPermissionIds = this.filterToRemovePermissionIds(rolePermissionRouteIds, checkedPermissionIds);
     },
     checkedElementPermissions(val) {
       const {rolePermissionElementIds} = this
@@ -301,10 +301,10 @@ export default {
     toggleTableLoading() {
       this.tableLoading = !this.tableLoading
     },
-    async loadElementsData(routeId) {
+    async loadElementsData(menuId) {
       this.toggleTableLoading()
       try {
-        const {data} = await getRouteElements({id: routeId})
+        const {data} = await getRouteElements({menuId})
         this.tableData = data
       } catch (e) {
       } finally {
@@ -326,8 +326,8 @@ export default {
     },
     resetForm() {
       this.formModel = Object.assign({}, defaultModel)
-      this.toAddRoutePermissionIds = []
-      this.toRemoveRoutePermissionIds = []
+      this.toAddMenuPermissionIds = []
+      this.toRemoveMenuPermissionIds = []
       this.toAddElementPermissionIds = []
       this.toRemoveElementPermissionIds = []
       this.selectedRowKeys = []
@@ -362,8 +362,8 @@ export default {
       try {
         const data = {
           roleId: this.role.id,
-          toAddRoutePermissionIds: this.toAddRoutePermissionIds,
-          toRemoveRoutePermissionIds: this.toRemoveRoutePermissionIds,
+          toAddMenuPermissionIds: this.toAddMenuPermissionIds,
+          toRemoveMenuPermissionIds: this.toRemoveMenuPermissionIds,
           toAddElementPermissionIds: this.toAddElementPermissionIds,
           toRemoveElementPermissionIds: this.toRemoveElementPermissionIds
         };
