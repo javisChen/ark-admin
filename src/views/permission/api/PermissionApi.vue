@@ -228,7 +228,7 @@ export default {
       apis: [],
       applications: [],
       columns: defaultColumns,
-      selectedApplication: '',
+      // selectedApplication: '',
       routeStatusOptions,
       addFormVisible: false,
     };
@@ -283,8 +283,8 @@ export default {
       }
     },
     onApplicationSelectChange(val) {
-      this.selectedApplication = val
-      this.queryParam.applicationId = val
+      // this.selectedApplication = val
+      // this.queryParam.applicationId = val
       this.loadApiCategories()
     },
     getAuthTypeOptionDesc(value) {
@@ -347,7 +347,7 @@ export default {
     },
     doSyncApi() {
       this.spinning = true
-      syncApi({applicationId: this.selectedApplication})
+      syncApi({applicationId: this.queryParam.applicationId})
         .then((resp) => {
           this.$message.success('同步完成')
           this.loadApiCategories()
@@ -360,7 +360,7 @@ export default {
         title: `提示`,
         content: `确认要删除[${record.name}]？`,
         onOk: async () => {
-          const {data} = await deleteApi(record.id)
+          const {data} = await deleteApi({id: record.id})
           await this.loadTableData();
         }
       })

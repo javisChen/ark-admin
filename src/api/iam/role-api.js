@@ -4,7 +4,7 @@ import Base from "./iam-base-api";
 const api = {
   roles: Base.serviceName + '/v1/roles',
   rolesAll: Base.serviceName + '/v1/roles/all',
-  roleCreate: Base.serviceName + '/v1/roles/create',
+  roleCreate: Base.serviceName + '/v1/roles',
   roleUpdate: Base.serviceName + '/v1/roles',
   roleDelete: Base.serviceName + '/v1/roles',
   rolePermissionRoutes: Base.serviceName + '/v1/role/permission/menus',

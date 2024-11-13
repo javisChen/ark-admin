@@ -19,7 +19,7 @@ export const enableApi = (data) => put({url: api.apiEnable, data})
 
 export const getApi = (params) => get({url: api.apiDetails, params})
 
-export const deleteApi = (id) => del({url: `${api.api}/${id}`})
+export const deleteApi = (params) => del({url: api.api, params})
 
 export const updateApi = (data) => put({url: api.api, data})
 

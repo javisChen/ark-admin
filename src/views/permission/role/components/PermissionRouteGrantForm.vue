@@ -362,6 +362,7 @@ export default {
       try {
         const data = {
           roleId: this.role.id,
+          applicationId: this.selectedApplicationId,
           toAddMenuPermissionIds: this.toAddMenuPermissionIds,
           toRemoveMenuPermissionIds: this.toRemoveMenuPermissionIds,
           toAddElementPermissionIds: this.toAddElementPermissionIds,

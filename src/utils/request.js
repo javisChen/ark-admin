@@ -86,6 +86,12 @@ const errorHandler = (error) => {
         duration: 4
       })
     }
+  } else {
+    message.error({
+      content: '服务器长时间未响应，请检查网络连接或稍后再试。',
+      duration: 4
+    });
+    return Promise.reject(error);
   }
   return Promise.reject(error)
 }

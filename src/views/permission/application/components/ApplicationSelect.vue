@@ -39,7 +39,9 @@ export default {
       getApplications({})
           .then(({data}) => {
             this.applicationsOptions = [...data]
+            console.log('333333', this.value)
             if (!this.value) {
+              console.log('12312312')
               this.handleChange(this.applicationsOptions[0].id)
             }
           })
