@@ -191,7 +191,6 @@ export default {
       validateFields(validateFieldsKey, { force: true }, (err, values) => {
         if (!err) {
           const loginParams = { ...values }
-          console.log(loginType)
           if (loginType === 1) {
             loginParams.password = md5(values.password)
             Login(loginParams)
@@ -201,7 +200,6 @@ export default {
                 state.loginBtn = false
               })
           } else {
-            console.log(123)
             MobileLogin(loginParams)
               .then((res) => this.loginSuccess(res))
               .catch(err => this.requestFailed(err))

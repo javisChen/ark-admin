@@ -42,10 +42,14 @@ const user = {
   },
 
   actions: {
-    // 登录
+    // 账号密码登录
     Login({commit}, userInfo) {
       return new Promise((resolve, reject) => {
-        login(userInfo).then(({data}) => {
+        const loginData = {
+          ...userInfo,
+          loginMode: 'ACCOUNT'
+        }
+        login(loginData).then(({data}) => {
           const result = data
           storage.set(ACCESS_TOKEN, result.accessToken, result.expires * 1000)
           commit('SET_TOKEN', result.accessToken)
@@ -55,10 +59,14 @@ const user = {
         })
       })
     },
-    // 登录
+    // 手机号登录
     MobileLogin({commit}, userInfo) {
       return new Promise((resolve, reject) => {
-        mobileLogin(userInfo).then(({data}) => {
+        const loginData = {
+          ...userInfo,
+          loginMode: 'MOBILE'
+        }
+        mobileLogin(loginData).then(({data}) => {
           const result = data
           storage.set(ACCESS_TOKEN, result.accessToken, result.expires * 1000)
           commit('SET_TOKEN', result.accessToken)
