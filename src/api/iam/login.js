@@ -3,8 +3,8 @@ import Base from "./auth-base-api";
 
 
 const userApi = {
-  Login: Base.serviceName + '/v1/login/account',
-  MobileLogin: Base.serviceName + '/v1/login/mobile',
+  Login: Base.serviceName + '/v1/login',
+  MobileLogin: Base.serviceName + '/v1/login',
   Logout: Base.serviceName + '/v1/logout',
   ForgePassword: Base.serviceName + '/v1/auth/forge-password',
   Register: Base.serviceName + '/v1/auth/register',
